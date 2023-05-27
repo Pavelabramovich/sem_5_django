@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>METANIT.COM</title>
+</head>
+<body>
+    <form method="POST" action="create/">
+        {% csrf_token %}
+        <p>
+            <label>Введите имя</label><br>
+            <input type="text" name="name" />
+        </p>
+        <input type="submit" value="Сохранить" >
+    </form>
+    {% if product_types.count > 0 %}
+    <h2>Список пользователей</h2>
+    <table>
+        {% for product_type in product_types %}
+        <tr>
+            <td>{{ product_type.name }}</td>
+            <td><a href="edit/{{product_type.id}}">Изменить</a> | <a href="delete/{{product_type.id}}">Удалить</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</body>
+</html>
