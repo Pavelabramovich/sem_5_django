@@ -1,15 +1,25 @@
+from django.db.models import Model
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponseNotFound
+from .models import Product, Bye, Provider
+
 from .models import ProductType
 
 
-# получение данных из бд
 def index(request):
-    product_types = ProductType.objects.all()
-    return render(request, "index.html", {"product_types": product_types})
+
+    sort = request.GET.getlist('sort')
+
+    products = Product.objects.all().order_by(*sort)
+    byes = Bye.objects.all()
+    providers = Provider.objects.all()
+
+    return render(request, "index.html", {"products": products, "providers": providers, "byes": byes})
 
 
-# сохранение данных в бд
+
+
+
 def create(request):
     if request.method == "POST":
         product_type = ProductType()

@@ -68,11 +68,13 @@ TEMPLATES = [
     },
 ]
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
 WSGI_APPLICATION = 'CarShop.wsgi.application'
 
+LOGIN_REDIRECT_URL = '/'
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     'default': {

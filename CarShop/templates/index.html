@@ -2,27 +2,83 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>METANIT.COM</title>
 </head>
 <body>
-    <form method="POST" action="create/">
+    <!--<form method="POST" action="create/">
         {% csrf_token %}
         <p>
             <label>Введите имя</label><br>
             <input type="text" name="name" />
         </p>
         <input type="submit" value="Сохранить" >
+    </form> -->
+
+    {% load auth_extras %}
+
+
+
+
+
+    {% if products.count > 0 %}
+    <h2>Product list</h2>
+
+    <form method="get">
+        <button type="submit" class="btn btn-sm btn-primary btn-raised mr-3">Sort</button>
+        <input name="sort" type="checkbox" value="name" {{ by_name }}>By name
+        <input name="sort" type="checkbox" value="-price" {{ by_price }}>By price
+        <input name="sort" type="checkbox" value="-product_type" {{ by_product_type }}>By product type
     </form>
-    {% if product_types.count > 0 %}
-    <h2>Список пользователей</h2>
+
     <table>
-        {% for product_type in product_types %}
+        {% for product in products %}
         <tr>
-            <td>{{ product_type.name }}</td>
-            <td><a href="edit/{{product_type.id}}">Изменить</a> | <a href="delete/{{product_type.id}}">Удалить</a></td>
+            <td>{{ product.name     }}</td>
+            <td>|</td>
+            <td>{{ product.price     }}</td>
+            <td>|</td>
+            <td>{{ product.product_type }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+
+
+
+    {% elif products.count == 0 %}
+    <h2>There is no products now</h2>
+    {% endif %}
+    <a href="/accounts/login/">Log in</a>
+
+    {% if request.user|has_group:"Employee" %}
+
+    <h2>Byes list</h2>
+    <table>
+        {% for bye in byes %}
+        <tr>
+            <td>{{ bye.date     }}</td>
+            <td>|</td>
+            <td>{{ bye.article     }}</td>
+            <td>|</td>
+            <td>{{ bye.count }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Providers list</h2>
+    <table>
+        {% for provider in providers %}
+        <tr>
+            <td>{{ provider.name     }}</td>
+            <td>|</td>
+            <td>{{ provider.phone     }}</td>
+            <td>|</td>
+            <td>{{ provider.address }}</td>
         </tr>
         {% endfor %}
     </table>
     {% endif %}
+
+
 </body>
 </html>

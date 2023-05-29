@@ -20,11 +20,6 @@ class Provider(models.Model):
         return self.name
 
 
-class Person(models.Model):
-    name = models.CharField(max_length=20)
-    age = models.IntegerField()
-
-
 class Producer(models.Model):
     name = models.CharField(max_length=50)
 
@@ -34,6 +29,17 @@ class Producer(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Bye(models.Model):
+    date = models.DateField()
+
+    article = models.UUIDField()
+
+    count = models.IntegerField()
+
+    def __str__(self):
+        return f"bye {{ date: {self.date}, article: {str(self.article)[:10]}, count: {self.count} }}"
 
 
 class Product(models.Model):
@@ -52,6 +58,7 @@ class Product(models.Model):
 
     def display_producer(self):
         return self.producer.name
+
     display_producer.short_description = 'Producer'
 
     def display_short_providers(self):
