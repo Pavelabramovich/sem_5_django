@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from django.core.exceptions import ValidationError
 
 
 class ProductType(models.Model):
@@ -34,12 +35,12 @@ class Producer(models.Model):
 class Bye(models.Model):
     date = models.DateField()
 
-    article = models.UUIDField()
+    product_name = models.CharField(max_length=50, help_text="Name of product")
 
     count = models.IntegerField()
 
     def __str__(self):
-        return f"bye {{ date: {self.date}, article: {str(self.article)[:10]}, count: {self.count} }}"
+        return f"bye {{ date: {self.date}, product: {self.product_name}, count: {self.count} }}"
 
 
 class Product(models.Model):
