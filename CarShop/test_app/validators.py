@@ -5,7 +5,7 @@ PHONE_PATTERN = r"\+375\s*\(\s*29\s*\)\s*\d{3}\s*-\s*\d{2}\s*-\s*\d{2}"
 WORD_PATTERN = r"\b([A-Za-z]+)\b"
 NUMBER_PATTERN = r"\b([\d\.\-]+)\b"
 
-ADDRESS_PATTERN = fr"(({WORD_PATTERN})|({NUMBER_PATTERN})|(\s*))*"
+ADDRESS_PATTERN = fr"(({WORD_PATTERN})|({NUMBER_PATTERN})|([\s,\.\:\!]*))*"
 
 
 # Check is string represent phone number in format
