@@ -3,9 +3,9 @@ from datetime import date, timedelta
 from django.db.models import Model
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponseNotFound
-from .models import Product, Bye, Provider
+from .models import *
 
-from .models import ProductType
+from .models import Category
 import requests
 
 
@@ -27,9 +27,9 @@ def get_bitcoin():
     api = 'https://api.coindesk.com/v1/bpi/currentprice.json?start=' \
           + date_yesterday + '&end=' + date_today + '&index=[USD]'
 
-    response = requests.get(api, timeout=2)  # get api response data from coindesk based on date range supplied by user
-    response.raise_for_status()  # raise error if HTTP request returned an unsuccessful status code.
-    prices = response.json()  # convert response to json format
+    response = requests.get(api, timeout=2)
+    response.raise_for_status()
+    prices = response.json()
     btc_price = prices.get("bpi")["USD"]["rate"]
 
     return btc_price
@@ -40,13 +40,13 @@ def index(request):
     sort = request.GET.getlist('sort')
 
     products = Product.objects.all().order_by(*sort)
-    byes = Bye.objects.all()
+    buys = Buy.objects.all()
     providers = Provider.objects.all()
 
     return render(request, "index.html", {
         "products": products,
         "providers": providers,
-        "byes": byes,
+        "buys": buys,
         "temp": get_weather(),
         "bitc": get_bitcoin(),
     })

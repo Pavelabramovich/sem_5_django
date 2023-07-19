@@ -1,111 +1,116 @@
 from django.contrib import admin
-from .models import ProductType, Provider, Producer, Product, Bye
-from django import forms
-from .validators import is_address, is_phone_number
+from django.contrib.admin import DateFieldListFilter
+from .models import Category, Producer, Provider, Product, Buy
+from .forms import CategoryForm, ProducerForm, ProviderForm, ProductForm, BuyForm
+from .make_range_field_list_filter import make_range_field_list_filter
+from .make_validated_admin_form_set import make_validated_admin_form_set
+from django.urls import reverse
+from django.utils.http import urlencode
+from django.utils.html import format_html
 
 
-class ProviderForm(forms.ModelForm):
-    class Meta:
-        model = Provider
-        fields = '__all__'
-
-    def clean(self):
-
-        phone = self.cleaned_data.get('phone')
-        if not is_phone_number(phone):
-            raise forms.ValidationError("Phone number is incorrect. Correct format is +375 (29) XXX-XX-XX")
-
-        address = self.cleaned_data.get('address')
-        if not is_address(address):
-            raise forms.ValidationError("Address is incorrect. It must consist of words, numbers and codes")
-
-        return self.cleaned_data
+class ValidatedListEditableAdmin(admin.ModelAdmin):
+    def get_changelist_formset(self, request, **kwargs):
+        kwargs['formset'] = make_validated_admin_form_set(self.form)
+        return super().get_changelist_formset(request, **kwargs)
 
 
-class ProviderAdmin(admin.ModelAdmin):
+@admin.register(Category)
+class ProductTypeAdmin(admin.ModelAdmin):
+    form = CategoryForm
+
+    list_display = ('name',)
+    list_display_links = None
+    list_editable = ('name',)
+    ordering = ('name',)
+    list_filter = ('name',)
+    search_fields = ("name",)
+
+    list_per_page = 20
+
+
+@admin.register(Provider)
+class ProviderAdmin(ValidatedListEditableAdmin):
     form = ProviderForm
+
     list_display = ('name', 'phone', 'address')
+    ordering = ('name', 'phone')
+    list_editable = ('phone', 'address')
+    list_filter = ('name',)
+    search_fields = ("name",)
+
+    list_per_page = 20
 
 
-class ProducerForm(forms.ModelForm):
-    class Meta:
-        model = Producer
-        fields = '__all__'
-
-    def clean(self):
-
-        phone = self.cleaned_data.get('phone')
-        if not is_phone_number(phone):
-            raise forms.ValidationError("Phone number is incorrect. Correct format is +375 (29) XXX-XX-XX")
-
-        address = self.cleaned_data.get('address')
-        if not is_address(address):
-            raise forms.ValidationError("Address is incorrect. It must consist of words, numbers and codes")
-
-        return self.cleaned_data
-
-
-class ProducerAdmin(admin.ModelAdmin):
+@admin.register(Producer)
+class ProducerAdmin(ValidatedListEditableAdmin):
     form = ProducerForm
+
     list_display = ('name', 'phone', 'address')
+    ordering = ('name', 'phone')
+    list_editable = ('phone', 'address')
+    list_filter = ("name",)
+    search_fields = ("name",)
+
+    list_per_page = 20
 
 
-class ProductForm(forms.ModelForm):
-    class Meta:
-        model = Product
-        fields = '__all__'
-
-    def clean(self):
-        price = self.cleaned_data.get('price')
-        if price < 0:
-            raise forms.ValidationError("Price must be positive")
-
-        return self.cleaned_data
-
-
-class ProductAdmin(admin.ModelAdmin):
+@admin.register(Product)
+class ProductAdmin(ValidatedListEditableAdmin):
     form = ProductForm
-    list_display = ('name', 'product_type', 'price', 'display_producer', 'display_short_providers')
+
+    list_display = ('name', 'category', 'price', 'display_producer_as_link', 'display_few_providers')
+    ordering = ('name', 'category', 'price')
+
+    price_range_list_filter = make_range_field_list_filter([
+        ("0$ - $10", 0, 10),
+        ("10$ - $50", 10, 50),
+        ("50$ - $100", 50, 100),
+        ("More then $100", 100, None),
+    ])
+
+    list_filter = ('name', 'category', ('price', price_range_list_filter), 'providers')
+    list_editable = ('category', 'price')
+    search_fields = ('name',)
 
     fieldsets = (
         (None, {
-            'fields': ('name', 'product_type', 'price')
+            'fields': ('name', 'category', 'price')
         }),
         ('Detailed information', {
             'fields': ('article', 'producer', 'providers')
         }),
     )
 
+    list_per_page = 20
 
-class ByeForm(forms.ModelForm):
-    class Meta:
-        model = Bye
-        fields = '__all__'
+    def display_producer_as_link(self, obj):
+        producer = obj.producer
 
-    def clean(self):
-        count = self.cleaned_data.get('count')
-        if count <= 0:
-            raise forms.ValidationError("Count must be positive")
+        link = (
+                reverse("admin:test_app_producer_changelist") + "?" + urlencode({"id": producer.id})
+        )
+        return format_html('<b><a href="{}">{}</a></b>', link, producer)
 
-        product_name = self.cleaned_data.get('product_name')
-        products = Product.objects.all()
-
-        filtered = filter(lambda p: p.name == product_name, products)
-
-        if len(list(filtered)) == 0:
-            raise forms.ValidationError("No products with this name")
-
-        return self.cleaned_data
+    display_producer_as_link.short_description = "Producer"
 
 
-class ByeAdmin(admin.ModelAdmin):
-    form = ByeForm
+@admin.register(Buy)
+class BuyAdmin(admin.ModelAdmin):
+    form = BuyForm
+
     list_display = ('date', 'product_name', 'count')
+    ordering = ('date', 'product_name', 'count')
+    list_filter = (('date', DateFieldListFilter), 'product_name')
+    search_fields = ('product_name',)
 
+    list_per_page = 20
 
-admin.site.register(ProductType)
+    def has_add_permission(self, request):
+        return True
 
-admin.site.register(Provider, ProviderAdmin)
-admin.site.register(Producer, ProducerAdmin)
-admin.site.register(Product, ProductAdmin)
-admin.site.register(Bye, ByeAdmin)
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return True

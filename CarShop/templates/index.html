@@ -4,20 +4,8 @@
     <meta charset="utf-8" />
 </head>
 <body>
-    <!--<form method="POST" action="create/">
-        {% csrf_token %}
-        <p>
-            <label>Введите имя</label><br>
-            <input type="text" name="name" />
-        </p>
-        <input type="submit" value="Сохранить" >
-    </form> -->
 
     {% load auth_extras %}
-
-
-
-
 
     {% if products.count > 0 %}
     <h2>Product list</h2>
