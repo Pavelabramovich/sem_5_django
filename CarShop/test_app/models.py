@@ -11,6 +11,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = "Category"
         verbose_name_plural = "Categories"
+        ordering = ("name",)
 
 
 class Provider(models.Model):
@@ -26,6 +27,7 @@ class Provider(models.Model):
     class Meta:
         verbose_name = "Provider"
         verbose_name_plural = "Providers"
+        ordering = ("name",)
 
 
 class Producer(models.Model):
@@ -41,6 +43,7 @@ class Producer(models.Model):
     class Meta:
         verbose_name = "Producer"
         verbose_name_plural = "Producers"
+        ordering = ("name",)
 
 
 class Buy(models.Model):
@@ -56,6 +59,7 @@ class Buy(models.Model):
     class Meta:
         verbose_name = "Buy"
         verbose_name_plural = "Buys"
+        ordering = ("-date", "product_name", "count")
 
 
 class Product(models.Model):
@@ -114,4 +118,5 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
+        ordering = ("name",)
 

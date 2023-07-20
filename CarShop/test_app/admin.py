@@ -63,10 +63,10 @@ class ProductAdmin(ValidatedListEditableAdmin):
     ordering = ('name', 'category', 'price')
 
     price_range_list_filter = make_range_field_list_filter([
-        ("0$ - $10", 0, 10),
-        ("10$ - $50", 10, 50),
-        ("50$ - $100", 50, 100),
-        ("More then $100", 100, None),
+        ("$0 - $10", 0, 10),
+        ("$10 - $50", 10, 50),
+        ("$50 - $100", 50, 100),
+        ("$100 and more", 100, None),
     ])
 
     list_filter = ('name', 'category', ('price', price_range_list_filter), 'providers')

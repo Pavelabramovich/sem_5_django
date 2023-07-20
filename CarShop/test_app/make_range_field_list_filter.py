@@ -12,7 +12,7 @@ def make_range_field_list_filter(lookups, nullable=False):
             self.lookup_kwarg_stop = '%s__lt' % field_path
             self.lookup_kwarg_null = '%s__isnull' % field_path
 
-            self.links = [('Any value', {}), ]
+            self.links = [('All', {}), ]
             for name, start, stop in lookups:
                 query_params = {}
                 if start is not None:

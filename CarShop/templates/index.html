@@ -14,7 +14,7 @@
         <button type="submit" class="btn btn-sm btn-primary btn-raised mr-3">Sort</button>
         <input name="sort" type="checkbox" value="name" {{ by_name }}>By name
         <input name="sort" type="checkbox" value="-price" {{ by_price }}>By price
-        <input name="sort" type="checkbox" value="-product_type" {{ by_product_type }}>By product type
+        <input name="sort" type="checkbox" value="-category" {{ by_category }}>By product type
     </form>
 
     <table>
@@ -24,7 +24,7 @@
             <td>|</td>
             <td>{{ product.price     }}</td>
             <td>|</td>
-            <td>{{ product.product_type }}</td>
+            <td>{{ product.category }}</td>
         </tr>
         {% endfor %}
     </table>
