@@ -15,6 +15,7 @@ class ProducerForm(forms.ModelForm):
         fields = '__all__'
 
     def clean(self):
+        super().clean()
 
         phone = self.cleaned_data.get('phone')
         if not is_phone_number(phone):
@@ -33,13 +34,21 @@ class ProviderForm(forms.ModelForm):
         fields = '__all__'
 
     def clean(self):
+        super().clean()
+
+        error = forms.ValidationError("")
+        error.error_dict = {}
+
         phone = self.cleaned_data.get('phone')
         if not is_phone_number(phone):
-            raise forms.ValidationError("Phone number is incorrect. Correct format is +375 (29) XXX-XX-XX")
+            error.error_dict.update({'phone': r"Phone number is incorrect. Correct format is +375 (29) XXX-XX-XX"})
 
         address = self.cleaned_data.get('address')
         if not is_address(address):
-            raise forms.ValidationError("Address is incorrect. It must consist of words, numbers and codes")
+            error.error_dict.update({'address': r"Address is incorrect. It must consist of words, numbers and codes"})
+
+        if error.error_dict:
+            raise error
 
         return self.cleaned_data
 
@@ -50,6 +59,8 @@ class ProductForm(forms.ModelForm):
         fields = '__all__'
 
     def clean(self):
+        super().clean()
+
         price = self.cleaned_data.get('price')
         if price < 0:
             raise forms.ValidationError("Price must be positive")
@@ -63,6 +74,8 @@ class BuyForm(forms.ModelForm):
         fields = '__all__'
 
     def clean(self):
+        super().clean()
+
         count = self.cleaned_data.get('count')
         if count <= 0:
             raise forms.ValidationError("Count must be positive")

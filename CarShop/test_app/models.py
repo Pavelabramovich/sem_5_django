@@ -3,10 +3,13 @@ import uuid
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=64, help_text="Enter a category (e.g. Oil, Tire etc.)")
+    name = models.CharField(max_length=64, help_text="Enter a category (e.g. Oil, Tire etc.)", unique=True)
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return f'/category/{self.name}/'
 
     class Meta:
         verbose_name = "Category"
@@ -15,7 +18,7 @@ class Category(models.Model):
 
 
 class Provider(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
 
     phone = models.CharField(max_length=64)
 
@@ -23,6 +26,9 @@ class Provider(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return f'/category/{self.name}/'
 
     class Meta:
         verbose_name = "Provider"
@@ -31,7 +37,7 @@ class Provider(models.Model):
 
 
 class Producer(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
 
     phone = models.CharField(max_length=64)
 
@@ -39,6 +45,9 @@ class Producer(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return f'/category/{self.name}/'
 
     class Meta:
         verbose_name = "Producer"
@@ -63,7 +72,7 @@ class Buy(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
 
     category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
 
