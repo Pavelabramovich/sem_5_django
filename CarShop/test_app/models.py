@@ -1,9 +1,11 @@
 from django.db import models
 import uuid
+from .validators import validate_phone_number, validate_address, validate_positive, validate_non_negative
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=64, help_text="Enter a category (e.g. Oil, Tire etc.)", unique=True)
+    name = models.CharField(max_length=64, unique=True,
+                            help_text="Enter a category (e.g. Oil, Tire etc.)")
 
     def __str__(self):
         return self.name
@@ -20,9 +22,10 @@ class Category(models.Model):
 class Provider(models.Model):
     name = models.CharField(max_length=64, unique=True)
 
-    phone = models.CharField(max_length=64)
+    phone = models.CharField(max_length=64, validators=[validate_phone_number],
+                             help_text="Enter a phone in format +375 (29) XXX-XX-XX")
 
-    address = models.CharField(max_length=64)
+    address = models.CharField(max_length=64, validators=[validate_address])
 
     def __str__(self):
         return self.name
@@ -39,9 +42,10 @@ class Provider(models.Model):
 class Producer(models.Model):
     name = models.CharField(max_length=64, unique=True)
 
-    phone = models.CharField(max_length=64)
+    phone = models.CharField(max_length=64, validators=[validate_phone_number],
+                             help_text="Enter a phone in format +375 (29) XXX-XX-XX")
 
-    address = models.CharField(max_length=64)
+    address = models.CharField(max_length=64, validators=[validate_address])
 
     def __str__(self):
         return self.name
@@ -60,7 +64,7 @@ class Buy(models.Model):
 
     product_name = models.CharField(max_length=64, help_text="Name of product")
 
-    count = models.IntegerField()
+    count = models.IntegerField(validators=[validate_positive('Count')])
 
     def __str__(self):
         return f"buy {{ date: {self.date}, product: {self.product_name}, count: {self.count} }}"
@@ -79,16 +83,16 @@ class Product(models.Model):
     article = models.UUIDField(primary_key=True, default=uuid.uuid4,
                                help_text="Unique ID for this product")
 
-    price = models.IntegerField()
+    price = models.IntegerField(validators=[validate_non_negative('Price')])
 
     providers = models.ManyToManyField(Provider, help_text="Select a provider for this product")
 
-    producer = models.OneToOneField(Producer, on_delete=models.CASCADE)
+    producer = models.OneToOneField(Producer, null=True, on_delete=models.SET_NULL)
 
-    def display_producer(self):
+    def get_producer(self):
         return self.producer.name
 
-    def display_few_providers(self):
+    def get_few_providers(self):
         max_count = 3
         providers = self.providers.all()
 
@@ -97,7 +101,7 @@ class Product(models.Model):
         else:
             return ', '.join([provider.name for provider in providers])
 
-    def display_many_providers(self):
+    def get_many_providers(self):
         max_count = 20
         max_str_length = 20
         providers = self.providers.all()
@@ -115,11 +119,11 @@ class Product(models.Model):
             return '\n'.join(prov_strs)
 
         else:
-            return "More than 20 providers"
+            return f"More than {max_count} providers"
 
-    display_producer.short_description = 'Producer'
-    display_few_providers.short_description = 'Providers'
-    display_many_providers.short_description = 'Providers'
+    get_producer.short_description = 'Producer'
+    get_few_providers.short_description = 'Providers'
+    get_many_providers.short_description = 'Providers'
 
     def __str__(self):
         return self.name

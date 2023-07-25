@@ -3,16 +3,12 @@ from django.contrib.admin import DateFieldListFilter
 from .models import Category, Producer, Provider, Product, Buy
 from .forms import CategoryForm, ProducerForm, ProviderForm, ProductForm, BuyForm
 from .make_range_field_list_filter import make_range_field_list_filter
-from .make_validated_list_editable_admin_formset import make_validated_list_editable_admin_formset
 from django.urls import reverse
 from django.utils.http import urlencode
 from django.utils.html import format_html
+from more_admin_filters import MultiSelectRelatedFilter, MultiSelectFilter
 
-
-class ValidatedListEditableAdmin(admin.ModelAdmin):
-    def get_changelist_formset(self, request, **kwargs):
-        kwargs['formset'] = make_validated_list_editable_admin_formset(self.form)
-        return super().get_changelist_formset(request, **kwargs)
+admin.site.empty_value_display = '???'
 
 
 @admin.register(Category)
@@ -29,7 +25,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Provider)
-class ProviderAdmin(ValidatedListEditableAdmin):
+class ProviderAdmin(admin.ModelAdmin):
     form = ProviderForm
 
     list_display = ('name', 'phone', 'address')
@@ -41,7 +37,7 @@ class ProviderAdmin(ValidatedListEditableAdmin):
 
 
 @admin.register(Producer)
-class ProducerAdmin(ValidatedListEditableAdmin):
+class ProducerAdmin(admin.ModelAdmin):
     form = ProducerForm
 
     list_display = ('name', 'phone', 'address')
@@ -53,10 +49,10 @@ class ProducerAdmin(ValidatedListEditableAdmin):
 
 
 @admin.register(Product)
-class ProductAdmin(ValidatedListEditableAdmin):
+class ProductAdmin(admin.ModelAdmin):
     form = ProductForm
 
-    list_display = ('name', 'category', 'price', 'display_producer_as_link', 'display_few_providers')
+    list_display = ('name', 'category', 'price', 'get_producer_as_link', 'get_providers_as_link')
     ordering = ('name', 'category', 'price')
 
     price_range_list_filter = make_range_field_list_filter([
@@ -66,7 +62,11 @@ class ProductAdmin(ValidatedListEditableAdmin):
         ("$100 and more", 100, None),
     ])
 
-    list_filter = ('category', ('price', price_range_list_filter), 'providers')
+    list_filter = (
+        ('category', MultiSelectRelatedFilter),
+        ('price', price_range_list_filter),
+        ('providers', MultiSelectRelatedFilter)
+    )
     list_editable = ('category', 'price')
     search_fields = ('name',)
 
@@ -79,16 +79,38 @@ class ProductAdmin(ValidatedListEditableAdmin):
         }),
     )
 
+    readonly_fields = ("article",)
+
     list_per_page = 20
 
-    def display_producer_as_link(self, obj):
+    def get_producer_as_link(self, obj):
         producer = obj.producer
 
-        link = (reverse("admin:test_app_producer_changelist") + "?" + urlencode({"id": producer.id}))
+        link = (
+            reverse("admin:test_app_producer_changelist") +
+            "?" +
+            urlencode({"id": producer.id})
+        )
 
         return format_html('<b><a href="{}">{}</a></b>', link, producer)
 
-    display_producer_as_link.short_description = "Producer"
+    def get_providers_as_link(self, obj):
+
+        providers = obj.providers.all()
+        providers_id = ','.join([str(p.id) for p in providers])
+
+        link = (
+            reverse("admin:test_app_provider_changelist") +
+            "?" +
+            urlencode({"id__in": f"{providers_id}"})
+        )
+
+        few_providers = obj.get_few_providers()
+
+        return format_html('<a href="{}">{}</a>', link, few_providers)
+
+    get_producer_as_link.short_description = "Producer"
+    get_providers_as_link.short_description = "Providers"
 
 
 @admin.register(Buy)
@@ -97,7 +119,7 @@ class BuyAdmin(admin.ModelAdmin):
 
     list_display = ('date', 'product_name', 'count')
     ordering = ('date', 'product_name', 'count')
-    list_filter = (('date', DateFieldListFilter), 'product_name')
+    list_filter = (('date', DateFieldListFilter), ('product_name', MultiSelectFilter))
     search_fields = ('product_name',)
 
     list_per_page = 20
