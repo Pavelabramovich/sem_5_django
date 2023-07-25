@@ -15,15 +15,20 @@ class ProducerForm(forms.ModelForm):
         fields = '__all__'
 
     def clean(self):
-        super().clean()
+        forms.ModelForm.clean(self)
+
+        error_dict = {}
 
         phone = self.cleaned_data.get('phone')
         if not is_phone_number(phone):
-            raise forms.ValidationError("Phone number is incorrect. Correct format is +375 (29) XXX-XX-XX")
+            error_dict['phone'] = ["Phone number is incorrect. Correct format is +375 (29) XXX-XX-XX"]
 
         address = self.cleaned_data.get('address')
         if not is_address(address):
-            raise forms.ValidationError("Address is incorrect. It must consist of words, numbers and codes")
+            error_dict['address'] = ["Address is incorrect. It must consist of words, numbers and codes"]
+
+        if error_dict:
+            raise forms.ValidationError(error_dict)
 
         return self.cleaned_data
 
@@ -34,21 +39,20 @@ class ProviderForm(forms.ModelForm):
         fields = '__all__'
 
     def clean(self):
-        super().clean()
+        forms.ModelForm.clean(self)
 
-        error = forms.ValidationError("")
-        error.error_dict = {}
+        error_dict = {}
 
         phone = self.cleaned_data.get('phone')
         if not is_phone_number(phone):
-            error.error_dict.update({'phone': r"Phone number is incorrect. Correct format is +375 (29) XXX-XX-XX"})
+            error_dict['phone'] = ["Phone number is incorrect. Correct format is +375 (29) XXX-XX-XX"]
 
         address = self.cleaned_data.get('address')
         if not is_address(address):
-            error.error_dict.update({'address': r"Address is incorrect. It must consist of words, numbers and codes"})
+            error_dict['address'] = ["Address is incorrect. It must consist of words, numbers and codes"]
 
-        if error.error_dict:
-            raise error
+        if error_dict:
+            raise forms.ValidationError(error_dict)
 
         return self.cleaned_data
 
@@ -59,11 +63,11 @@ class ProductForm(forms.ModelForm):
         fields = '__all__'
 
     def clean(self):
-        super().clean()
+        forms.ModelForm.clean(self)
 
         price = self.cleaned_data.get('price')
         if price < 0:
-            raise forms.ValidationError("Price must be positive")
+            raise forms.ValidationError({'price': ["Price must be positive"]})
 
         return self.cleaned_data
 
@@ -74,11 +78,13 @@ class BuyForm(forms.ModelForm):
         fields = '__all__'
 
     def clean(self):
-        super().clean()
+        forms.ModelForm.clean(self)
+
+        error_dict = {}
 
         count = self.cleaned_data.get('count')
         if count <= 0:
-            raise forms.ValidationError("Count must be positive")
+            error_dict['count'] = ["Count must be positive"]
 
         product_name = self.cleaned_data.get('product_name')
         products = Product.objects.all()

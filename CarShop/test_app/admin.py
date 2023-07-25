@@ -3,7 +3,7 @@ from django.contrib.admin import DateFieldListFilter
 from .models import Category, Producer, Provider, Product, Buy
 from .forms import CategoryForm, ProducerForm, ProviderForm, ProductForm, BuyForm
 from .make_range_field_list_filter import make_range_field_list_filter
-from .make_validated_admin_form_set import make_validated_admin_form_set
+from .make_validated_list_editable_admin_formset import make_validated_list_editable_admin_formset
 from django.urls import reverse
 from django.utils.http import urlencode
 from django.utils.html import format_html
@@ -11,19 +11,18 @@ from django.utils.html import format_html
 
 class ValidatedListEditableAdmin(admin.ModelAdmin):
     def get_changelist_formset(self, request, **kwargs):
-        kwargs['formset'] = make_validated_admin_form_set(self.form)
+        kwargs['formset'] = make_validated_list_editable_admin_formset(self.form)
         return super().get_changelist_formset(request, **kwargs)
 
 
 @admin.register(Category)
-class ProductTypeAdmin(admin.ModelAdmin):
+class CategoryAdmin(admin.ModelAdmin):
     form = CategoryForm
 
     list_display = ('name',)
     list_display_links = None
     list_editable = ('name',)
     ordering = ('name',)
-    list_filter = ('name',)
     search_fields = ("name",)
 
     list_per_page = 20
@@ -36,7 +35,6 @@ class ProviderAdmin(ValidatedListEditableAdmin):
     list_display = ('name', 'phone', 'address')
     ordering = ('name', 'phone')
     list_editable = ('phone', 'address')
-    list_filter = ('name',)
     search_fields = ("name",)
 
     list_per_page = 20
@@ -49,7 +47,6 @@ class ProducerAdmin(ValidatedListEditableAdmin):
     list_display = ('name', 'phone', 'address')
     ordering = ('name', 'phone')
     list_editable = ('phone', 'address')
-    list_filter = ("name",)
     search_fields = ("name",)
 
     list_per_page = 20
@@ -69,7 +66,7 @@ class ProductAdmin(ValidatedListEditableAdmin):
         ("$100 and more", 100, None),
     ])
 
-    list_filter = ('name', 'category', ('price', price_range_list_filter), 'providers')
+    list_filter = ('category', ('price', price_range_list_filter), 'providers')
     list_editable = ('category', 'price')
     search_fields = ('name',)
 
@@ -87,9 +84,8 @@ class ProductAdmin(ValidatedListEditableAdmin):
     def display_producer_as_link(self, obj):
         producer = obj.producer
 
-        link = (
-                reverse("admin:test_app_producer_changelist") + "?" + urlencode({"id": producer.id})
-        )
+        link = (reverse("admin:test_app_producer_changelist") + "?" + urlencode({"id": producer.id}))
+
         return format_html('<b><a href="{}">{}</a></b>', link, producer)
 
     display_producer_as_link.short_description = "Producer"

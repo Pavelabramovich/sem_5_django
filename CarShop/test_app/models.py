@@ -28,7 +28,7 @@ class Provider(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return f'/category/{self.name}/'
+        return f'/provider/{self.name}/'
 
     class Meta:
         verbose_name = "Provider"
@@ -47,7 +47,7 @@ class Producer(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return f'/category/{self.name}/'
+        return f'/producer/{self.name}/'
 
     class Meta:
         verbose_name = "Producer"

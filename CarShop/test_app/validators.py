@@ -11,6 +11,10 @@ ADDRESS_PATTERN = fr"(({WORD_PATTERN})|({NUMBER_PATTERN})|([\s,\.\:\!]*))*"
 # Check is string represent phone number in format
 # +375 (29) XXX-XX-XX; using some pattern
 def is_phone_number(string: str):
+
+    if not isinstance(string, str):
+        return False
+
     string = string.strip()
     match = re.fullmatch(PHONE_PATTERN, string)
     return match is not None
@@ -18,6 +22,10 @@ def is_phone_number(string: str):
 
 # Checks the composition of strings from words and numbers
 def is_address(string: str):
+
+    if not isinstance(string, str):
+        return False
+
     string = string.strip()
     match = re.fullmatch(ADDRESS_PATTERN, string)
     return match is not None
