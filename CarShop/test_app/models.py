@@ -1,6 +1,6 @@
 from django.db import models
 import uuid
-from .validators import validate_phone_number, validate_address, validate_positive, validate_non_negative
+from .validators import validate_phone_number, validate_address, get_positive_validator, get_not_negative_validator
 
 
 class Category(models.Model):
@@ -64,7 +64,7 @@ class Buy(models.Model):
 
     product_name = models.CharField(max_length=64, help_text="Name of product")
 
-    count = models.IntegerField(validators=[validate_positive('Count')])
+    count = models.IntegerField(validators=[get_positive_validator('Count')])
 
     def __str__(self):
         return f"buy {{ date: {self.date}, product: {self.product_name}, count: {self.count} }}"
@@ -83,7 +83,7 @@ class Product(models.Model):
     article = models.UUIDField(primary_key=True, default=uuid.uuid4,
                                help_text="Unique ID for this product")
 
-    price = models.IntegerField(validators=[validate_non_negative('Price')])
+    price = models.IntegerField(validators=[get_not_negative_validator('Price')])
 
     providers = models.ManyToManyField(Provider, help_text="Select a provider for this product")
 

@@ -1,6 +1,5 @@
 from .models import Category, Producer, Provider, Product, Buy
 from django import forms
-from .validators import is_address, is_phone_number
 
 
 class CategoryForm(forms.ModelForm):

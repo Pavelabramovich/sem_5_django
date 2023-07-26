@@ -19,7 +19,7 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
-from test_app import views     # vsie good na samom dele
+# from test_app import views     # vsie good na samom dele
 
 urlpatterns = [
     path('admin/', admin.site.urls),

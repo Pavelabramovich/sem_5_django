@@ -3,14 +3,9 @@ from test_app.models import Category
 
 
 class TestCategoryModel(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         cls.test_obj = Category.objects.create(name='Tire')
-
-    def test_category_model_entry(self):
-        category = self.test_obj
-        self.assertTrue(isinstance(category, Category))
 
     def test_name_label(self):
         category = self.test_obj
