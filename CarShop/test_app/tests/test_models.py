@@ -19,5 +19,10 @@ class TestCategoryModel(TestCase):
 
     def test_str(self):
         category = self.test_obj
-        expected_str_result = category.name
-        self.assertEqual(expected_str_result, str(category))
+        expected_str_res = 'Tire'
+        self.assertEqual(str(category), expected_str_res)
+
+    def test_get_absolute_url(self):
+        category = self.test_obj
+        expected_absolute_url = f'/category/{category.name}/'
+        self.assertEqual(category.get_absolute_url(), expected_absolute_url)

@@ -6,9 +6,6 @@ class FullMatchRegexValidator(RegexValidator):
     def __init__(
             self, pattern, message=None, code=None, inverse_match=None, flags=None
     ):
-        if not isinstance(pattern, str):
-            raise TypeError("Pattern must be string.")
-
         if not pattern.startswith('^'):
             pattern = '^' + pattern
 

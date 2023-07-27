@@ -23,9 +23,9 @@ class _AssertNotRaisesContext(_AssertRaisesContext):
                 exc_name = str(self.expected)
 
             if self.obj_name:
-                self._raiseFailure("{} raised by {}".format(exc_name, self.obj_name))
+                self._raiseFailure(f"{exc_name} raised by {self.obj_name}")
             else:
-                self._raiseFailure("{} raised".format(exc_name))
+                self._raiseFailure(f"{exc_name} raised")
 
         else:
             traceback.clear_frames(tb)

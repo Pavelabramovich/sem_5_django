@@ -1,3 +1,5 @@
+import datetime
+
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 import re
@@ -34,7 +36,7 @@ class LevenshteinStringMatcher:
         return self.comp_func(first, second) / 100
 
 
-match_address = LevenshteinStringMatcher(flag="partial token set")
+match_address = LevenshteinStringMatcher(flag="token sort")
 
 
 def match_phone_number(phone_number, string):
@@ -77,6 +79,18 @@ def match_phone_number(phone_number, string):
 
 def match_date(date, string):
     try:
+        if isinstance(date, str):
+            try:
+                date = parse_date(date).date()
+            except ValueError:
+                return 0.0
+
+        elif isinstance(date, datetime.datetime):
+            date = date.date()
+
+        elif not isinstance(date, datetime.date):
+            raise ValueError("Date must be date, datetime or string with date")
+
         string_date = parse_date(string).date()
 
         score = 0
@@ -93,12 +107,12 @@ def match_date(date, string):
         if string_date.month == date.month:
             score += month_match_scores
         else:
-            return score
+            return round(score, 2)
 
         if string_date.day == date.day:
             score += day_match_scores
         else:
-            return score
+            return round(score, 2)
 
         return round(score, 2)
 
