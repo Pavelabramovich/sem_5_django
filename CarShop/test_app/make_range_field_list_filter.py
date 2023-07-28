@@ -4,13 +4,13 @@ from django.contrib.admin import FieldListFilter
 def make_range_field_list_filter(lookups, nullable=False):
     class RangeFieldListFilter(FieldListFilter):
         def __init__(self, field, request, params, model, model_admin, field_path):
-            self.field_generic = '%s__' % field_path
+            self.field_generic = f'{field_path}__'
             self.range_params = dict([(k, v) for k, v in params.items()
                                      if k.startswith(self.field_generic)])
 
-            self.lookup_kwarg_start = '%s__gte' % field_path
-            self.lookup_kwarg_stop = '%s__lt' % field_path
-            self.lookup_kwarg_null = '%s__isnull' % field_path
+            self.lookup_kwarg_start = f'{field_path}__gte'
+            self.lookup_kwarg_stop = f'{field_path}__lt'
+            self.lookup_kwarg_null = f'{field_path}__isnull'
 
             self.links = [('All', {}), ]
             for name, start, stop in lookups:

@@ -67,7 +67,7 @@ class Buy(models.Model):
     count = models.IntegerField(validators=[get_positive_validator('Count')])
 
     def __str__(self):
-        return f"buy {{ date: {self.date}, product: {self.product_name}, count: {self.count} }}"
+        return f"Buy {self.product_name} x{self.count}"
 
     class Meta:
         verbose_name = "Buy"

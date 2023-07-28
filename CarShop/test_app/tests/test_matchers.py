@@ -132,8 +132,9 @@ class TestAddressMatcher(TestCase):
 
 
 class TestPhoneNumberMatcher(TestCase):
-    def setUp(self):
-        self.test_number = "+375 (29) 194-56-98"
+    @classmethod
+    def setUpTestData(cls):
+        cls.test_number = "+375 (29) 194-56-98"
 
     def test_normal(self):
         first = self.test_number
@@ -197,8 +198,9 @@ class TestPhoneNumberMatcher(TestCase):
 
 
 class TestDateMatcher(TestCase):
-    def setUp(self):
-        self.test_date = "18/10/2023"
+    @classmethod
+    def setUpTestData(cls):
+        cls.test_date = "18/10/2023"
 
     def test_normal(self):
         first = self.test_date

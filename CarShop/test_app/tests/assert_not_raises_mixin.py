@@ -1,26 +1,20 @@
 import traceback
-import unittest
+from types import TracebackType, NoneType
 from unittest.case import _AssertRaisesContext
 
 
 class _AssertNotRaisesContext(_AssertRaisesContext):
-    _base_type = BaseException
-    _base_type_str = 'an exception type or tuple of exception types'
-
     def __enter__(self):
         return self
 
-    def __exit__(self, exc_type, exc_value, tb):
+    def __exit__(self, exc_type: type | None, exc_value: Exception | None, tb: TracebackType | None):
         if exc_type is not None:
             self.exception = exc_value.with_traceback(None)
 
             if not issubclass(exc_type, self.expected):
                 return False
 
-            try:
-                exc_name = self.expected.__name__
-            except AttributeError:
-                exc_name = str(self.expected)
+            exc_name = self.expected.__name__
 
             if self.obj_name:
                 self._raiseFailure(f"{exc_name} raised by {self.obj_name}")

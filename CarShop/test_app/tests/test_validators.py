@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.forms import ValidationError
-from test_app.tests.AssertNotRaisesMixin import AssertNotRaisesMixin
+from test_app.tests.assert_not_raises_mixin import AssertNotRaisesMixin
 
 from test_app.validators import \
     FullMatchRegexValidator, \
@@ -38,8 +38,9 @@ class TestFullMatchRegexValidator(TestCase, AssertNotRaisesMixin):
 
 
 class TestAddressValidator(TestCase, AssertNotRaisesMixin):
-    def setUp(self):
-        self.test_func = validate_address
+    @classmethod
+    def setUpTestData(cls):
+        cls.test_func = validate_address
 
     def test_normal(self):
         with self.assertNotRaises(ValidationError):
@@ -53,8 +54,9 @@ class TestAddressValidator(TestCase, AssertNotRaisesMixin):
 
 
 class TestPhoneNumberValidator(TestCase, AssertNotRaisesMixin):
-    def setUp(self):
-        self.test_func = validate_phone_number
+    @classmethod
+    def setUpTestData(cls):
+        cls.test_func = validate_phone_number
 
     def test_normal(self):
         with self.assertNotRaises(ValidationError):
@@ -78,8 +80,9 @@ class TestPhoneNumberValidator(TestCase, AssertNotRaisesMixin):
 
 
 class TestPositiveValidator(TestCase, AssertNotRaisesMixin):
-    def setUp(self):
-        self.test_func = get_positive_validator('value')
+    @classmethod
+    def setUpTestData(cls):
+        cls.test_func = get_positive_validator('value')
 
     def test_positive(self):
         with self.assertNotRaises(ValidationError):
@@ -103,8 +106,9 @@ class TestPositiveValidator(TestCase, AssertNotRaisesMixin):
 
 
 class TestNotNegativeValidator(TestCase, AssertNotRaisesMixin):
-    def setUp(self):
-        self.test_func = get_not_negative_validator('value')
+    @classmethod
+    def setUpTestData(cls):
+        cls.test_func = get_not_negative_validator('value')
 
     def test_positive(self):
         with self.assertNotRaises(ValidationError):
