@@ -9,6 +9,8 @@ from django.utils.html import format_html
 from more_admin_filters import MultiSelectRelatedFilter, MultiSelectFilter
 from .matchers import match_phone_number, match_date, match_address
 
+from .queryset_lambda_filter import queryset_lambda_filter
+
 admin.site.empty_value_display = '???'
 
 
@@ -37,23 +39,16 @@ class ProviderAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
     def get_search_results(self, request, queryset, search_term):
-        phone_matches_id = {obj.id for obj in queryset if
-                            match_phone_number(obj.phone, search_term) > 0.75}
+        phone_matches = queryset_lambda_filter(queryset, lambda obj: match_phone_number(obj.phone, search_term) > 0.75)
+        address_matches = queryset_lambda_filter(queryset, lambda obj: match_address(obj.address, search_term) > 0.75)
 
-        address_matches_id = {obj.id for obj in queryset if
-                              match_address(obj.address, search_term) > 0.75}
-
-        filtered_id = phone_matches_id | address_matches_id
-
-        filtered_queryset = queryset.filter(id__in=filtered_id)
-
-        queryset, may_have_duplicates = super().get_search_results(
+        (other_matches, may_have_duplicates) = super().get_search_results(
             request,
             queryset,
             search_term,
         )
 
-        return queryset | filtered_queryset, may_have_duplicates
+        return phone_matches | address_matches | other_matches, may_have_duplicates
 
     search_help_text = "Enter provider name, phone number or address"
 
@@ -71,23 +66,16 @@ class ProducerAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
     def get_search_results(self, request, queryset, search_term):
-        phone_matches_id = {obj.id for obj in queryset if
-                            match_phone_number(obj.phone, search_term) > 0.75}
+        phone_matches = queryset_lambda_filter(queryset, lambda obj: match_phone_number(obj.phone, search_term) > 0.75)
+        address_matches = queryset_lambda_filter(queryset, lambda obj: match_address(obj.address, search_term) > 0.75)
 
-        address_matches_id = {obj.id for obj in queryset if
-                              match_address(obj.address, search_term) > 0.75}
-
-        filtered_id = phone_matches_id | address_matches_id
-
-        filtered_queryset = queryset.filter(id__in=filtered_id)
-
-        queryset, may_have_duplicates = super().get_search_results(
+        (other_matches, may_have_duplicates) = super().get_search_results(
             request,
             queryset,
             search_term,
         )
 
-        return queryset | filtered_queryset, may_have_duplicates
+        return phone_matches | address_matches | other_matches, may_have_duplicates
 
     search_help_text = "Enter producer name, phone number or address"
 
@@ -170,18 +158,15 @@ class BuyAdmin(admin.ModelAdmin):
     search_fields = ('product_name',)
 
     def get_search_results(self, request, queryset, search_term):
-        date_matches_id = {obj.id for obj in queryset if
-                           match_date(obj.date, search_term) > 0.75}
+        date_matches = queryset_lambda_filter(queryset, lambda obj: match_date(obj.date, search_term) > 0.75)
 
-        filtered_queryset = queryset.filter(id__in=date_matches_id)
-
-        queryset, may_have_duplicates = super().get_search_results(
+        (other_matches, may_have_duplicates) = super().get_search_results(
             request,
             queryset,
             search_term,
         )
 
-        return queryset | filtered_queryset, may_have_duplicates
+        return date_matches | other_matches, may_have_duplicates
 
     search_help_text = "Enter product name or date of buy"
 

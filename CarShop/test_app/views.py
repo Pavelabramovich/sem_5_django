@@ -3,9 +3,13 @@ from datetime import date, timedelta
 from django.db.models import Model
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponseNotFound
-from .models import *
+from .models import \
+    Category, \
+    Producer, \
+    Provider, \
+    Product, \
+    Buy
 
-from .models import Category
 import requests
 
 
@@ -50,6 +54,12 @@ def index(request):
         "temp": get_weather(),
         "bitc": get_bitcoin(),
     })
+
+
+def all_products(request):
+    products = Product.objects.all()
+    return render(request, "shop/home.html", {'products': products})
+
 
 
 

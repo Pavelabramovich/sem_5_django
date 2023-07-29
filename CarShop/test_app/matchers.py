@@ -91,9 +91,18 @@ def match_date(date, string):
         elif not isinstance(date, datetime.date):
             raise ValueError("Date must be date, datetime or string with date")
 
+        # parse function from dateutil treats a number as the day of the current month and year
+        try:
+            int(string)
+            return 0
+        except ValueError:
+            pass
+
         string_date = parse_date(string).date()
 
         score = 0
+
+        print(string_date)
 
         year_match_scores = 17 / 32
         month_match_scores = 10 / 32
