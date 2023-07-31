@@ -56,9 +56,17 @@ def index(request):
     })
 
 
-def all_products(request):
+def home(request):
     products = Product.objects.all()
-    return render(request, "shop/home.html", {'products': products})
+    providers = Provider.objects.all()
+    producers = Producer.objects.all()
+    buys = Buy.objects.all()
+    return render(request, "shop/home.html", {
+        'products': products,
+        'providers': providers,
+        'producers': producers,
+        'buys': buys
+    })
 
 
 
