@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-
+from django.views import generic
 from django.db.models import Model
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponseNotFound
@@ -69,8 +69,14 @@ def home(request):
     })
 
 
+class ProductListView(generic.ListView):
+    model = Product
+    template_name = 'shop/product_list.html'
 
 
+class ProductDetailView(generic.DetailView):
+    model = Product
+    template_name = 'shop/product_details.html'
 
 
 

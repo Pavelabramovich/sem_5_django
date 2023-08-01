@@ -89,6 +89,9 @@ class Product(models.Model):
 
     producer = models.OneToOneField(Producer, null=True, on_delete=models.SET_NULL)
 
+    def get_absolute_url(self):
+        return f"/product/{self.article}/"
+
     def get_producer(self):
         return self.producer.name
 

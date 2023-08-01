@@ -1,7 +1,9 @@
 <!doctype html>
 <html lang="en">
   <head>
-    {% block title %}<title>Local Library</title>{% endblock %}
+    {% block title %}
+      <title>Mater Headlight — Auto Detailing Supplies, Chemicals, Equipment, Accessories and more</title>
+    {% endblock %}
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -22,7 +24,8 @@
           {% block sidebar %}
             <ul class="sidebar-nav">
               <li><a href="{% url 'shop:home' %}">Home</a></li>
-              <li><a href="">All books</a></li>
+              <li><a href="{% url 'shop:products'%}">All books</a></li>
+
               <li><a href="">All authors</a></li>
             </ul>
           {% endblock %}
