@@ -11,7 +11,7 @@ class Category(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return f'/category/{self.name}/'
+        return f'/category/{self.id}/'
 
     class Meta:
         verbose_name = "Category"
@@ -31,7 +31,7 @@ class Provider(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return f'/provider/{self.name}/'
+        return f'/provider/{self.id}/'
 
     class Meta:
         verbose_name = "Provider"
@@ -51,7 +51,7 @@ class Producer(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return f'/producer/{self.name}/'
+        return f'/producer/{self.id}/'
 
     class Meta:
         verbose_name = "Producer"
@@ -68,6 +68,9 @@ class Buy(models.Model):
 
     def __str__(self):
         return f"Buy {self.product_name} x{self.count}"
+
+    def get_absolute_url(self):
+        return f'buy/{self.id}/'
 
     class Meta:
         verbose_name = "Buy"

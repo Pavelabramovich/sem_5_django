@@ -3,7 +3,7 @@
 {% block content %}
   <h1>Name: {{ product.name }}</h1>
 
-  <p><strong>Producer:</strong> <a href="">{{ product.producer }}</a></p>
+  <p><strong>Producer:</strong> <a href="{{ product.producer.get_absolute_url }}">{{ product.producer }}</a></p>
   <p><strong>Price:</strong> {{ product.price }}</p>
 
   <div style="margin-left:20px;margin-top:20px">
@@ -12,7 +12,7 @@
     {% for provider in product.providers.all %}
     <hr>
     <p><strong>Name:</strong> {{provider.name}}</p>
-    <p class="text-muted"><strong>Address:</strong> {{provider.id}}</p>
+    <p class="text-muted"><strong>Address:</strong> {{provider.address}}</p>
     {% endfor %}
   </div>
 {% endblock %}

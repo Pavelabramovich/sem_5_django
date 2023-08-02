@@ -72,6 +72,7 @@ def home(request):
 class ProductListView(generic.ListView):
     model = Product
     template_name = 'shop/product_list.html'
+    paginate_by = 10
 
 
 class ProductDetailView(generic.DetailView):
