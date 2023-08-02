@@ -1,18 +1,22 @@
 from django.contrib import admin
 from django.contrib.admin import DateFieldListFilter
-from .models import Category, Producer, Provider, Product, Buy
-from .forms import CategoryForm, ProducerForm, ProviderForm, ProductForm, BuyForm
+from .models import Category, Producer, Provider, Product, Buy, Profile
+from .forms import CategoryForm, ProducerForm, ProviderForm, ProductForm, BuyForm, ProfileForm
 from .make_range_field_list_filter import make_range_field_list_filter
 from django.urls import reverse
 from django.utils.http import urlencode
 from django.utils.html import format_html
 from more_admin_filters import MultiSelectRelatedFilter, MultiSelectFilter
 from .matchers import match_phone_number, match_date, match_address
+from .admin_override import override
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
+from fieldsets_with_inlines import FieldsetsInlineMixin
 
 from .queryset_lambda_filter import queryset_lambda_filter
 
-
 admin.site.empty_value_display = '???'
+admin.override = override
 
 
 @admin.register(Category)
@@ -175,3 +179,68 @@ class BuyAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         return False
+
+
+class ProfileInline(admin.StackedInline):
+    model = Profile
+    can_delete = False
+    verbose_name_plural = 'Profile'
+    fk_name = 'user'
+
+
+@admin.override(User)
+class UserProfileAdmin(UserAdmin):
+    inlines = (ProfileInline,)
+
+    def get_inline_instances(self, request, obj=None):
+        if not obj:
+            return list()
+        return super(UserProfileAdmin, self).get_inline_instances(request, obj)
+
+    list_display = ('username', 'email', 'first_name', 'last_name', 'get_address', 'get_phone')
+    ordering = ('username',)
+    list_filter = ('is_staff', 'is_superuser')
+
+    search_fields = ('username', 'email', 'first_name', 'last_name')
+
+    def get_search_results(self, request, queryset, search_term):
+        check_high_phone_match = lambda obj: match_phone_number(obj.profile.phone, search_term) > 0.75
+        check_high_address_match = lambda obj: match_phone_number(obj.profile.address, search_term) > 0.75
+
+        phone_matches = queryset_lambda_filter(queryset, check_high_phone_match)
+        address_matches = queryset_lambda_filter(queryset, check_high_address_match)
+
+        (other_matches, may_have_duplicates) = super().get_search_results(
+            request,
+            queryset,
+            search_term,
+        )
+
+        return phone_matches | address_matches | other_matches, may_have_duplicates
+
+    fieldsets = (
+        (None, {
+            'fields': ('username', 'password')
+        }),
+        ('Personal information', {
+            'fields': ('first_name', 'last_name', 'email')
+        }),
+       # ProfileInline,
+        ('Important dates', {
+            'fields': ('last_login', 'date_joined')
+        }),
+        ('Permissions', {
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')
+        })
+    )
+
+    def get_phone(self, obj):
+        return obj.profile.phone
+
+    def get_address(self, obj):
+        return obj.profile.address
+
+    get_phone.short_description = "Phone"
+    get_address.short_description = "Address"
+
+    list_per_page = 20

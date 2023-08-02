@@ -1,10 +1,16 @@
-from .models import Category, Producer, Provider, Product, Buy
+from .models import Category, Producer, Provider, Product, Buy, Profile
 from django import forms
 
 
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
+        fields = '__all__'
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
         fields = '__all__'
 
 

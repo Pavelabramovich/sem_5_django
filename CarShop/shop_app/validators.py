@@ -1,3 +1,5 @@
+import re
+
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator, MinValueValidator
 
@@ -21,7 +23,7 @@ class FullMatchRegexValidator(RegexValidator):
         )
 
 
-PHONE_PATTERN = r"\+375\s*\(\s*29\s*\)\s*\d{3}\s*-\s*\d{2}\s*-\s*\d{2}"
+PHONE_PATTERN = r"\+375\s*\(\s*29\s*\)\s*(\d{3})\s*-\s*(\d{2})\s*-\s*(\d{2})"
 
 # Check is string represent phone number in format
 # +375 (29) XXX-XX-XX; using some pattern
@@ -51,3 +53,9 @@ def get_not_negative_validator(value_name):
 
 def get_positive_validator(value_name):
     return MinValueValidator(limit_value=1, message=f"{value_name} must be positive.")
+
+
+def normalize_phone(phone: str):
+    res = re.search(PHONE_PATTERN, phone)
+
+    return f"+375 (29) {res.group(1)}-{res.group(2)}-{res.group(3)}"

@@ -1,6 +1,40 @@
 from django.db import models
 import uuid
-from .validators import validate_phone_number, validate_address, get_positive_validator, get_not_negative_validator
+from django.contrib.auth.models import User
+from PIL import Image
+from .validators import \
+    validate_phone_number, normalize_phone, \
+    validate_address, \
+    get_positive_validator, \
+    get_not_negative_validator
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    phone = models.CharField(max_length=64, validators=[validate_phone_number],
+                             help_text="Enter a phone in format +375 (29) XXX-XX-XX")
+
+    address = models.CharField(max_length=64, validators=[validate_address])
+
+    avatar = models.ImageField(
+        default='default_avatar.jpg',
+        upload_to='profile_avatars'
+    )
+
+    def __str__(self):
+        return f'{self.user.username} Profile'
+
+    def save(self, *args, **kwargs):
+        self.phone = normalize_phone(self.phone)
+
+        super().save(*args, **kwargs)
+
+        img = Image.open(self.avatar.path)
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            img.save(self.avatar.path)
 
 
 class Category(models.Model):
