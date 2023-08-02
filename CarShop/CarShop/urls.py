@@ -19,11 +19,11 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
-# from test_app import views
+# from shop_app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('test_app.urls', namespace='shop')),
+    path('', include('shop_app.urls', namespace='shop')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
