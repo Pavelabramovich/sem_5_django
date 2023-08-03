@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin import DateFieldListFilter
 from .models import Category, Producer, Provider, Product, Buy, Profile
-from .forms import CategoryForm, ProducerForm, ProviderForm, ProductForm, BuyForm, ProfileForm
 from .make_range_field_list_filter import make_range_field_list_filter
 from django.urls import reverse
 from django.utils.http import urlencode
@@ -11,17 +10,19 @@ from .matchers import match_phone_number, match_date, match_address
 from .admin_override import override
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from fieldsets_with_inlines import FieldsetsInlineMixin
+from .fieldsets_inline_mixin import FieldsetsInlineMixin
+from django.db.models.query import QuerySet
 
-from .queryset_lambda_filter import queryset_lambda_filter
+from .queryset_condition_filter import queryset_condition_filter
 
 admin.site.empty_value_display = '???'
+
 admin.override = override
+QuerySet.condition_filer = queryset_condition_filter
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    form = CategoryForm
 
     list_display = ('name',)
     list_display_links = None
@@ -35,7 +36,6 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Provider)
 class ProviderAdmin(admin.ModelAdmin):
-    form = ProviderForm
 
     list_display = ('name', 'phone', 'address')
     ordering = ('name', 'phone')
@@ -44,8 +44,8 @@ class ProviderAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
     def get_search_results(self, request, queryset, search_term):
-        phone_matches = queryset_lambda_filter(queryset, lambda obj: match_phone_number(obj.phone, search_term) > 0.75)
-        address_matches = queryset_lambda_filter(queryset, lambda obj: match_address(obj.address, search_term) > 0.75)
+        phone_matches = queryset.condition_filer(lambda obj: match_phone_number(obj.phone, search_term) > 0.75)
+        address_matches = queryset.condition_filer(lambda obj: match_address(obj.address, search_term) > 0.75)
 
         (other_matches, may_have_duplicates) = super().get_search_results(
             request,
@@ -62,7 +62,6 @@ class ProviderAdmin(admin.ModelAdmin):
 
 @admin.register(Producer)
 class ProducerAdmin(admin.ModelAdmin):
-    form = ProducerForm
 
     list_display = ('name', 'phone', 'address')
     ordering = ('name', 'phone')
@@ -71,8 +70,8 @@ class ProducerAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
     def get_search_results(self, request, queryset, search_term):
-        phone_matches = queryset_lambda_filter(queryset, lambda obj: match_phone_number(obj.phone, search_term) > 0.75)
-        address_matches = queryset_lambda_filter(queryset, lambda obj: match_address(obj.address, search_term) > 0.75)
+        phone_matches = queryset.condition_filer(lambda obj: match_phone_number(obj.phone, search_term) > 0.75)
+        address_matches = queryset.condition_filer(lambda obj: match_address(obj.address, search_term) > 0.75)
 
         (other_matches, may_have_duplicates) = super().get_search_results(
             request,
@@ -89,7 +88,6 @@ class ProducerAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    form = ProductForm
 
     list_display = ('name', 'category', 'price', 'get_producer_as_link', 'get_providers_as_link')
     ordering = ('name', 'category', 'price')
@@ -154,7 +152,6 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Buy)
 class BuyAdmin(admin.ModelAdmin):
-    form = BuyForm
 
     list_display = ('date', 'product_name', 'count')
     ordering = ('date', 'product_name', 'count')
@@ -163,7 +160,7 @@ class BuyAdmin(admin.ModelAdmin):
     search_fields = ('product_name',)
 
     def get_search_results(self, request, queryset, search_term):
-        date_matches = queryset_lambda_filter(queryset, lambda obj: match_date(obj.date, search_term) > 0.75)
+        date_matches = queryset.condition_filer(lambda obj: match_date(obj.date, search_term) > 0.75)
 
         (other_matches, may_have_duplicates) = super().get_search_results(
             request,
@@ -185,11 +182,14 @@ class ProfileInline(admin.StackedInline):
     model = Profile
     can_delete = False
     verbose_name_plural = 'Profile'
-    fk_name = 'user'
 
 
 @admin.override(User)
 class UserProfileAdmin(FieldsetsInlineMixin, UserAdmin):
+    class Media:
+        css = {
+            'all': ('css/no_inline_title_admin.css', )
+        }
 
     list_display = ('username', 'email', 'first_name', 'last_name', 'get_address', 'get_phone')
     ordering = ('username',)
@@ -201,8 +201,8 @@ class UserProfileAdmin(FieldsetsInlineMixin, UserAdmin):
         check_high_phone_match = lambda obj: match_phone_number(obj.profile.phone, search_term) > 0.75
         check_high_address_match = lambda obj: match_phone_number(obj.profile.address, search_term) > 0.75
 
-        phone_matches = queryset_lambda_filter(queryset, check_high_phone_match)
-        address_matches = queryset_lambda_filter(queryset, check_high_address_match)
+        phone_matches = queryset.condition_filer(check_high_phone_match)
+        address_matches = queryset.condition_filer(check_high_address_match)
 
         (other_matches, may_have_duplicates) = super().get_search_results(
             request,

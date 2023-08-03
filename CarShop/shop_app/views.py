@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from django.views import View
 from django.views import generic
 from django.db.models import Model
 from django.shortcuts import render
@@ -80,4 +81,13 @@ class ProductDetailView(generic.DetailView):
     template_name = 'shop/product_details.html'
 
 
+def sign_in(request):
+    pass
 
+
+def sign_out(request):
+    pass
+
+
+def sign_up(request):
+    pass

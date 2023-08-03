@@ -12,15 +12,19 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 TEMPLATE_DIR = BASE_DIR / 'templates'
+
 DATABASE_DIR = BASE_DIR / 'db.sqlite3'
+
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
+STATIC_ROOT = ''
+STATIC_URL = '/static/'
+STATICFILES_DIRS = ('static',)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-4a+m&jz&)*od!^m)%zf0=spz)n8y#7hu*r0jig&sj_3w3)rd^x'
@@ -42,7 +46,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'more_admin_filters',
-    'fieldsets_with_inlines',
 
     'shop_app',
 ]
@@ -125,7 +128,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
