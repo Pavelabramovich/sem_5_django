@@ -189,13 +189,7 @@ class ProfileInline(admin.StackedInline):
 
 
 @admin.override(User)
-class UserProfileAdmin(UserAdmin):
-    inlines = (ProfileInline,)
-
-    def get_inline_instances(self, request, obj=None):
-        if not obj:
-            return list()
-        return super(UserProfileAdmin, self).get_inline_instances(request, obj)
+class UserProfileAdmin(FieldsetsInlineMixin, UserAdmin):
 
     list_display = ('username', 'email', 'first_name', 'last_name', 'get_address', 'get_phone')
     ordering = ('username',)
@@ -218,14 +212,16 @@ class UserProfileAdmin(UserAdmin):
 
         return phone_matches | address_matches | other_matches, may_have_duplicates
 
-    fieldsets = (
+    search_help_text = "Enter producer username, email, first name, last name, phone number or address"
+
+    fieldsets_with_inlines = (
         (None, {
             'fields': ('username', 'password')
         }),
         ('Personal information', {
             'fields': ('first_name', 'last_name', 'email')
         }),
-       # ProfileInline,
+        ProfileInline,
         ('Important dates', {
             'fields': ('last_login', 'date_joined')
         }),
@@ -233,6 +229,8 @@ class UserProfileAdmin(UserAdmin):
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')
         })
     )
+
+    readonly_fields = ('last_login', 'date_joined')
 
     def get_phone(self, obj):
         return obj.profile.phone
