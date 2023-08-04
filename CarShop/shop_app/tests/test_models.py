@@ -1,12 +1,12 @@
 import datetime
 
 from django.test import TestCase
-from test_app.models import Category, Provider, Producer, Buy, Product
+from shop_app.models import Category, Provider, Producer, Buy, Product
 
 
 class TestCategoryModel(TestCase):
     def setUp(self):
-        self.test_obj = Category.objects.create(name='Tire')
+        self.test_obj = Category.objects.create(id=1, name='Tire')
 
     def test_name_label(self):
         category = self.test_obj
@@ -25,13 +25,14 @@ class TestCategoryModel(TestCase):
 
     def test_get_absolute_url(self):
         category = self.test_obj
-        expected_absolute_url = f'/category/Tire/'
+        expected_absolute_url = f'/category/1/'
         self.assertEqual(category.get_absolute_url(), expected_absolute_url)
 
 
 class TestProviderModel(TestCase):
     def setUp(self):
-        self.test_obj = Provider.objects.create(name='Richard',
+        self.test_obj = Provider.objects.create(id=1,
+                                                name='Richard',
                                                 phone='+375 (29) 123-45-67',
                                                 address="Red alley 1, Bricklin")
 
@@ -42,13 +43,14 @@ class TestProviderModel(TestCase):
 
     def test_get_absolute_url(self):
         provider = self.test_obj
-        expected_absolute_url = f'/provider/Richard/'
+        expected_absolute_url = f'/provider/1/'
         self.assertEqual(provider.get_absolute_url(), expected_absolute_url)
 
 
 class TestProducerModel(TestCase):
     def setUp(self):
-        self.test_obj = Producer.objects.create(name='Peter',
+        self.test_obj = Producer.objects.create(id=1,
+                                                name='Peter',
                                                 phone='+375 (29) 987-65-43',
                                                 address="Grand highway 1, Lowfield")
 
@@ -59,7 +61,7 @@ class TestProducerModel(TestCase):
 
     def test_get_absolute_url(self):
         provider = self.test_obj
-        expected_absolute_url = f'/producer/Peter/'
+        expected_absolute_url = f'/producer/1/'
         self.assertEqual(provider.get_absolute_url(), expected_absolute_url)
 
 

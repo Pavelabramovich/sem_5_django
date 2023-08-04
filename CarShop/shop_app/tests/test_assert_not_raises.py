@@ -1,7 +1,7 @@
 from django.test import TestCase
 from unittest import case
 from django.forms import ValidationError
-from test_app.tests.assert_not_raises_mixin import _AssertNotRaisesContext
+from shop_app.tests.assert_not_raises_mixin import _AssertNotRaisesContext
 
 
 class TestAssertNotRaisesContext(TestCase):

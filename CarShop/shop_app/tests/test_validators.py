@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.forms import ValidationError
-from test_app.tests.assert_not_raises_mixin import AssertNotRaisesMixin
+from shop_app.tests.assert_not_raises_mixin import AssertNotRaisesMixin
 
-from test_app.validators import \
+from shop_app.validators import \
     FullMatchRegexValidator, \
     validate_address, \
     validate_phone_number, \

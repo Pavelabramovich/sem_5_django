@@ -4,12 +4,18 @@ from django.views import generic
 from django.db.models import Model
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponseNotFound
+from .forms import LoginForm, RegisterForm
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.db import transaction
+from django.contrib.auth import login, authenticate, logout
 from .models import \
     Category, \
     Producer, \
     Provider, \
     Product, \
-    Buy
+    Buy, \
+    Profile
 
 import requests
 
@@ -62,7 +68,7 @@ def home(request):
     providers = Provider.objects.all()
     producers = Producer.objects.all()
     buys = Buy.objects.all()
-    return render(request, "shop/home.html", {
+    return render(request, "shop_app/home.html", {
         'products': products,
         'providers': providers,
         'producers': producers,
@@ -72,13 +78,11 @@ def home(request):
 
 class ProductListView(generic.ListView):
     model = Product
-    template_name = 'shop/product_list.html'
     paginate_by = 10
 
 
 class ProductDetailView(generic.DetailView):
     model = Product
-    template_name = 'shop/product_details.html'
 
 
 def sign_in(request):
@@ -90,4 +94,24 @@ def sign_out(request):
 
 
 def sign_up(request):
-    pass
+    if request.method == 'GET':
+        form = RegisterForm()
+        return render(request, 'shop_app/register.html', {'form': form})
+
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            with transaction.atomic():
+                user = form.save()
+
+                Profile.objects.create(
+                    user=user,
+                    phone=form.cleaned_data['phone'],
+                    address=form.cleaned_data['address']
+                ).save()
+
+                messages.success(request, "You have singed up successfully.")
+                login(request, user)
+                return redirect('shop:home')
+        else:
+            return render(request, 'shop_app/register.html', {'form': form})

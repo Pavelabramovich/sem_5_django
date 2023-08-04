@@ -8,7 +8,7 @@ app_name = 'shop'
 urlpatterns = [
     path('', views.home, name='home'),
     path('products/', views.ProductListView.as_view(), name='products'),
-    re_path(r'product/(?P<pk>.+)/$', views.ProductDetailView.as_view(), name='book-detail'),
+    re_path(r'product/(?P<pk>.+)/$', views.ProductDetailView.as_view(), name='product-detail'),
 
     path('login/', views.sign_in, name='login'),
     path('logout/', views.sign_out, name='logout'),
