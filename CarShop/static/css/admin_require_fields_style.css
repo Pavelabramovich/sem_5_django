@@ -1,0 +1,10 @@
+.required label, .aligned label.required {
+    font-weight: normal;
+}
+
+.aligned label.required:not(.vCheckboxLabel):after {
+    content: " *";
+    padding-top: 10px;
+    padding-left: 3px;
+    font-weight: bold;
+}

@@ -2,7 +2,7 @@ from django import forms
 
 
 class FieldsetsInlineMixin:
-    change_form_template = 'inlines_change_form.html'
+    change_form_template = 'admin/admin_inlines_to_fieldsets_change_form.html'
 
     @staticmethod
     def make_placeholder(index, fieldset):

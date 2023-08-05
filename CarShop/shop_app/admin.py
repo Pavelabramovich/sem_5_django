@@ -13,6 +13,10 @@ from django.contrib.auth.models import User
 from .fieldsets_inline_mixin import FieldsetsInlineMixin
 from django.db.models.query import QuerySet
 
+
+from django.template.loader import get_template
+
+
 from .queryset_condition_filter import queryset_condition_filter
 
 admin.site.empty_value_display = '???'
@@ -52,6 +56,8 @@ class ProviderAdmin(admin.ModelAdmin):
             queryset,
             search_term,
         )
+
+        print(get_template('admin/change_form.html').backend.template_dirs[0])
 
         return phone_matches | address_matches | other_matches, may_have_duplicates
 
@@ -125,7 +131,7 @@ class ProductAdmin(admin.ModelAdmin):
         producer = obj.producer
 
         link = (
-                reverse("admin:test_app_producer_changelist") +
+                reverse("admin:shop_app_producer_changelist") +
                 "?" +
                 urlencode({"id": producer.id})
         )
@@ -137,7 +143,7 @@ class ProductAdmin(admin.ModelAdmin):
         providers_id = ','.join([str(provider.id) for provider in providers])
 
         link = (
-                reverse("admin:test_app_provider_changelist") +
+                reverse("admin:shop_app_provider_changelist") +
                 "?" +
                 urlencode({"id__in": providers_id})
         )
@@ -180,15 +186,19 @@ class BuyAdmin(admin.ModelAdmin):
 
 class ProfileInline(admin.StackedInline):
     model = Profile
-    can_delete = False
+    fields = ('avatar', 'phone', 'address')
+
     verbose_name_plural = 'Profile'
+    can_delete = False
+
+    classes = ('no-upper', 'no-title')
 
 
 @admin.override(User)
 class UserProfileAdmin(FieldsetsInlineMixin, UserAdmin):
     class Media:
         css = {
-            'all': ('css/no_inline_title_admin.css', )
+            'all': ('css/admin_inline_style.css',)
         }
 
     list_display = ('username', 'email', 'first_name', 'last_name', 'get_address', 'get_phone')
@@ -199,7 +209,7 @@ class UserProfileAdmin(FieldsetsInlineMixin, UserAdmin):
 
     def get_search_results(self, request, queryset, search_term):
         check_high_phone_match = lambda obj: match_phone_number(obj.profile.phone, search_term) > 0.75
-        check_high_address_match = lambda obj: match_phone_number(obj.profile.address, search_term) > 0.75
+        check_high_address_match = lambda obj: match_address(obj.profile.address, search_term) > 0.85
 
         phone_matches = queryset.condition_filer(check_high_phone_match)
         address_matches = queryset.condition_filer(check_high_address_match)
@@ -212,7 +222,7 @@ class UserProfileAdmin(FieldsetsInlineMixin, UserAdmin):
 
         return phone_matches | address_matches | other_matches, may_have_duplicates
 
-    search_help_text = "Enter producer username, email, first name, last name, phone number or address"
+    search_help_text = "Enter username, email, first name, last name, phone number or address"
 
     fieldsets_with_inlines = (
         (None, {

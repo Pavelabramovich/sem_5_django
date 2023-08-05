@@ -102,8 +102,6 @@ def match_date(date, string):
 
         score = 0
 
-        print(string_date)
-
         year_match_scores = 17 / 32
         month_match_scores = 10 / 32
         day_match_scores = 1 - year_match_scores - month_match_scores

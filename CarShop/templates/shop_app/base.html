@@ -18,6 +18,15 @@
   </head>
 
   <body>
+    <header>
+  		{%if request.user.is_authenticated %}
+  			<span>Hi {{ request.user.username | title }}</span>
+  			<a href="{% url 'shop:logout' %}">Logout</a>
+  		{%else%}
+  			<a href="{% url 'shop:login' %}">Login</a>
+  			<a href="{% url 'shop:register' %}">Register</a>
+  		{%endif%}
+  	</header>
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-2">

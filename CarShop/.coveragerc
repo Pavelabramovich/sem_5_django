@@ -1,0 +1,9 @@
+[run]
+omit =
+    */.venv/*
+    */migrations/*
+    */__init__.py
+    */manage.py
+    */urls.py
+    /CarShop/*
+    */tests/*

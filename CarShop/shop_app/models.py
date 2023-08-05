@@ -36,10 +36,6 @@ class Profile(models.Model):
             img.thumbnail(output_size)
             img.save(self.avatar.path)
 
-   #class Meta:
-   #     verbose_name = "Profile"
-   #     verbose_name_plural = "Profiles"
-
 
 class Category(models.Model):
     name = models.CharField(max_length=64, unique=True,

@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 TEMPLATE_DIR = BASE_DIR / 'templates'
@@ -26,6 +25,9 @@ STATIC_ROOT = ''
 STATIC_URL = '/static/'
 STATICFILES_DIRS = ('static',)
 
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = 'login'
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-4a+m&jz&)*od!^m)%zf0=spz)n8y#7hu*r0jig&sj_3w3)rd^x'
 
@@ -33,7 +35,6 @@ SECRET_KEY = 'django-insecure-4a+m&jz&)*od!^m)%zf0=spz)n8y#7hu*r0jig&sj_3w3)rd^x
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -83,16 +84,12 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
 WSGI_APPLICATION = 'CarShop.wsgi.application'
 
-LOGIN_REDIRECT_URL = '/'
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': DATABASE_DIR,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -112,7 +109,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -124,10 +120,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 
 
 # Default primary key field type

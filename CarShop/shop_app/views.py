@@ -8,6 +8,8 @@ from .forms import LoginForm, RegisterForm
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db import transaction
+from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
 from django.contrib.auth import login, authenticate, logout
 from .models import \
     Category, \
@@ -85,15 +87,19 @@ class ProductDetailView(generic.DetailView):
     model = Product
 
 
-def sign_in(request):
-    pass
+class CustomLoginView(LoginView):
+    redirect_authenticated_user = True
+    template_name = "shop_app/login.html"
+
+    def get_success_url(self):
+        return reverse_lazy('shop:home')
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Invalid username or password')
+        return self.render_to_response(self.get_context_data(form=form))
 
 
-def sign_out(request):
-    pass
-
-
-def sign_up(request):
+def register(request):
     if request.method == 'GET':
         form = RegisterForm()
         return render(request, 'shop_app/register.html', {'form': form})
