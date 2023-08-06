@@ -1,7 +1,10 @@
 from django.db import models
 import uuid
+import random
+import os
 from django.contrib.auth.models import User
 from PIL import Image
+from .img_tools import crop_to_circle, create_background
 from .validators import \
     validate_phone_number, normalize_phone, \
     validate_address, \
@@ -17,10 +20,8 @@ class Profile(models.Model):
 
     address = models.CharField(max_length=64, validators=[validate_address])
 
-    avatar = models.ImageField(
-        default='default_avatar.jpg',
-        upload_to='profile_avatars'
-    )
+    avatar = models.ImageField(default='profile_avatars/avatar_default.jpg', upload_to='profile_avatars', blank=True)
+    AVATAR_SIZE = 300
 
     def __str__(self):
         return f'{self.user.username} Profile'
@@ -30,11 +31,38 @@ class Profile(models.Model):
 
         super().save(*args, **kwargs)
 
-        img = Image.open(self.avatar.path)
-        if img.height > 320 or img.width > 320:
-            output_size = (320, 320)
-            img.thumbnail(output_size)
-            img.save(self.avatar.path)
+        user_id = self.user.id
+
+        if self.avatar:
+            with Image.open(self.avatar.path) as image:
+                square_avatar = image.copy()
+
+            os.remove(self.avatar.path)
+        else:
+            random.seed(user_id)
+            avatar_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+            avatar_background = create_background((self.AVATAR_SIZE, self.AVATAR_SIZE), avatar_color)
+
+            default_avatar_path = self.avatar.storage.path(self.avatar.field.default)
+            default_avatar = Image.open(default_avatar_path).convert('RGBA')
+
+            square_avatar = Image.alpha_composite(avatar_background, default_avatar)
+
+        new_avatar = crop_to_circle(square_avatar, self.AVATAR_SIZE)
+
+        image_name = f'avatar_{user_id}.png'
+        image_path = f'{self.avatar.field.upload_to}/{image_name}'
+        full_image_path = self.avatar.storage.path(image_path)
+
+        new_avatar.save(full_image_path)
+        self.avatar = image_path
+
+        super().save(*args, **kwargs)
+
+    def delete(self, using=None, keep_parents=False):
+        print(self.avatar.path)
+        os.remove(self.avatar.path)
+        super().delete(using=using, keep_parents=keep_parents)
 
 
 class Category(models.Model):
@@ -172,4 +200,3 @@ class Product(models.Model):
         verbose_name = "Product"
         verbose_name_plural = "Products"
         ordering = ("name",)
-

@@ -10,8 +10,9 @@ from .matchers import match_phone_number, match_date, match_address
 from .admin_override import override
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from .fieldsets_inline_mixin import FieldsetsInlineMixin
+from .fieldsets_inline_mixin import FieldsetsInlineMixin, UserFieldsetsInlineMixin
 from django.db.models.query import QuerySet
+from django.utils.html import mark_safe
 
 
 from django.template.loader import get_template
@@ -189,19 +190,26 @@ class ProfileInline(admin.StackedInline):
     fields = ('avatar', 'phone', 'address')
 
     verbose_name_plural = 'Profile'
+
+    # This ensures that inlines fields are required when creating a user.
+    min_num = 1
     can_delete = False
 
     classes = ('no-upper', 'no-title')
 
 
 @admin.override(User)
-class UserProfileAdmin(FieldsetsInlineMixin, UserAdmin):
+class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
     class Media:
         css = {
             'all': ('css/admin_inline_style.css',)
         }
 
-    list_display = ('username', 'email', 'first_name', 'last_name', 'get_address', 'get_phone')
+    inlines = (ProfileInline,)
+
+    list_display = ('username', 'get_avatar_as_html_image', 'email', 'first_name', 'last_name',
+                    'get_address', 'get_phone')
+
     ordering = ('username',)
     list_filter = ('is_staff', 'is_superuser')
 
@@ -240,6 +248,19 @@ class UserProfileAdmin(FieldsetsInlineMixin, UserAdmin):
         })
     )
 
+    add_fieldsets_with_inlines = (
+        (None, {
+            'fields': ('username', 'password1', 'password2')
+        }),
+        ('Personal information', {
+            'fields': ('first_name', 'last_name', 'email')
+        }),
+        ProfileInline,
+        ('Permissions', {
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')
+        })
+    )
+
     readonly_fields = ('last_login', 'date_joined')
 
     def get_phone(self, obj):
@@ -248,7 +269,11 @@ class UserProfileAdmin(FieldsetsInlineMixin, UserAdmin):
     def get_address(self, obj):
         return obj.profile.address
 
+    def get_avatar_as_html_image(self, obj):
+        return mark_safe(f'<img src = "{obj.profile.avatar.url}" width = "65"/>')
+
     get_phone.short_description = "Phone"
     get_address.short_description = "Address"
+    get_avatar_as_html_image.short_description = "Avatar"
 
     list_per_page = 20
