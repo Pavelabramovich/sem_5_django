@@ -1,5 +1,6 @@
 import re
 
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator, MinValueValidator
 
@@ -59,3 +60,8 @@ def normalize_phone(phone: str):
     res = re.search(PHONE_PATTERN, phone)
 
     return f"+375 (29) {res.group(1)}-{res.group(2)}-{res.group(3)}"
+
+
+def validate_provider(user):
+    if not user.has_perm('shop_app.provide_product'):
+        raise ValidationError(f"{user.username} does not have provider permissions.")

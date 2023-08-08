@@ -1,4 +1,6 @@
 from datetime import date, timedelta
+
+from django.contrib.auth.models import User
 from django.views import View
 from django.views import generic
 from django.db.models import Model
@@ -14,8 +16,6 @@ from django.urls import reverse_lazy
 from django.contrib.auth import login, authenticate, logout
 from .models import \
     Category, \
-    Producer, \
-    Provider, \
     Product, \
     Buy, \
     Profile
@@ -49,26 +49,10 @@ def get_bitcoin():
     return btc_price
 
 
-def index(request):
-    sort = request.GET.getlist('sort')
-
-    products = Product.objects.all().order_by(*sort)
-    buys = Buy.objects.all()
-    providers = Provider.objects.all()
-
-    return render(request, "index.html", {
-        "products": products,
-        "providers": providers,
-        "buys": buys,
-        "temp": get_weather(),
-        "bitc": get_bitcoin(),
-    })
-
-
 def home(request):
     products = Product.objects.all()
-    providers = Provider.objects.all()
-    producers = Producer.objects.all()
+    providers = User.objects.all()
+    producers = User.objects.all()
     buys = Buy.objects.all()
     return render(request, "shop_app/home.html", {
         'products': products,

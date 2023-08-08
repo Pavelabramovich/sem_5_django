@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import DateFieldListFilter
-from .models import Category, Producer, Provider, Product, Buy, Profile
+from .models import Category, Product, Buy, Profile
+from .forms import ProductForm
 from .make_range_field_list_filter import make_range_field_list_filter
 from django.urls import reverse
 from django.utils.http import urlencode
@@ -13,9 +14,6 @@ from django.contrib.auth.models import User
 from .fieldsets_inline_mixin import FieldsetsInlineMixin, UserFieldsetsInlineMixin
 from django.db.models.query import QuerySet
 from django.utils.html import mark_safe
-
-
-from django.template.loader import get_template
 
 
 from .queryset_condition_filter import queryset_condition_filter
@@ -39,64 +37,11 @@ class CategoryAdmin(admin.ModelAdmin):
     list_per_page = 20
 
 
-@admin.register(Provider)
-class ProviderAdmin(admin.ModelAdmin):
-
-    list_display = ('name', 'phone', 'address')
-    ordering = ('name', 'phone')
-    list_editable = ('phone', 'address')
-
-    search_fields = ("name",)
-
-    def get_search_results(self, request, queryset, search_term):
-        phone_matches = queryset.condition_filer(lambda obj: match_phone_number(obj.phone, search_term) > 0.75)
-        address_matches = queryset.condition_filer(lambda obj: match_address(obj.address, search_term) > 0.75)
-
-        (other_matches, may_have_duplicates) = super().get_search_results(
-            request,
-            queryset,
-            search_term,
-        )
-
-        print(get_template('admin/change_form.html').backend.template_dirs[0])
-
-        return phone_matches | address_matches | other_matches, may_have_duplicates
-
-    search_help_text = "Enter provider name, phone number or address"
-
-    list_per_page = 20
-
-
-@admin.register(Producer)
-class ProducerAdmin(admin.ModelAdmin):
-
-    list_display = ('name', 'phone', 'address')
-    ordering = ('name', 'phone')
-    list_editable = ('phone', 'address')
-
-    search_fields = ("name",)
-
-    def get_search_results(self, request, queryset, search_term):
-        phone_matches = queryset.condition_filer(lambda obj: match_phone_number(obj.phone, search_term) > 0.75)
-        address_matches = queryset.condition_filer(lambda obj: match_address(obj.address, search_term) > 0.75)
-
-        (other_matches, may_have_duplicates) = super().get_search_results(
-            request,
-            queryset,
-            search_term,
-        )
-
-        return phone_matches | address_matches | other_matches, may_have_duplicates
-
-    search_help_text = "Enter producer name, phone number or address"
-
-    list_per_page = 20
-
-
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    form = ProductForm
 
-    list_display = ('name', 'category', 'price', 'get_producer_as_link', 'get_providers_as_link')
+    list_display = ('name', 'category', 'price', 'get_providers_as_link')
     ordering = ('name', 'category', 'price')
 
     price_range_list_filter = make_range_field_list_filter([
@@ -120,7 +65,7 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('name', 'category', 'price')
         }),
         ('Detailed information', {
-            'fields': ('article', 'producer', 'providers')
+            'fields': ('article', 'providers')
         }),
     )
 
@@ -128,23 +73,12 @@ class ProductAdmin(admin.ModelAdmin):
 
     list_per_page = 20
 
-    def get_producer_as_link(self, obj):
-        producer = obj.producer
-
-        link = (
-                reverse("admin:shop_app_producer_changelist") +
-                "?" +
-                urlencode({"id": producer.id})
-        )
-
-        return format_html('<b><a href="{}">{}</a></b>', link, producer)
-
     def get_providers_as_link(self, obj):
         providers = obj.providers.all()
         providers_id = ','.join([str(provider.id) for provider in providers])
 
         link = (
-                reverse("admin:shop_app_provider_changelist") +
+                reverse("admin:auth_user_changelist") +
                 "?" +
                 urlencode({"id__in": providers_id})
         )
@@ -153,7 +87,6 @@ class ProductAdmin(admin.ModelAdmin):
 
         return format_html('<a href="{}">{}</a>', link, few_providers)
 
-    get_producer_as_link.short_description = "Producer"
     get_providers_as_link.short_description = "Providers"
 
 

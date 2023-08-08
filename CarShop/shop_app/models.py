@@ -21,7 +21,7 @@ class Profile(models.Model):
     address = models.CharField(max_length=64, validators=[validate_address])
 
     avatar = models.ImageField(upload_to='profile_avatars', blank=True, null=True,
-                               default='profile_avatars/avatar_default.jpg',)
+                               default='profile_avatars/avatar_default.jpg', )
     AVATAR_SIZE = 300
 
     def __str__(self):
@@ -84,46 +84,6 @@ class Category(models.Model):
         ordering = ("name",)
 
 
-class Provider(models.Model):
-    name = models.CharField(max_length=64, unique=True)
-
-    phone = models.CharField(max_length=64, validators=[validate_phone_number],
-                             help_text="Enter a phone in format +375 (29) XXX-XX-XX")
-
-    address = models.CharField(max_length=64, validators=[validate_address])
-
-    def __str__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return f'/provider/{self.id}/'
-
-    class Meta:
-        verbose_name = "Provider"
-        verbose_name_plural = "Providers"
-        ordering = ("name",)
-
-
-class Producer(models.Model):
-    name = models.CharField(max_length=64, unique=True)
-
-    phone = models.CharField(max_length=64, validators=[validate_phone_number],
-                             help_text="Enter a phone in format +375 (29) XXX-XX-XX")
-
-    address = models.CharField(max_length=64, validators=[validate_address])
-
-    def __str__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return f'/producer/{self.id}/'
-
-    class Meta:
-        verbose_name = "Producer"
-        verbose_name_plural = "Producers"
-        ordering = ("name",)
-
-
 class Buy(models.Model):
     date = models.DateField()
 
@@ -153,24 +113,19 @@ class Product(models.Model):
 
     price = models.IntegerField(validators=[get_not_negative_validator('Price')])
 
-    providers = models.ManyToManyField(Provider, help_text="Select a provider for this product")
-
-    producer = models.OneToOneField(Producer, null=True, on_delete=models.SET_NULL)
+    providers = models.ManyToManyField(User, help_text="Select a provider for this product")
 
     def get_absolute_url(self):
         return f"/product/{self.article}/"
-
-    def get_producer(self):
-        return self.producer.name
 
     def get_few_providers(self):
         max_count = 3
         providers = self.providers.all()
 
         if len(providers) > max_count:
-            return ', '.join([provider.name for provider in providers[:max_count]]) + " and others"
+            return ', '.join([provider.username for provider in providers[:max_count]]) + " and others"
         else:
-            return ', '.join([provider.name for provider in providers])
+            return ', '.join([provider.username for provider in providers])
 
     def get_many_providers(self):
         max_count = 20
@@ -192,7 +147,6 @@ class Product(models.Model):
         else:
             return f"More than {max_count} providers"
 
-    get_producer.short_description = 'Producer'
     get_few_providers.short_description = 'Providers'
     get_many_providers.short_description = 'Providers'
 
@@ -205,5 +159,5 @@ class Product(models.Model):
         ordering = ("name",)
 
         permissions = [
-            ("provide_product", "Can provide Product")
+            ("provide_product", "Can provide Products")
         ]
