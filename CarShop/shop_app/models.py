@@ -20,20 +20,24 @@ class Profile(models.Model):
 
     address = models.CharField(max_length=64, validators=[validate_address])
 
-    avatar = models.ImageField(default='profile_avatars/avatar_default.jpg', upload_to='profile_avatars', blank=True)
+    avatar = models.ImageField(upload_to='profile_avatars', blank=True, null=True,
+                               default='profile_avatars/avatar_default.jpg',)
     AVATAR_SIZE = 300
 
     def __str__(self):
         return f'{self.user.username} Profile'
 
     def save(self, *args, **kwargs):
-        self.phone = normalize_phone(self.phone)
+
+        if self.phone:
+            self.phone = normalize_phone(self.phone)
 
         super().save(*args, **kwargs)
 
         user_id = self.user.id
 
-        if self.avatar:
+        if self.avatar and self.avatar.name != self.avatar.field.default:
+
             with Image.open(self.avatar.path) as image:
                 square_avatar = image.copy()
 
@@ -50,17 +54,16 @@ class Profile(models.Model):
 
         new_avatar = crop_to_circle(square_avatar, self.AVATAR_SIZE)
 
-        image_name = f'avatar_{user_id}.png'
-        image_path = f'{self.avatar.field.upload_to}/{image_name}'
-        full_image_path = self.avatar.storage.path(image_path)
+        new_avatar_name = f'avatar_{user_id}.png'
+        new_avatar_path = f'{self.avatar.field.upload_to}/{new_avatar_name}'
+        full_new_avatar_path = self.avatar.storage.path(new_avatar_path)
 
-        new_avatar.save(full_image_path)
-        self.avatar = image_path
+        new_avatar.save(full_new_avatar_path)
+        self.avatar = new_avatar_path
 
         super().save(*args, **kwargs)
 
     def delete(self, using=None, keep_parents=False):
-        print(self.avatar.path)
         os.remove(self.avatar.path)
         super().delete(using=using, keep_parents=keep_parents)
 
@@ -200,3 +203,7 @@ class Product(models.Model):
         verbose_name = "Product"
         verbose_name_plural = "Products"
         ordering = ("name",)
+
+        permissions = [
+            ("provide_product", "Can provide Product")
+        ]

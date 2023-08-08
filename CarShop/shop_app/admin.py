@@ -277,3 +277,7 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
     get_avatar_as_html_image.short_description = "Avatar"
 
     list_per_page = 20
+
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            obj.delete()

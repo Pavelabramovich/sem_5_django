@@ -2,9 +2,10 @@ from datetime import date, timedelta
 from django.views import View
 from django.views import generic
 from django.db.models import Model
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from .forms import LoginForm, RegisterForm
+from django.views.generic.detail import DetailView
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db import transaction
@@ -49,7 +50,6 @@ def get_bitcoin():
 
 
 def index(request):
-
     sort = request.GET.getlist('sort')
 
     products = Product.objects.all().order_by(*sort)
@@ -121,3 +121,15 @@ def register(request):
                 return redirect('shop:home')
         else:
             return render(request, 'shop_app/register.html', {'form': form})
+
+
+class ShowProfilePageView(DetailView):
+    model = Profile
+    template_name = 'shop_app/user_profile.html'
+
+    def get_context_data(self, *args, **kwargs):
+        users = Profile.objects.all()
+        context = super(ShowProfilePageView, self).get_context_data(*args, **kwargs)
+        page_user = get_object_or_404(Profile, id=self.kwargs['pk'])
+        context['page_user'] = page_user
+        return context
