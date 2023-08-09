@@ -1,5 +1,10 @@
+import operator
+
 from django.contrib import admin
 from django.contrib.admin import DateFieldListFilter
+from django.db.models import BLANK_CHOICE_DASH
+
+from .m2m_validation import get_filtered_filter
 from .models import Category, Product, Buy, Profile
 from .forms import ProductForm
 from .make_range_field_list_filter import make_range_field_list_filter
@@ -14,14 +19,15 @@ from django.contrib.auth.models import User
 from .fieldsets_inline_mixin import FieldsetsInlineMixin, UserFieldsetsInlineMixin
 from django.db.models.query import QuerySet
 from django.utils.html import mark_safe
-
-
 from .queryset_condition_filter import queryset_condition_filter
+
+
+from .validators import to_condition, validate_provider
 
 admin.site.empty_value_display = '???'
 
 admin.override = override
-QuerySet.condition_filer = queryset_condition_filter
+QuerySet.condition_filter = queryset_condition_filter
 
 
 @admin.register(Category)
@@ -54,7 +60,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = (
         ('category', MultiSelectRelatedFilter),
         ('price', price_range_list_filter),
-        ('providers', MultiSelectRelatedFilter)
+        ('providers', get_filtered_filter(validate_provider))
     )
     list_editable = ('category', 'price')
 
@@ -74,13 +80,17 @@ class ProductAdmin(admin.ModelAdmin):
     list_per_page = 20
 
     def get_providers_as_link(self, obj):
+        print('---------')
+        print(self.__dict__['model'].__dict__['providers'].__dict__['field'])
+        print('---------')
+
         providers = obj.providers.all()
         providers_id = ','.join([str(provider.id) for provider in providers])
 
         link = (
-                reverse("admin:auth_user_changelist") +
-                "?" +
-                urlencode({"id__in": providers_id})
+            reverse("admin:auth_user_changelist") +
+            "?" +
+            urlencode({"id__in": providers_id})
         )
 
         few_providers = obj.get_few_providers()
@@ -100,7 +110,7 @@ class BuyAdmin(admin.ModelAdmin):
     search_fields = ('product_name',)
 
     def get_search_results(self, request, queryset, search_term):
-        date_matches = queryset.condition_filer(lambda obj: match_date(obj.date, search_term) > 0.75)
+        date_matches = queryset.condition_filter(lambda obj: match_date(obj.date, search_term) > 0.75)
 
         (other_matches, may_have_duplicates) = super().get_search_results(
             request,
@@ -152,8 +162,8 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
         check_high_phone_match = lambda obj: match_phone_number(obj.profile.phone, search_term) > 0.75
         check_high_address_match = lambda obj: match_address(obj.profile.address, search_term) > 0.85
 
-        phone_matches = queryset.condition_filer(check_high_phone_match)
-        address_matches = queryset.condition_filer(check_high_address_match)
+        phone_matches = queryset.condition_filter(check_high_phone_match)
+        address_matches = queryset.condition_filter(check_high_address_match)
 
         (other_matches, may_have_duplicates) = super().get_search_results(
             request,

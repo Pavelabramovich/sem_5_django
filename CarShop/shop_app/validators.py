@@ -65,3 +65,14 @@ def normalize_phone(phone: str):
 def validate_provider(user):
     if not user.has_perm('shop_app.provide_product'):
         raise ValidationError(f"{user.username} does not have provider permissions.")
+
+
+def to_condition(validator):
+    def wrapper(*args, **kwargs) -> bool:
+        try:
+            validator(*args, **kwargs)
+            return True
+        except ValidationError:
+            return False
+
+    return wrapper
