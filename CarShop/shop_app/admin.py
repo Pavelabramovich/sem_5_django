@@ -1,12 +1,14 @@
+import copy
 import operator
-
+from django.db import models
 from django.contrib import admin
-from django.contrib.admin import DateFieldListFilter
-from django.db.models import BLANK_CHOICE_DASH
+from django.contrib.admin import DateFieldListFilter, widgets
+from django.contrib.admin.views.main import ChangeList
+from django.core.exceptions import FieldDoesNotExist
+from django.db.models import BLANK_CHOICE_DASH, ManyToOneRel
+from .view_only_field_admin_mixin import ViewOnlyFieldsAdminMixin
 
-from .m2m_validation import get_filtered_filter
 from .models import Category, Product, Buy, Profile
-from .forms import ProductForm
 from .make_range_field_list_filter import make_range_field_list_filter
 from django.urls import reverse
 from django.utils.http import urlencode
@@ -44,9 +46,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    form = ProductForm
-
+class ProductAdmin(ViewOnlyFieldsAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'category', 'price', 'get_providers_as_link')
     ordering = ('name', 'category', 'price')
 
@@ -60,7 +60,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = (
         ('category', MultiSelectRelatedFilter),
         ('price', price_range_list_filter),
-        ('providers', get_filtered_filter(validate_provider))
+        ('providers', MultiSelectRelatedFilter)
     )
     list_editable = ('category', 'price')
 
@@ -75,15 +75,12 @@ class ProductAdmin(admin.ModelAdmin):
         }),
     )
 
+    only_view_fields = ('category', 'providers')
     readonly_fields = ("article",)
 
     list_per_page = 20
 
     def get_providers_as_link(self, obj):
-        print('---------')
-        print(self.__dict__['model'].__dict__['providers'].__dict__['field'])
-        print('---------')
-
         providers = obj.providers.all()
         providers_id = ','.join([str(provider.id) for provider in providers])
 

@@ -1,139 +1,70 @@
 import operator
 
-from django.db.models import BLANK_CHOICE_DASH
+from django.db.models import BLANK_CHOICE_DASH, QuerySet
 
-from .models import Product
-from .static_init import static_init
-from django.utils.functional import classproperty
+from .queryset_condition_filter import queryset_condition_filter
+
 from django import forms
 from django.db.models.fields.related import ManyToManyField
-from more_admin_filters import MultiSelectRelatedFilter, MultiSelectFilter
 
 from .validators import to_condition
 
 
-def m2m_validation(fields_validators_dict):
-    def _wrapper(modelform):
-        class M2MValidatedModelForm(modelform):
-            def __init__(self, *args, **kwargs):
-                super().__init__(*args, **kwargs)
-
-                if self.instance.pk:
-                    for field in fields_validators_dict:
-                        initial_field_values = getattr(self.instance, field).values_list('pk', flat=True)
-                        self.initial[field] = initial_field_values
-
-            def save(self, *args, **kwargs):
-                kwargs['commit'] = True
-                return super().save(*args, **kwargs)
-
-            def save_m2m(self):
-                for field in fields_validators_dict:
-                    getattr(self.instance, field).clear()
-                    getattr(self.instance, field).add(*self.cleaned_data[field])
-
-        def _get_m2m_field_replacement(field, validators):
-            all_field_values = modelform.base_fields[field].queryset
-            filtered_fields_values = all_field_values
-
-            for validator in validators:
-                filtered_fields_values = filtered_fields_values.condition_filer(to_condition(validator))
-
-            return forms.ModelMultipleChoiceField(
-                queryset=filtered_fields_values,
-                required=False,
-            )
-
-        for field, validators in fields_validators_dict.items():
-            setattr(M2MValidatedModelForm, field, _get_m2m_field_replacement(field, validators))
-
-        return M2MValidatedModelForm
-
-    return _wrapper
+QuerySet.condition_filter = queryset_condition_filter
 
 
-def get_filtered_filter(validator):
-    class Fil(MultiSelectRelatedFilter):
-        def field_choices(self, field, request, model_admin):
-            ordering = self.field_admin_ordering(field, request, model_admin)
-            return self._get_field_choices(field, include_blank=False, ordering=ordering)
-
-        @staticmethod
-        def _get_field_choices(
-            field,
+class ValidatedManyToManyField(ManyToManyField):
+    def get_choices(
+            self,
             include_blank=True,
             blank_choice=BLANK_CHOICE_DASH,
             limit_choices_to=None,
             ordering=(),
-        ):
-            if field.choices is not None:
-                choices = list(field.choices)
-                if include_blank:
-                    blank_defined = any(
-                        choice in ("", None) for choice, _ in field.flatchoices
-                    )
-                    if not blank_defined:
-                        choices = blank_choice + choices
-                return choices
-
-            rel_model = field.remote_field.model
-            limit_choices_to = limit_choices_to or field.get_limit_choices_to()
-            choice_func = operator.attrgetter(
-                field.remote_field.get_related_field().attname
-                if hasattr(field.remote_field, "get_related_field")
-                else "pk"
-            )
-            qs = rel_model._default_manager.complex_filter(limit_choices_to)
-            if ordering:
-                qs = qs.order_by(*ordering)
-
-            qs = qs.condition_filter(to_condition(validator))
-
-            return (blank_choice if include_blank else []) + [
-                (choice_func(x), str(x)) for x in qs
-            ]
-
-    return Fil
-
-
-def m2m_validated_admin(fields_validators_dict):
-    def _wrapper(admin_class):
-        # print(self.__dict__['model'].__dict__['providers'].__dict__['field'].__dict__['choices'])
-
-        print(admin_class.__dict__)
-
-        # admin_class.model = type('NewModel', admin_class.model, {})
-        #
-        # for field, validator in fields_validators_dict.items():
-        #     field = getattr(admin_class.model, field)
-        #     field.choices = _get_field_choices(field, validator)
-
-        return admin_class
-
-    @staticmethod
-    def _get_field_choices(
-        field,
-        validator,
-        include_blank=True,
-        blank_choice=BLANK_CHOICE_DASH,
-        limit_choices_to=None,
-        ordering=(),
     ):
-        rel_model = field.remote_field.model
-        limit_choices_to = limit_choices_to or field.get_limit_choices_to()
+        rel_model = self.remote_field.model
+        limit_choices_to = limit_choices_to or self.get_limit_choices_to()
         choice_func = operator.attrgetter(
-            field.remote_field.get_related_field().attname
-            if hasattr(field.remote_field, "get_related_field")
+            self.remote_field.get_related_field().attname
+            if hasattr(self.remote_field, "get_related_field")
             else "pk"
         )
+
         qs = rel_model._default_manager.complex_filter(limit_choices_to)
+
+        for validator in self.validators:
+            qs = qs.condition_filter(to_condition(validator))
+
         if ordering:
             qs = qs.order_by(*ordering)
-
-        qs = qs.condition_filter(to_condition(validator))
 
         return (blank_choice if include_blank else []) + [
             (choice_func(x), str(x)) for x in qs
         ]
 
-    return _wrapper
+    def formfield(self, *, using=None, **kwargs):
+        qs = self.remote_field.model._default_manager.using(using)
+
+        for validator in self.validators:
+            qs = qs.condition_filter(to_condition(validator))
+
+        defaults = {
+            "form_class": forms.ModelMultipleChoiceField,
+            **kwargs,
+            "queryset": qs,
+        }
+
+        if defaults.get("initial") is not None:
+            initial = defaults["initial"]
+            if callable(initial):
+                initial = initial()
+
+            defaults["initial"] = [i.pk for i in initial]
+
+        return super(ManyToManyField, self).formfield(**defaults)
+
+    # Remove warning: ManyToManyField does not support validators
+    def _check_ignored_options(self, **kwargs):
+        warnings = super()._check_ignored_options(**kwargs)
+        return [warning for warning in warnings if warning.id != "fields.W341"]
+
+
