@@ -67,12 +67,19 @@ def validate_provider(user):
         raise ValidationError(f"{user.username} does not have provider permissions.")
 
 
-def to_condition(validator):
-    def wrapper(*args, **kwargs) -> bool:
-        try:
-            validator(*args, **kwargs)
-            return True
-        except ValidationError:
-            return False
+def is_valid(*args):
+    validator = args[0]
 
-    return wrapper
+    if len(args) == 1:
+        def wrapper(*args, **kwargs) -> bool:
+            try:
+                validator(*args, **kwargs)
+                return True
+            except ValidationError:
+                return False
+
+        return wrapper
+
+    else:
+        args = args[1:]
+        return is_valid(validator)(*args)

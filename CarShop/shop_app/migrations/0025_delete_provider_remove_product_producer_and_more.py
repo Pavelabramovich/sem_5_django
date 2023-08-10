@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='product',
             name='providers1',
-            field=shop_app.m2m_validation.ValidatedManyToManyField(help_text='Select a provider for this product', to=settings.AUTH_USER_MODEL),
+            field=shop_app.m2m_validation.ChoicesValidatedManyToManyField(help_text='Select a provider for this product', to=settings.AUTH_USER_MODEL),
         ),
         migrations.DeleteModel(
             name='Producer',

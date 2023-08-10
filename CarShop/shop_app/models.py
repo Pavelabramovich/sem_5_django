@@ -5,7 +5,7 @@ import os
 from django.contrib.auth.models import User
 from PIL import Image
 from .img_tools import crop_to_circle, create_background
-from .m2m_validation import ValidatedManyToManyField
+from .m2m_validation import ChoicesValidatedManyToManyField
 from .validators import \
     validate_phone_number, normalize_phone, \
     validate_address, \
@@ -114,8 +114,8 @@ class Product(models.Model):
 
     price = models.IntegerField(validators=[get_not_negative_validator('Price')])
 
-    providers = ValidatedManyToManyField(User, help_text="Select a provider for this product",
-                                         validators=[validate_provider], blank=True)
+    providers = ChoicesValidatedManyToManyField(User, help_text="Select a provider for this product",
+                                                validators=[validate_provider], blank=True, related_name='products')
 
     def get_absolute_url(self):
         return f"/product/{self.article}/"

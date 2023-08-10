@@ -7,13 +7,14 @@ from .queryset_condition_filter import queryset_condition_filter
 from django import forms
 from django.db.models.fields.related import ManyToManyField
 
-from .validators import to_condition
+from .validators import is_valid
 
 
 QuerySet.condition_filter = queryset_condition_filter
 
 
-class ValidatedManyToManyField(ManyToManyField):
+class ChoicesValidatedManyToManyField(ManyToManyField):
+
     def get_choices(
             self,
             include_blank=True,
@@ -32,7 +33,7 @@ class ValidatedManyToManyField(ManyToManyField):
         qs = rel_model._default_manager.complex_filter(limit_choices_to)
 
         for validator in self.validators:
-            qs = qs.condition_filter(to_condition(validator))
+            qs = qs.condition_filter(is_valid(validator))
 
         if ordering:
             qs = qs.order_by(*ordering)
@@ -45,7 +46,7 @@ class ValidatedManyToManyField(ManyToManyField):
         qs = self.remote_field.model._default_manager.using(using)
 
         for validator in self.validators:
-            qs = qs.condition_filter(to_condition(validator))
+            qs = qs.condition_filter(is_valid(validator))
 
         defaults = {
             "form_class": forms.ModelMultipleChoiceField,

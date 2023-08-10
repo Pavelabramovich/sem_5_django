@@ -24,8 +24,6 @@ from django.utils.html import mark_safe
 from .queryset_condition_filter import queryset_condition_filter
 
 
-from .validators import to_condition, validate_provider
-
 admin.site.empty_value_display = '???'
 
 admin.override = override
@@ -184,7 +182,7 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
             'fields': ('last_login', 'date_joined')
         }),
         ('Permissions', {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups')
         })
     )
 
@@ -197,7 +195,7 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
         }),
         ProfileInline,
         ('Permissions', {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups')
         })
     )
 

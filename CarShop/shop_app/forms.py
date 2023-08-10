@@ -7,7 +7,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .queryset_condition_filter import queryset_condition_filter
-from .validators import validate_provider, validate_phone_number, validate_address, to_condition
+from .validators import validate_provider, validate_phone_number, validate_address
 
 
 class LoginForm(forms.Form):
