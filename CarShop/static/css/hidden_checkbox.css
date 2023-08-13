@@ -1,0 +1,5 @@
+input.hidden-checkbox[type="checkbox" i]:disabled  {
+    visibility: hidden;
+    height: 0px;
+    width: 0px;
+}

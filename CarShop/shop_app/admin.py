@@ -6,6 +6,8 @@ from django.contrib.admin import DateFieldListFilter, widgets
 from django.contrib.admin.views.main import ChangeList
 from django.core.exceptions import FieldDoesNotExist
 from django.db.models import BLANK_CHOICE_DASH, ManyToOneRel
+
+from .forms import ProviderChangeForm
 from .view_only_field_admin_mixin import ViewOnlyFieldsAdminMixin
 
 from .models import Category, Product, Buy, Profile
@@ -23,7 +25,6 @@ from django.db.models.query import QuerySet
 from django.utils.html import mark_safe
 from .queryset_condition_filter import queryset_condition_filter
 
-
 admin.site.empty_value_display = '???'
 
 admin.override = override
@@ -32,7 +33,6 @@ QuerySet.condition_filter = queryset_condition_filter
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-
     list_display = ('name',)
     list_display_links = None
     list_editable = ('name',)
@@ -83,9 +83,9 @@ class ProductAdmin(ViewOnlyFieldsAdminMixin, admin.ModelAdmin):
         providers_id = ','.join([str(provider.id) for provider in providers])
 
         link = (
-            reverse("admin:auth_user_changelist") +
-            "?" +
-            urlencode({"id__in": providers_id})
+                reverse("admin:auth_user_changelist") +
+                "?" +
+                urlencode({"id__in": providers_id})
         )
 
         few_providers = obj.get_few_providers()
@@ -97,7 +97,6 @@ class ProductAdmin(ViewOnlyFieldsAdminMixin, admin.ModelAdmin):
 
 @admin.register(Buy)
 class BuyAdmin(admin.ModelAdmin):
-
     list_display = ('date', 'product_name', 'count')
     ordering = ('date', 'product_name', 'count')
     list_filter = (('date', DateFieldListFilter), ('product_name', MultiSelectFilter))
@@ -138,6 +137,8 @@ class ProfileInline(admin.StackedInline):
 
 @admin.override(User)
 class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
+    form = ProviderChangeForm
+
     class Media:
         css = {
             'all': ('css/admin_inline_style.css',)
@@ -183,6 +184,9 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
         }),
         ('Permissions', {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups')
+        }),
+        ('Providered products', {
+            'fields': ('products',)
         })
     )
 

@@ -125,32 +125,12 @@ class Product(models.Model):
         providers = self.providers.all()
 
         if len(providers) > max_count:
-            return ', '.join([provider.username for provider in providers[:max_count]]) + " and others"
+            # We cut one less to replace more than one provider.
+            return ', '.join([provider.username for provider in providers[:max_count - 1]]) + " and others"
         else:
             return ', '.join([provider.username for provider in providers])
 
-    def get_many_providers(self):
-        max_count = 20
-        max_str_length = 20
-        providers = self.providers.all()
-
-        if len(providers) <= max_count:
-            prov_strs = []
-
-            for provider in providers:
-
-                if prov_strs and len(prov_strs[-1]) < max_str_length:
-                    prov_strs[-1] += f", {str(provider)}"
-                else:
-                    prov_strs.append(str(provider))
-
-            return '\n'.join(prov_strs)
-
-        else:
-            return f"More than {max_count} providers"
-
     get_few_providers.short_description = 'Providers'
-    get_many_providers.short_description = 'Providers'
 
     def __str__(self):
         return self.name
