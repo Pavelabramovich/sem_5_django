@@ -1,11 +1,12 @@
 import copy
 import operator
+from django.core.cache import cache
+from django.utils.cache import get_cache_key
+from imagekit.admin import AdminThumbnail
 from django.db import models
 from django.contrib import admin
 from django.contrib.admin import DateFieldListFilter, widgets
-from django.contrib.admin.views.main import ChangeList
-from django.core.exceptions import FieldDoesNotExist
-from django.db.models import BLANK_CHOICE_DASH, ManyToOneRel
+
 
 from .forms import ProviderChangeForm
 from .view_only_field_admin_mixin import ViewOnlyFieldsAdminMixin
@@ -24,6 +25,7 @@ from .fieldsets_inline_mixin import FieldsetsInlineMixin, UserFieldsetsInlineMix
 from django.db.models.query import QuerySet
 from django.utils.html import mark_safe
 from .queryset_condition_filter import queryset_condition_filter
+from PIL import Image
 
 admin.site.empty_value_display = '???'
 
@@ -83,9 +85,9 @@ class ProductAdmin(ViewOnlyFieldsAdminMixin, admin.ModelAdmin):
         providers_id = ','.join([str(provider.id) for provider in providers])
 
         link = (
-                reverse("admin:auth_user_changelist") +
-                "?" +
-                urlencode({"id__in": providers_id})
+            reverse("admin:auth_user_changelist") +
+            "?" +
+            urlencode({"id__in": providers_id})
         )
 
         few_providers = obj.get_few_providers()
@@ -212,6 +214,14 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
         return obj.profile.address
 
     def get_avatar_as_html_image(self, obj):
+      #  print(obj.profile.avatar.url)
+      #  print(cache.get('/admin/auth/user/'))
+        cache.delete('/admin/auth/user/')
+      #  cache.clear()
+      #  return mark_safe('<img src="%s"?v={{ username.updated_at }}" width="150" height="150" />' % obj.profile.avatar.url)
+       # return mark_safe('<img src="%s%s" width="150" height="150" />' % (f'{settings.MEDIA_URL}', obj.profile.avatar.url))
+        # return format_html('<img src="{}" width = "65"/>'.format(obj.profile.avatar.url))
+       # return mark_safe('<img src="/profile_avatars/%s" width="65" height="65" />' % obj.profile.avatar)
         return mark_safe(f'<img src = "{obj.profile.avatar.url}" width = "65"/>')
 
     get_phone.short_description = "Phone"
