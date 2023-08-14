@@ -8,9 +8,9 @@ from io import BytesIO
 from django.core.files import File
 from django.contrib.auth.models import User
 from PIL import Image
-from .img_tools import crop_to_circle, create_background
+from .img_tools import crop_to_circle, create_background, get_random_color
 from .m2m_validation import ChoicesValidatedManyToManyField
-from .overwrite_storage import OverwriteStorage, AvatarStorage, AvatarField
+from .overwrite_storage import OverwriteStorage, OverwriteCodedStorage, AvatarField
 
 from .validators import \
     validate_phone_number, normalize_phone, \
@@ -27,9 +27,8 @@ class Profile(models.Model):
 
     address = models.CharField(max_length=64, validators=[validate_address])
 
-    avatar = AvatarField(upload_to='profile_avatars', blank=True,
-                               default='profile_avatars/avatar_default.jpg', storage=AvatarStorage())
-    AVATAR_SIZE = 300
+    avatar = AvatarField(upload_to='profile_avatars', default='profile_avatars/avatar_default.jpg', blank=True,
+                         avatar_size=300, get_color=lambda instance: get_random_color(instance.user.id))
 
     def __str__(self):
         return f'{self.user.username} Profile'
@@ -39,33 +38,6 @@ class Profile(models.Model):
             self.phone = normalize_phone(self.phone)
 
         super().save(*args, **kwargs)
-
-        # # with transaction.atomic():
-        # user_id = self.user.id
-        #
-        # if self.avatar and self.avatar.name != self.avatar.field.default:
-        #     with Image.open(self.avatar.path) as image:
-        #         square_avatar = image.copy()
-        #
-        #     os.remove(self.avatar.path)
-        # else:
-        #     random.seed(user_id)
-        #     avatar_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-        #     avatar_background = create_background((self.AVATAR_SIZE, self.AVATAR_SIZE), avatar_color)
-        #
-        #     default_avatar_path = self.avatar.storage.path(self.avatar.field.default)
-        #     default_avatar = Image.open(default_avatar_path).convert('RGBA')
-        #
-        #     square_avatar = Image.alpha_composite(avatar_background, default_avatar)
-        #
-        # new_avatar = crop_to_circle(square_avatar, self.AVATAR_SIZE)
-        #
-        # blob = BytesIO()
-        # new_avatar.save(blob, 'PNG')
-        #
-        # self.avatar.save(f"avatar_{user_id}.png", File(blob), save=False)
-        #
-        # super().save(*args, **kwargs)
 
     def delete(self, using=None, keep_parents=False):
         os.remove(self.avatar.path)

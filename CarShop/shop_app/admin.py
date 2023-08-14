@@ -216,7 +216,7 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
     def get_avatar_as_html_image(self, obj):
       #  print(obj.profile.avatar.url)
       #  print(cache.get('/admin/auth/user/'))
-        cache.delete('/admin/auth/user/')
+      #  cache.delete('/admin/auth/user/')
       #  cache.clear()
       #  return mark_safe('<img src="%s"?v={{ username.updated_at }}" width="150" height="150" />' % obj.profile.avatar.url)
        # return mark_safe('<img src="%s%s" width="150" height="150" />' % (f'{settings.MEDIA_URL}', obj.profile.avatar.url))

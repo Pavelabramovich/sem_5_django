@@ -1,5 +1,6 @@
 import numpy as np
 from PIL import Image, ImageDraw
+import random
 
 
 def crop_to_square(image, new_size):
@@ -45,3 +46,8 @@ def create_background(size, color):
         color = (*color, 255)
 
     return Image.new('RGBA', size, color=color)
+
+
+def get_random_color(seed):
+    random.seed(seed)
+    return random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)

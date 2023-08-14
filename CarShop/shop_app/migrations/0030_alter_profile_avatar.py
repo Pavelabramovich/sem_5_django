@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='profile',
             name='avatar',
-            field=shop_app.overwrite_storage.AvatarField(blank=True, default='profile_avatars/avatar_default.jpg', null=True, storage=shop_app.overwrite_storage.AvatarStorage(), upload_to='profile_avatars'),
+            field=shop_app.overwrite_storage.AvatarField(blank=True, default='profile_avatars/avatar_default.jpg', null=True, storage=shop_app.overwrite_storage.OverwriteCodedStorage(), upload_to='profile_avatars'),
         ),
     ]
