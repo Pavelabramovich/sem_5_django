@@ -1,9 +1,3 @@
-import copy
-import operator
-from django.core.cache import cache
-from django.utils.cache import get_cache_key
-from imagekit.admin import AdminThumbnail
-from django.db import models
 from django.contrib import admin
 from django.contrib.admin import DateFieldListFilter, widgets
 
@@ -214,14 +208,6 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
         return obj.profile.address
 
     def get_avatar_as_html_image(self, obj):
-      #  print(obj.profile.avatar.url)
-      #  print(cache.get('/admin/auth/user/'))
-      #  cache.delete('/admin/auth/user/')
-      #  cache.clear()
-      #  return mark_safe('<img src="%s"?v={{ username.updated_at }}" width="150" height="150" />' % obj.profile.avatar.url)
-       # return mark_safe('<img src="%s%s" width="150" height="150" />' % (f'{settings.MEDIA_URL}', obj.profile.avatar.url))
-        # return format_html('<img src="{}" width = "65"/>'.format(obj.profile.avatar.url))
-       # return mark_safe('<img src="/profile_avatars/%s" width="65" height="65" />' % obj.profile.avatar)
         return mark_safe(f'<img src = "{obj.profile.avatar.url}" width = "65"/>')
 
     get_phone.short_description = "Phone"

@@ -1,7 +1,12 @@
 import datetime
 
 from django.test import TestCase
-from shop_app.models import Category, Buy, Product
+
+from shop_app.models import (
+    Category,
+    Buy,
+    Product
+)
 
 
 class TestCategoryModel(TestCase):
@@ -48,6 +53,10 @@ class TestBuyModel(TestCase):
         # expected_absolute_url = f'/b/Peter/'
         # self.assertEqual(provider.get_absolute_url(), expected_absolute_url)
 
+
+class TestProfileModel(TestCase):
+    def setUp(self):
+        pass
 
 # class TestProductModel(TestCase):
 #     def setUp(self):

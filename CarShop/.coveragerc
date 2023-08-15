@@ -6,4 +6,4 @@ omit =
     */manage.py
     */urls.py
     /CarShop/*
-    */tests/*
+    */test_*

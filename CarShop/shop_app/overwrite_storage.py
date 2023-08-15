@@ -122,9 +122,6 @@ class AvatarField(ImageField):
         return File(blob)
 
     def pre_save(self, model_instance, add):
-        print("-----pre_save------")
-        print(f"{model_instance.pk=}")
-
         image = super(FileField, self).pre_save(model_instance, add)
 
         if not image or not getattr(image, '_commited', False):

@@ -17,9 +17,9 @@ class _AssertNotRaisesContext(_AssertRaisesContext):
             exc_name = self.expected.__name__
 
             if self.obj_name:
-                self._raiseFailure(f"{exc_name} raised by {self.obj_name}")
+                self._raiseFailure(f"{exc_name} unexpectedly raised by {self.obj_name}")
             else:
-                self._raiseFailure(f"{exc_name} raised")
+                self._raiseFailure(f"{exc_name} unexpectedly raised")
 
         else:
             traceback.clear_frames(tb)
