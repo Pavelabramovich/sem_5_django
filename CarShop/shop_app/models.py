@@ -28,7 +28,8 @@ class Profile(models.Model):
     address = models.CharField(max_length=64, validators=[validate_address])
 
     avatar = AvatarField(upload_to='profile_avatars', default='profile_avatars/avatar_default.jpg', blank=True,
-                         avatar_size=300, get_color=lambda instance: get_random_color(instance.user.id))
+                         get_color=lambda instance: get_random_color(instance.user.id), avatar_size=300,
+                         get_filename=lambda instance: f"avatar_{instance.user.id}",)
 
     def __str__(self):
         return f'{self.user.username} Profile'
@@ -40,7 +41,7 @@ class Profile(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, using=None, keep_parents=False):
-        os.remove(self.avatar.path)
+        self.avatar.delete(save=False)
         super().delete(using=using, keep_parents=keep_parents)
 
 

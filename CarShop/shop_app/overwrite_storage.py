@@ -10,9 +10,6 @@ from datetime import datetime
 
 from django.db.models import ImageField
 from django.db.models.fields.files import ImageFieldFile, FileField
-from imagekit.cachefiles.backends import CacheFileState
-
-from .first_or_default import first_or_default
 from .img_tools import create_background, crop_to_circle
 
 
@@ -29,57 +26,51 @@ class OverwriteStorage(FileSystemStorage):
 
 class CodedStorage(FileSystemStorage):
     def __init__(
-            self,
-            get_code=lambda name, content: datetime.now().strftime("%d-%m-%Y-%H-%M-%S-%f"),
-            **kwargs,
+        self,
+        get_code=lambda name, content: datetime.now().strftime("%d-%m-%Y-%H-%M-%S-%f"),
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.get_code = get_code
 
     def exists(self, name):
-        with_code = bool(self.__get_coded_filenames(name))
-        without_code = super().exists(name)
+        return bool(self.__get_matched_filenames(name))
 
-        return with_code or without_code
+    def __get_matched_filenames(self, name):
+        if super().exists(name):
+            return [name]
 
-    def __get_coded_filenames(self, name):
-        splitted_name = name.split(os.extsep)
-        only_name = '.'.join(splitted_name[:-1])
-        extension = splitted_name[-1]
+        else:
+            splitted_name = name.split(os.extsep)
 
-        print(f"{splitted_name=}")
-        print(f"{only_name=}")
-        print(f"{extension=}")
+            *only_name, extension = splitted_name
+            only_name = os.extsep.join(only_name)
 
-        file_matches = [str(path) for path in Path(self.location).glob(f'{only_name}*')]
-        print(f"{file_matches=}")
-        file_codes = [path.split(os.extsep)[-2] for path in file_matches]
+            file_matches = [str(path) for path in Path(self.location).glob(f'{only_name}*')]
+            file_codes = [path.split(os.extsep)[-2] for path in file_matches]
 
-        return [f"{only_name}.{file_code}.{extension}" for file_code in file_codes]
+            return [f"{only_name}{os.extsep}{file_code}{os.extsep}{extension}" for file_code in file_codes]
 
     def _open(self, name, mode="rb"):
-        if coded_names := self.__get_coded_filenames(name):
-            name = coded_names[0]
+        coded_names = self.__get_matched_filenames(name)
+        name = coded_names[0]
 
         return super()._open(name, mode)
 
     def delete(self, name):
-        if coded_names := self.__get_coded_filenames(name):
-            for coded_name in coded_names:
-                super().delete(coded_name)
-        else:
-            super().delete(name)
+        coded_names = self.__get_matched_filenames(name)
+        for coded_name in coded_names:
+            super().delete(coded_name)
 
     def _save(self, name, content):
-
         splitted_name = name.split(os.extsep)
 
-        only_name = splitted_name[:-1]
-        extension = splitted_name[-1]
+        *only_name, extension = splitted_name
+        only_name = os.extsep.join(only_name)
 
         code = self.get_code(name, content)
 
-        return super()._save(f"{'.'.join(only_name)}.{code}.{extension}", content)
+        return super()._save(f"{only_name}{os.extsep}{code}{os.extsep}{extension}", content)
 
 
 class OverwriteCodedStorage(OverwriteStorage, CodedStorage):
@@ -89,7 +80,8 @@ class OverwriteCodedStorage(OverwriteStorage, CodedStorage):
 
 class AvatarFieldFile(ImageFieldFile):
     def _require_file(self):
-        pass
+        if not self:
+            self.file = None
 
 
 class AvatarField(ImageField):
@@ -98,8 +90,8 @@ class AvatarField(ImageField):
     def __init__(
         self,
         avatar_size=300,
-        get_filename=lambda instance: f"avatar_{instance.pk}",
-        get_color=lambda instance: (0, 0, 0),
+        get_filename=lambda instance: "avatar",
+        get_color=lambda instance: (240, 29, 0), # Red
         storage=OverwriteCodedStorage(),
         **kwargs
     ):
@@ -130,6 +122,9 @@ class AvatarField(ImageField):
         return File(blob)
 
     def pre_save(self, model_instance, add):
+        print("-----pre_save------")
+        print(f"{model_instance.pk=}")
+
         image = super(FileField, self).pre_save(model_instance, add)
 
         if not image or not getattr(image, '_commited', False):
