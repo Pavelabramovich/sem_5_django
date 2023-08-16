@@ -19,10 +19,11 @@ class FieldsetsInlineMixin:
 
     @staticmethod
     def _replace_inlines_with_placeholders(fieldsets):
+        is_inline = lambda obj: isinstance(obj, forms.MediaDefiningClass)
         res = []
 
         for index, fieldset in enumerate(fieldsets):
-            if isinstance(fieldset, forms.MediaDefiningClass):
+            if is_inline(fieldset):
                 fieldset.fieldset_index = index
                 res.append((None, {'fields': ()}))
             else:

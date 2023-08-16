@@ -1,15 +1,13 @@
 import datetime
 
-from django.test import TestCase, override_settings
-from django.utils.html import format_html
-from django.utils.http import urlencode
+from django.test import override_settings
 from django.contrib.admin import AdminSite
 from django.contrib.auth.models import User
 from django.test import TestCase, RequestFactory
 from django.contrib.messages.storage.fallback import FallbackStorage
 
+import config.settings as settings
 from apps.core.test_tools import AssertNestedSequencesEqualsMixin
-import CarShop.settings as settings
 
 from apps.shop.admin import (
     ProductAdmin,
