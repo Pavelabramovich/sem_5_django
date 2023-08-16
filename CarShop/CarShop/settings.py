@@ -28,6 +28,8 @@ STATICFILES_DIRS = ('static',)
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = 'login'
 
+TEST_MEDIA_ROOT = BASE_DIR / 'testing/test_media'
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-4a+m&jz&)*od!^m)%zf0=spz)n8y#7hu*r0jig&sj_3w3)rd^x'
 
@@ -48,7 +50,7 @@ INSTALLED_APPS = [
 
     'more_admin_filters',
 
-    'apps.shop_app',
+    'apps.shop',
 ]
 
 MIDDLEWARE = [
