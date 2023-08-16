@@ -48,7 +48,7 @@ INSTALLED_APPS = [
 
     'more_admin_filters',
 
-    'shop_app',
+    'apps.shop_app',
 ]
 
 MIDDLEWARE = [
