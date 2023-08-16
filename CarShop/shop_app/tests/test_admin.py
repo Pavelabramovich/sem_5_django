@@ -86,12 +86,16 @@ class TestProductAdmin(TestCase):
         self.test_admin = ProductAdmin(Product, site)
 
     def test_get_providers_as_link(self):
-        # urlencode replace comma with %2C.
         expected_res = """<a href="/admin/auth/user/?id__in=1%2C2%2C3">Vova, Vasya, Vlad</a>"""
 
         res = self.test_admin.get_providers_as_link(self.test_obj)
 
         self.assertEqual(res, expected_res)
+
+    def tearDown(self):
+        Profile.objects.get(id=1).delete()
+        Profile.objects.get(id=2).delete()
+        Profile.objects.get(id=3).delete()
 
 
 class TestBuyAdmin(AssertNestedSequencesEqualsMixin, TestCase):

@@ -5,10 +5,10 @@ from django.forms.widgets import CheckboxInput
 # This is achieved by removing the checkbox icon using css
 class LabelOnlyWidget(CheckboxInput):
     def __init__(self, attrs=None):
-        if attrs:
-            attrs['class'] = 'hidden-checkbox'
-        else:
+        if attrs is None:
             attrs = {'class': 'hidden-checkbox'}
+        else:
+            attrs['class'] = 'hidden-checkbox'
 
         super().__init__(attrs)
 

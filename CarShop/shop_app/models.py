@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.db import models, transaction
 import uuid
-import random
+from django.utils.html import mark_safe
 import os
 from io import BytesIO
 from django.core.files import File
@@ -43,6 +43,9 @@ class Profile(models.Model):
     def delete(self, using=None, keep_parents=False):
         self.avatar.delete(save=False)
         super().delete(using=using, keep_parents=keep_parents)
+
+    def get_avatar_as_html_image(self, size):
+        return mark_safe(f'<img src = "{self.avatar.url}" width = "{size}"/>')
 
 
 class Category(models.Model):

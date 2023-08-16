@@ -15,7 +15,7 @@ from .matchers import match_phone_number, match_date, match_address
 from .admin_override import override
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from .fieldsets_inline_mixin import FieldsetsInlineMixin, UserFieldsetsInlineMixin
+from .fieldsets_inline_mixin import UserFieldsetsInlineMixin
 from django.db.models.query import QuerySet
 from django.utils.html import mark_safe
 from .queryset_condition_filter import queryset_condition_filter
@@ -130,20 +130,22 @@ class ProfileInline(admin.StackedInline):
 
     classes = ('no-upper', 'no-title')
 
-
-@admin.override(User)
-class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
-    form = ProviderChangeForm
-
     class Media:
         css = {
             'all': ('css/admin_inline_style.css',)
         }
 
+
+@admin.override(User)
+class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
+    form = ProviderChangeForm
+
     inlines = (ProfileInline,)
 
     list_display = ('username', 'get_avatar_as_html_image', 'email', 'first_name', 'last_name',
                     'get_address', 'get_phone')
+
+    list_display_links = ('username', 'get_avatar_as_html_image')
 
     ordering = ('username',)
     list_filter = ('is_staff', 'is_superuser')
@@ -208,7 +210,7 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
         return obj.profile.address
 
     def get_avatar_as_html_image(self, obj):
-        return mark_safe(f'<img src = "{obj.profile.avatar.url}" width = "65"/>')
+        return obj.profile.get_avatar_as_html_image(size=65)
 
     get_phone.short_description = "Phone"
     get_address.short_description = "Address"
