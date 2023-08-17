@@ -1,13 +1,14 @@
 from django.test import TestCase
 from django.forms import ValidationError
-from apps.core.test_tools import AssertNotRaisesMixin
 
-from apps.shop.validators import \
-    FullMatchRegexValidator, \
-    validate_address, \
-    validate_phone_number, \
-    get_not_negative_validator, \
+from apps.core.test_tools import AssertNotRaisesMixin
+from apps.shop.validators import (
+    FullMatchRegexValidator,
+    validate_address,
+    validate_phone_number,
+    get_not_negative_validator,
     get_positive_validator
+)
 
 
 class TestFullMatchRegexValidator(AssertNotRaisesMixin, TestCase):

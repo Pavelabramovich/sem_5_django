@@ -1,6 +1,7 @@
 import numpy as np
-from PIL import Image, ImageDraw
 import random
+
+from PIL import Image, ImageDraw
 
 
 def crop_to_square(image, new_size):

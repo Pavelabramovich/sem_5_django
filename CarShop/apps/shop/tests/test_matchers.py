@@ -1,9 +1,11 @@
 from django.test import TestCase
-from apps.shop.matchers import \
-    LevenshteinStringMatcher, \
-    match_address, \
-    match_phone_number, \
+
+from apps.shop.matchers import (
+    LevenshteinStringMatcher,
+    match_address,
+    match_phone_number,
     match_date
+)
 
 
 class TestLevenshteinStringMatcher(TestCase):

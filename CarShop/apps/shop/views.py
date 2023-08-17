@@ -1,26 +1,23 @@
+import requests
 from datetime import date, timedelta
 
 from django.contrib.auth.models import User
-from django.views import View
 from django.views import generic
-from django.db.models import Model
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponseNotFound
-from .forms import LoginForm, RegisterForm
+from django.shortcuts import get_object_or_404
 from django.views.generic.detail import DetailView
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db import transaction
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
-from django.contrib.auth import login, authenticate, logout
-from .models import \
-    Category, \
-    Product, \
-    Buy, \
-    Profile
+from django.contrib.auth import login
 
-import requests
+from .models import (
+    Product,
+    Buy,
+    Profile
+)
+from .forms import RegisterForm
 
 
 def get_weather():
@@ -54,6 +51,7 @@ def home(request):
     providers = User.objects.all()
     producers = User.objects.all()
     buys = Buy.objects.all()
+
     return render(request, "shop/home.html", {
         'products': products,
         'providers': providers,

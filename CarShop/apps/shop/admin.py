@@ -1,22 +1,24 @@
 from django.contrib import admin
 from django.contrib.admin import DateFieldListFilter
-
-from .forms import ProviderChangeForm
-from apps.core.admin_tools import ViewOnlyFieldsAdminMixin
-
-from .models import Category, Product, Buy, Profile
-from apps.core.admin_tools import make_range_field_list_filter
 from django.urls import reverse
 from django.utils.http import urlencode
 from django.utils.html import format_html
-from more_admin_filters import MultiSelectRelatedFilter, MultiSelectFilter
-from .matchers import match_phone_number, match_date, match_address
-from apps.core.admin_tools import override
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from apps.core.admin_tools.fieldsets_inline_mixin import UserFieldsetsInlineMixin
 from django.db.models.query import QuerySet
+from more_admin_filters import MultiSelectRelatedFilter, MultiSelectFilter
+
+from apps.core.admin_tools import (
+    override,
+    make_range_field_list_filter,
+    ViewOnlyFieldsAdminMixin,
+    UserFieldsetsInlineMixin
+)
 from apps.core.db_tools import queryset_condition_filter
+from .models import Category, Product, Buy, Profile
+from .forms import ProviderChangeForm
+from .matchers import match_phone_number, match_date, match_address
+
 
 admin.site.empty_value_display = '???'
 
@@ -66,7 +68,7 @@ class ProductAdmin(ViewOnlyFieldsAdminMixin, admin.ModelAdmin):
         }),
     )
 
-    only_view_fields = ('category', 'providers')
+    viewonly_fields = ('category', 'providers')
     readonly_fields = ("article",)
 
     list_per_page = 20

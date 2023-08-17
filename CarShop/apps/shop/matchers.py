@@ -1,15 +1,14 @@
 import datetime
+import re
 
 from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
-import re
 from dateutil.parser import parse as parse_date
 
 
 class LevenshteinStringMatcher:
     def __init__(self, flag=None):
         match flag:
-            # In the entire second line we are looking for a match with the first
+            # In the entire second string we are looking for a match with the first
             case "partial":
                 self.comp_func = fuzz.partial_ratio
             # Word comparison

@@ -1,8 +1,8 @@
 import os
 from pathlib import Path
+from datetime import datetime
 
 from django.core.files.storage import FileSystemStorage
-from datetime import datetime
 
 
 class OverwriteStorage(FileSystemStorage):

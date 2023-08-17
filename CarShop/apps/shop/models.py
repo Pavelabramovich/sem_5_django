@@ -1,16 +1,17 @@
-from django.db import models
 import uuid
+
+from django.db import models
 from django.utils.html import mark_safe
 from django.contrib.auth.models import User
-from apps.core.image_tools import get_random_color
-from apps.core.model_tools import ChoicesValidatedManyToManyField
-from apps.core.model_tools import AvatarField
 
-from .validators import \
-    validate_phone_number, normalize_phone, \
-    validate_address, \
-    get_positive_validator, \
+from apps.core.image_tools import get_random_color
+from apps.core.model_tools import ChoicesValidatedManyToManyField, AvatarField
+from .validators import (
+    validate_phone_number, normalize_phone,
+    validate_address,
+    get_positive_validator,
     get_not_negative_validator, validate_provider
+)
 
 
 class Profile(models.Model):

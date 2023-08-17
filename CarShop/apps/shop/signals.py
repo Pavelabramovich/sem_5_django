@@ -1,13 +1,8 @@
-from django.db.models.signals import post_save, pre_delete, m2m_changed
+from django.db.models.signals import pre_delete, m2m_changed
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 
 from .validators import is_valid, validate_provider
-
-
-# @receiver(post_save, sender=User)
-# def on_profile_post_save(sender, instance, **kwargs):
-#     instance.profile.save()
 
 
 @receiver(pre_delete, sender=User)
@@ -17,7 +12,7 @@ def on_user_pre_delete(sender, instance, **kwargs):
 
 @receiver(m2m_changed, sender=User.user_permissions.through)
 @receiver(m2m_changed, sender=User.groups.through)
-def validate(sender, **kwargs):
+def on_user_permissions_changed(sender, **kwargs):
     if kwargs.get('action') in ('post_add', 'post_remove'):
         instance = kwargs.pop('instance', None)
 

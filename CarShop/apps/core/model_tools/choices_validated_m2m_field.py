@@ -1,20 +1,17 @@
 import operator
 
 from django.db.models import BLANK_CHOICE_DASH, QuerySet
-
-from apps.core.db_tools import queryset_condition_filter
-
 from django import forms
 from django.db.models.fields.related import ManyToManyField
 
 from apps.shop.validators import is_valid
+from apps.core.db_tools import queryset_condition_filter
 
 
 QuerySet.condition_filter = queryset_condition_filter
 
 
 class ChoicesValidatedManyToManyField(ManyToManyField):
-
     def get_choices(
             self,
             include_blank=True,

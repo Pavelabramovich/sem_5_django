@@ -1,15 +1,28 @@
-from apps.core.form_tools import LabelOnlyWidget
-from .models import Product
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .validators import validate_provider, validate_phone_number, validate_address, is_valid
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm, UsernameField
+
+from apps.core.form_tools import LabelOnlyWidget
+from .models import Product
+from .validators import (
+    validate_provider,
+    validate_phone_number,
+    validate_address,
+    is_valid
+)
 
 
-class LoginForm(forms.Form):
-    username = forms.CharField(max_length=65)
-    password = forms.CharField(max_length=65, widget=forms.PasswordInput)
+class LoginForm(AuthenticationForm):
+    username = UsernameField(max_length=65, widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': '', 'id': 'hello'}))
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': '',
+            'id': 'hi',
+        }
+    ))
 
 
 class RegisterForm(UserCreationForm):

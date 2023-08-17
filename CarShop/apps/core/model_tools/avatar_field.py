@@ -1,13 +1,11 @@
-import os
-from pathlib import Path
-from django.core.files import File
 from io import BytesIO
-from PIL import Image
 
+from django.core.files import File
 from django.db.models import ImageField
 from django.db.models.fields.files import ImageFieldFile, FileField
-from apps.core.image_tools import create_background, crop_to_circle
+from PIL import Image
 
+from apps.core.image_tools import create_background, crop_to_circle
 from apps.core.media_tools import OverwriteCodedStorage
 
 

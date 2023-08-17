@@ -8,7 +8,6 @@ from django.contrib.messages.storage.fallback import FallbackStorage
 
 import config.settings as settings
 from apps.core.test_tools import AssertNestedSequencesEqualsMixin
-
 from apps.shop.admin import (
     ProductAdmin,
     BuyAdmin,

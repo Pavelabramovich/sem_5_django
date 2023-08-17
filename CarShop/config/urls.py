@@ -1,5 +1,5 @@
 """
-URL configuration for config project.
+URL configuration for CarShop project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
@@ -22,8 +22,8 @@ from django.conf.urls.static import static
 # from shop import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', include('apps.shop.urls', namespace='shop')),
+    path('admin/', admin.site.urls),
 ]
 
 urlpatterns += static(settings.STATIC_URL,
