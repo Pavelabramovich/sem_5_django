@@ -1,5 +1,6 @@
-{% extends "base.html" %}
+{% extends "shop/carousel.html" %}
 
+{% comment %}
 {% block content %}
 <h1>Local Library Home</h1>
 
@@ -16,3 +17,6 @@
   </ul>
 
 {% endblock %}
+{% endcomment %}
+
+{% block carousel_interval %}5000{% endblock %}
