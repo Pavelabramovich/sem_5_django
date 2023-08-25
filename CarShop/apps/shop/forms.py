@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm, UsernameField
 
 from apps.core.form_tools import LabelOnlyWidget
-from .models import Product
+from .models import Product, Provider
 from .validators import (
     validate_provider,
     validate_phone_number,
@@ -37,22 +37,27 @@ class RegisterForm(UserCreationForm):
 
 
 class ProviderChangeForm(UserChangeForm):
-
     products = forms.ModelMultipleChoiceField(
         Product.objects.all(),
         widget=admin.widgets.FilteredSelectMultiple('Products', False),
         required=False,
     )
 
+    is_provider = forms.BooleanField(required=False)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         if self.instance.pk:
-            self.initial['products'] = self.instance.products.values_list('pk', flat=True)
+            self.provider = Provider.objects.filter(user_ptr_id=self.instance.id).first()
 
-            products_field = self.fields['products']
+            if self.provider:
+                self.initial['is_provider'] = True
+                self.initial['products'] = self.provider.products.values_list('pk', flat=True)
+            else:
+                self.initial['is_provider'] = False
+                products_field = self.fields['products']
 
-            if not is_valid(validate_provider, self.instance):
                 products_field.widget = LabelOnlyWidget()
                 products_field.disabled = True
 
@@ -63,7 +68,22 @@ class ProviderChangeForm(UserChangeForm):
 
     def save(self, *args, **kwargs):
         instance = super(ProviderChangeForm, self).save(*args, **kwargs)
+
         if instance.pk:
-            instance.products.clear()
-            instance.products.add(*self.cleaned_data['products'])
+            is_provider = self.cleaned_data['is_provider']
+
+            if self.provider:
+                print(self.fields['is_provider'].__dict__)
+
+                if is_provider:
+                    self.provider.products.clear()
+                    self.provider.products.add(*self.cleaned_data['products'])
+                else:
+                    self.provider.delete(keep_parents=True)
+
+            elif is_provider:
+                provider = Provider(pk=self.instance.pk)
+                provider.__dict__.update(self.instance.__dict__)
+                provider.save()
+
         return instance

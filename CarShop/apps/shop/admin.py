@@ -15,7 +15,7 @@ from apps.core.admin_tools import (
     UserFieldsetsInlineMixin
 )
 from apps.core.db_tools import queryset_condition_filter
-from .models import Category, Product, Buy, Profile
+from .models import Category, Product, Buy, Profile, Provider
 from .forms import ProviderChangeForm
 from .matchers import match_phone_number, match_date, match_address
 
@@ -135,6 +135,11 @@ class ProfileInline(admin.StackedInline):
         }
 
 
+@admin.register(Provider)
+class ProviderAdmin(admin.ModelAdmin):
+    list_display = ('username',)
+
+
 @admin.override(User)
 class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
     form = ProviderChangeForm
@@ -180,10 +185,8 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
             'fields': ('last_login', 'date_joined')
         }),
         ('Permissions', {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups')
-        }),
-        ('Providered products', {
-            'fields': ('products',)
+            'fields': ('is_active', 'is_staff', 'is_superuser',
+                       'is_provider', 'groups', "user_permissions", 'products')
         })
     )
 

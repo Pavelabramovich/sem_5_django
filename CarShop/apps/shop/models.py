@@ -82,6 +82,14 @@ class Buy(models.Model):
         ordering = ("-date", "product_name", "count")
 
 
+class Provider(User):
+    class Meta:
+
+        permissions = (
+            ("provide_product", "Can provide products"),
+        )
+
+
 class Product(models.Model):
     name = models.CharField(max_length=64, unique=True)
 
@@ -92,8 +100,8 @@ class Product(models.Model):
 
     price = models.IntegerField(validators=[get_not_negative_validator('Price')])
 
-    providers = ChoicesValidatedManyToManyField(User, help_text="Select a provider for this product",
-                                                validators=[validate_provider], blank=True, related_name='products')
+    providers = models.ManyToManyField(Provider, help_text="Select a provider for this product",
+                                       blank=True, related_name='products')
 
     def get_absolute_url(self):
         return f"/product/{self.article}/"
@@ -118,6 +126,5 @@ class Product(models.Model):
         verbose_name_plural = "products"
         ordering = ("name",)
 
-        permissions = [
-            ("provide_product", "Can provide Products")
-        ]
+
+

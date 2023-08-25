@@ -1,6 +1,6 @@
 import re
 
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, User
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinValueValidator
 
@@ -63,7 +63,8 @@ def normalize_phone(phone: str):
 
 
 def validate_provider(user):
-    if not user.has_perm('shop.provide_product'):
+    from apps.shop.models import Provider
+    if not Provider.objects.filter(user_ptr_id=user.id).exists():
         raise ValidationError(f"{user.username} does not have provider permissions.")
 
 
