@@ -42,6 +42,10 @@ class Profile(models.Model):
     def get_avatar_as_html_image(self, size):
         return mark_safe(f'<img src = "{self.avatar.url}" width = "{size}"/>')
 
+    class Meta:
+        verbose_name = "profile"
+        verbose_name_plural = "profiles"
+
 
 class Category(models.Model):
     name = models.CharField(max_length=64, unique=True,
@@ -54,8 +58,8 @@ class Category(models.Model):
         return f'/category/{self.id}/'
 
     class Meta:
-        verbose_name = "Category"
-        verbose_name_plural = "Categories"
+        verbose_name = "category"
+        verbose_name_plural = "categories"
         ordering = ("name",)
 
 
@@ -73,8 +77,8 @@ class Buy(models.Model):
         return f'buy/{self.id}/'
 
     class Meta:
-        verbose_name = "Buy"
-        verbose_name_plural = "Buys"
+        verbose_name = "buy"
+        verbose_name_plural = "buys"
         ordering = ("-date", "product_name", "count")
 
 
@@ -110,8 +114,8 @@ class Product(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Product"
-        verbose_name_plural = "Products"
+        verbose_name = "product"
+        verbose_name_plural = "products"
         ordering = ("name",)
 
         permissions = [

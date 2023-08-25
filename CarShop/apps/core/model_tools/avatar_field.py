@@ -33,7 +33,7 @@ class AvatarField(ImageField):
         self.storage = storage
 
     def __get_avatar_file(self, image):
-        if image:
+        if image and image.name != self.default:
             with Image.open(image.file) as row_image:
                 row_avatar = row_image.copy()
         else:

@@ -13,6 +13,7 @@ def on_user_pre_delete(sender, instance, **kwargs):
 @receiver(m2m_changed, sender=User.user_permissions.through)
 @receiver(m2m_changed, sender=User.groups.through)
 def on_user_permissions_changed(sender, **kwargs):
+    print("signal")
     if kwargs.get('action') in ('post_add', 'post_remove'):
         instance = kwargs.pop('instance', None)
 
