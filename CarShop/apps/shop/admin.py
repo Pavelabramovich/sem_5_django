@@ -11,6 +11,7 @@ from more_admin_filters import MultiSelectRelatedFilter, MultiSelectFilter
 from apps.core.admin_tools import (
     override,
     make_range_field_list_filter,
+    make_condition_filter,
     ViewOnlyFieldsAdminMixin,
     UserFieldsetsInlineMixin
 )
@@ -18,7 +19,7 @@ from apps.core.db_tools import queryset_condition_filter
 from .models import Category, Product, Buy, Profile, Provider
 from .forms import ProviderChangeForm
 from .matchers import match_phone_number, match_date, match_address
-
+from .validators import validate_provider, is_valid
 
 admin.site.empty_value_display = '???'
 
@@ -47,7 +48,7 @@ class ProductAdmin(ViewOnlyFieldsAdminMixin, admin.ModelAdmin):
         ("$0 - $10", 0, 10),
         ("$10 - $50", 10, 50),
         ("$50 - $100", 50, 100),
-        ("$100 and more", 100, None),
+        ("$100 and more", 100, None)
     ])
 
     list_filter = (
@@ -135,11 +136,6 @@ class ProfileInline(admin.StackedInline):
         }
 
 
-@admin.register(Provider)
-class ProviderAdmin(admin.ModelAdmin):
-    list_display = ('username',)
-
-
 @admin.override(User)
 class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
     form = ProviderChangeForm
@@ -152,7 +148,9 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
     list_display_links = ('username', 'get_avatar_as_html_image')
 
     ordering = ('username',)
-    list_filter = ('is_staff', 'is_superuser')
+
+    provider_filter = make_condition_filter(is_valid(validate_provider), "provider status", "provider_status")
+    list_filter = ('is_staff', 'is_superuser', provider_filter)
 
     search_fields = ('username', 'email', 'first_name', 'last_name')
 

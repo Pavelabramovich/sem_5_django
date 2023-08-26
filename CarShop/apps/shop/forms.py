@@ -43,7 +43,11 @@ class ProviderChangeForm(UserChangeForm):
         required=False,
     )
 
-    is_provider = forms.BooleanField(required=False)
+    is_provider = forms.BooleanField(
+        required=False,
+        label="Provider status",
+        help_text="Determines whether the user can provide products."
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -62,8 +66,8 @@ class ProviderChangeForm(UserChangeForm):
                 products_field.disabled = True
 
                 products_field.label = """
-                This user does not have provider permissions. 
-                To grant provider permissions to a user, add the user to the Providers group and save.
+                This user is not provider. 
+                To grant provider permissions to a user, set his provider status and save.
                 """
 
     def save(self, *args, **kwargs):
@@ -79,9 +83,11 @@ class ProviderChangeForm(UserChangeForm):
                     self.provider.products.clear()
                     self.provider.products.add(*self.cleaned_data['products'])
                 else:
+                    # Downcast
                     self.provider.delete(keep_parents=True)
 
             elif is_provider:
+                # Upcast
                 provider = Provider(pk=self.instance.pk)
                 provider.__dict__.update(self.instance.__dict__)
                 provider.save()

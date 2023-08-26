@@ -15,7 +15,8 @@ from django.contrib.auth import login
 from .models import (
     Product,
     Buy,
-    Profile
+    Profile,
+    Category
 )
 from .forms import RegisterForm
 
@@ -47,16 +48,10 @@ def get_bitcoin():
 
 
 def home(request):
-    products = Product.objects.all()
-    providers = User.objects.all()
-    producers = User.objects.all()
-    buys = Buy.objects.all()
+    categories = Category.objects.all()
 
     return render(request, "shop/home.html", {
-        'products': products,
-        'providers': providers,
-        'producers': producers,
-        'buys': buys
+        'categories': categories
     })
 
 

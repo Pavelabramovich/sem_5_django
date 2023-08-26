@@ -17,7 +17,8 @@ from apps.shop.models import (
     Product,
     Buy,
     Profile,
-    Category
+    Category,
+    Provider
 )
 
 
@@ -42,15 +43,15 @@ class TestProductAdmin(TestCase):
         category = Category.objects.create(name='Cleaners')
         price = 100
 
-        User.objects.create(
+        Provider.objects.create(
             id=1,
             username='Vova',
             password='password_123'),
-        User.objects.create(
+        Provider.objects.create(
             id=2,
             username='Vasya',
             password='psswrd923'),
-        User.objects.create(
+        Provider.objects.create(
             id=3,
             username='Vlad',
             password='15_06_2017')
