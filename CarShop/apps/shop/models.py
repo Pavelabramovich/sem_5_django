@@ -59,6 +59,15 @@ class Category(models.Model):
     image = NamedImageField(upload_to='categories_images', default='categories_images/image_default.png',
                             get_filename=lambda instance: f"image_{instance.id}", storage=OverwriteCodedStorage())
 
+    def delete(self, using=None, keep_parents=False):
+        if self.logo != self.logo.field.default:
+            self.logo.delete(save=False)
+
+        if self.image != self.image.field.default:
+            self.image.delete(save=False)
+
+        super().delete(using=using, keep_parents=keep_parents)
+
     def __str__(self):
         return self.name
 
@@ -97,11 +106,7 @@ class Buy(models.Model):
 
 
 class Provider(User):
-    class Meta:
-
-        permissions = (
-            ("provide_product", "Can provide products"),
-        )
+    pass
 
 
 class Product(models.Model):

@@ -51,6 +51,10 @@ class CategoryAdmin(admin.ModelAdmin):
 
     list_per_page = 20
 
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            obj.delete()
+
 
 @admin.register(Product)
 class ProductAdmin(ViewOnlyFieldsAdminMixin, admin.ModelAdmin):
