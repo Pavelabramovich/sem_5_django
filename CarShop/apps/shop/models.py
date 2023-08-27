@@ -5,13 +5,15 @@ from django.utils.html import mark_safe
 from django.contrib.auth.models import User
 
 from apps.core.image_tools import get_random_color
-from apps.core.model_tools import ChoicesValidatedManyToManyField, AvatarField
+from apps.core.model_tools import AvatarField
 from .validators import (
     validate_phone_number, normalize_phone,
     validate_address,
     get_positive_validator,
     get_not_negative_validator, validate_provider
 )
+from apps.core.media_tools import OverwriteCodedStorage
+from apps.core.model_tools import SvgField, NamedImageField
 
 
 class Profile(models.Model):
@@ -51,11 +53,23 @@ class Category(models.Model):
     name = models.CharField(max_length=64, unique=True,
                             help_text="Enter a category (e.g. Oil, Tire etc.)")
 
+    logo = SvgField(upload_to='categories_logo', default='categories_logo/logo_default.svg',
+                    get_filename=lambda instance: f"logo_{instance.id}", storage=OverwriteCodedStorage())
+
+    image = NamedImageField(upload_to='categories_images', default='categories_images/image_default.png',
+                            get_filename=lambda instance: f"image_{instance.id}", storage=OverwriteCodedStorage())
+
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return f'/category/{self.id}/'
+
+    def get_logo_as_html_image(self, height):
+        return mark_safe(f'<img src = "{self.logo.url}" width = "{height}"/>')
+
+    def get_image_as_html_image(self, height):
+        return mark_safe(f'<img src = "{self.image.url}" width = "{height}"/>')
 
     class Meta:
         verbose_name = "category"

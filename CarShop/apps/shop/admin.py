@@ -29,9 +29,17 @@ QuerySet.condition_filter = queryset_condition_filter
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name',)
-    list_display_links = None
-    list_editable = ('name',)
+    list_display = ('name', 'get_image_as_html_image', 'get_logo_as_html_image')
+
+    def get_logo_as_html_image(self, obj):
+        return obj.get_logo_as_html_image(height=75)
+
+    def get_image_as_html_image(self, obj):
+        return obj.get_image_as_html_image(height=75)
+
+    get_logo_as_html_image.short_description = "Logo"
+    get_image_as_html_image.short_description = "Image"
+
     ordering = ('name',)
 
     search_fields = ("name",)

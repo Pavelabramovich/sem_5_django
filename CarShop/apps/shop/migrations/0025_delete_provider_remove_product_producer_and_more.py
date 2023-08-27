@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.db import migrations
 import apps.core.model_tools
+from django.db import models
 
 
 class Migration(migrations.Migration):
@@ -27,7 +28,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='product',
             name='providers1',
-            field=apps.core.model_tools.ChoicesValidatedManyToManyField(help_text='Select a provider for this product', to=settings.AUTH_USER_MODEL),
+            field=models.ManyToManyField(help_text='Select a provider for this product', to=settings.AUTH_USER_MODEL),
         ),
         migrations.DeleteModel(
             name='Producer',

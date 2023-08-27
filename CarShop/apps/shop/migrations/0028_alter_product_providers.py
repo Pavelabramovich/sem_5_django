@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.db import migrations
+from django.db import models
 import apps.shop.validators
 
 
@@ -16,6 +17,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='product',
             name='providers',
-            field=apps.core.model_tools.ChoicesValidatedManyToManyField(blank=True, help_text='Select a provider for this product', related_name='products', to=settings.AUTH_USER_MODEL, validators=[apps.shop.validators.validate_provider]),
+            field=models.ManyToManyField(blank=True, help_text='Select a provider for this product', related_name='products', to=settings.AUTH_USER_MODEL, validators=[apps.shop.validators.validate_provider]),
         ),
     ]
