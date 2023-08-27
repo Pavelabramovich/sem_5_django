@@ -31,6 +31,12 @@ QuerySet.condition_filter = queryset_condition_filter
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'get_image_as_html_image', 'get_logo_as_html_image')
 
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'image', 'logo')
+        }),
+    )
+
     def get_logo_as_html_image(self, obj):
         return obj.get_logo_as_html_image(height=75)
 
@@ -41,7 +47,6 @@ class CategoryAdmin(admin.ModelAdmin):
     get_image_as_html_image.short_description = "Image"
 
     ordering = ('name',)
-
     search_fields = ("name",)
 
     list_per_page = 20
