@@ -1,20 +1,22 @@
 {% extends "shop/carousel.html" %}
 
 {% block under_carousel %}
-  <div class="container">
+  <div class="container-fluid">
     <h2 class="text-center my-5">Categories</h2>
 
     <div class="row gy-5">
 
       {% for category in categories %}
-        <div class="col-md-4 col-sm-6 text-center">
-          <img src="{{category.image.url}}" height="100px"/>
-          <h4>{{ category.name }}</h4>
+        <div class="col-md-3 col-sm-4 col-6 text-center" style="padding:0 3%;">
+          <div class="position-relative">
+            <img src="{{category.image.url}}" height="100px"/>
+            <p>{{ category.name }}</p>
+            <a class="stretched-link" href="{% url 'shop:products'%}"></a>
+         </div>
         </div>
       {% empty %}
         <h2 class="text-center my-5">No Categories</h2>
       {% endfor %}
-
     </div>
   </div>
 {% endblock %}

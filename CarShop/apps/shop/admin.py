@@ -33,9 +33,11 @@ class CategoryAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('name', 'image', 'logo')
+            'fields': ('name', 'uuid', 'image', 'logo')
         }),
     )
+
+    readonly_fields = ("uuid",)
 
     def get_logo_as_html_image(self, obj):
         return obj.get_logo_as_html_image(height=75)

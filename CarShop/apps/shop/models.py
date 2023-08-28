@@ -50,14 +50,16 @@ class Profile(models.Model):
 
 
 class Category(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+
     name = models.CharField(max_length=64, unique=True,
                             help_text="Enter a category (e.g. Oil, Tire etc.)")
 
     logo = SvgField(upload_to='categories_logo', default='categories_logo/logo_default.svg',
-                    get_filename=lambda instance: f"logo_{instance.id}", storage=OverwriteCodedStorage())
+                    get_filename=lambda instance: f"logo_{instance.uuid}", storage=OverwriteCodedStorage())
 
     image = NamedImageField(upload_to='categories_images', default='categories_images/image_default.png',
-                            get_filename=lambda instance: f"image_{instance.id}", storage=OverwriteCodedStorage())
+                            get_filename=lambda instance: f"image_{instance.uuid}", storage=OverwriteCodedStorage())
 
     def delete(self, using=None, keep_parents=False):
         if self.logo != self.logo.field.default:
@@ -114,7 +116,7 @@ class Product(models.Model):
 
     category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
 
-    article = models.UUIDField(primary_key=True, default=uuid.uuid4,
+    article = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,
                                help_text="Unique ID for this product")
 
     price = models.IntegerField(validators=[get_not_negative_validator('Price')])
