@@ -9,7 +9,7 @@ from django.db.models.query import QuerySet
 from more_admin_filters import MultiSelectRelatedFilter, MultiSelectFilter
 
 from apps.core.admin_tools import (
-    override,
+    admin_override,
     make_range_field_list_filter,
     make_condition_filter,
     ViewOnlyFieldsAdminMixin,
@@ -23,7 +23,7 @@ from .validators import validate_provider, is_valid
 
 admin.site.empty_value_display = '???'
 
-admin.override = override
+admin.override = admin_override
 QuerySet.condition_filter = queryset_condition_filter
 
 

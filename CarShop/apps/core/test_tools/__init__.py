@@ -1,2 +1,3 @@
 from .assert_not_raises_mixin import AssertNotRaisesMixin
 from .assert_nested_sequences_equals_mixin import AssertNestedSequencesEqualsMixin
+from .runner_with_test_models import RunnerWithTestModels, TestModel

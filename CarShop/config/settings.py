@@ -130,3 +130,5 @@ TIME_ZONE = 'Europe/Minsk'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+TEST_RUNNER = "apps.core.test_tools.RunnerWithTestModels"

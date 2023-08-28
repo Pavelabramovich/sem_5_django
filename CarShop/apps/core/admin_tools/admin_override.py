@@ -3,7 +3,7 @@ from django.contrib.admin.sites import AdminSite
 from django.contrib.admin.sites import site as default_site
 
 
-def override(*models, site=None):
+def admin_override(*models, site=None):
     def _model_admin_wrapper(admin_class):
         if not models:
             raise ValueError("At least one model must be passed to override.")
