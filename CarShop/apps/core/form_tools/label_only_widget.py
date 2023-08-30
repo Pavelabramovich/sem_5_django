@@ -12,5 +12,5 @@ class LabelOnlyWidget(CheckboxInput):
 
     class Media:
         css = {
-            'all': ('css/hidden_checkbox.css',)
+            'all': ('core/form_tools/css/hidden_checkbox.css',)
         }

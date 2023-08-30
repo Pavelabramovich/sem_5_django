@@ -151,7 +151,7 @@ class ProfileInline(admin.StackedInline):
 
     class Media:
         css = {
-            'all': ('css/admin_inline_style.css',)
+            'all': ('admin/css/admin_inline_style.css',)
         }
 
 

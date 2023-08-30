@@ -97,6 +97,7 @@ def register(request):
                 login(request, user)
                 return redirect('shop:home')
         else:
+
             return render(request, 'shop/register.html', {'form': form})
 
 

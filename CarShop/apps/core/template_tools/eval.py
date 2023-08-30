@@ -3,40 +3,36 @@ from django.utils.translation import gettext_lazy as _
 import re
 
 
-register = template.Library()
-
-
 class EvalNode(template.Node):
     def __init__(self, eval_string, var_name):
-
         self.eval_string = eval_string
         self.var_name = var_name
 
     def render(self, context):
+        clist = list(context)
+
+        clist.reverse()
+        context_dict = {'_': _}
+
+        for c in clist:
+            context_dict.update(c)
+
+            for item in c:
+                if isinstance(item, dict):
+                    context_dict.update(item)
         try:
-            clist = list(context)
-
-            clist.reverse()
-            d = {'_': _}
-
-            for c in clist:
-                d.update(c)
-
-                for item in c:
-                    if isinstance(item, dict):
-                        d.update(item)
-
             if self.var_name:
-                context[self.var_name] = eval(self.eval_string, d)
+                context[self.var_name] = eval(self.eval_string,  context_dict)
                 return ''
             else:
-                return str(eval(self.eval_string, d))
+                return str(eval(self.eval_string,  context_dict))
 
-        except:
-            raise
+        except SyntaxError as e:
+            raise SyntaxError(
+                "Make sure you don't use special dot notation and other quirks of template syntax.") from e
 
 
-r_eval = re.compile(r'(.*?)\s+as\s+(\w+)', re.DOTALL)
+tag_with_as_regex = re.compile(r'(.*?)\s+as\s+(\w+)', re.DOTALL)
 
 
 def do_eval(parser, token):
@@ -45,9 +41,8 @@ def do_eval(parser, token):
     except ValueError:
         raise template.TemplateSyntaxError(f"{token.contents[0]} tag requires arguments")
 
-    m = r_eval.search(arg)
-    if m:
-        eval_string, var_name = m.groups()
+    if match := tag_with_as_regex.search(arg):
+        eval_string, var_name = match.groups()
     else:
         if not arg:
             raise template.TemplateSyntaxError(f"{tag_name} tag at least require one argument")
@@ -57,4 +52,4 @@ def do_eval(parser, token):
     return EvalNode(eval_string, var_name)
 
 
-do_eval = register.tag('eval', do_eval)
+

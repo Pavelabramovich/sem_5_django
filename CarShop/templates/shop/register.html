@@ -1,17 +1,17 @@
 {% extends 'shop/carousel.html' %}
 {% load static %}
-{% load eval %}
+{% load template_tools %}
 
 {% block content %}
-  <form method="POST" novalidate>
+  <form method="POST" class="requires-validation" novalidate>
     {% csrf_token %}
 
-    <div class="container py-5 h-100">
+    <div class="container h-100" style="padding-top: 37px">
 	  <div class="row d-flex justify-content-center align-items-center h-100">
 	    <div class="col-lg-8 col-xl-6">
 		  <div class="card rounded-3">
-		    <div class="card-body p-4 p-md-5">
-			  <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 px-md-2 text-center">Registration</h3>
+		    <div class="card-body py-4 px-4 px-md-5">
+			  <h3 class="mb-4 pb-2 pb-md-0 px-md-2 text-center">Registration</h3>
 
 			  <div class="px-md-2">
 
@@ -23,15 +23,24 @@
 					type="text"
 					id="{{ form.username.auto_id }}"
 					name="{{ form.username.name }}"
-					class="form-control"
-					required/>
+					value="{% if form.username.value %}{{ form.username.value }}{% endif %}"
+					class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+				    aria-describedby="{{ form.username.auto_id }}Feedback"
+				    required/>
 
-				  <h2>{{ form.username.errors.as_ul }}</h2>
+
+				  <div id="{{ form.username.auto_id }}Feedback" class="invalid-feedback">
+					{% for error in form.username.errors %}
+					  {{ error }}
+				    {% empty %}
+					  This field is required.
+			        {% endfor %}
+				  </div>
 			    </div>
 
-			    <!--password-->
+			    <!--passwords-->
 			    <div class="row">
-				  <script src="{% static '/js/password_show_hide.js' %}"></script>
+				  <script src="{% static '/shop/js/password_show_hide.js' %}"></script>
 
 				  {% eval (form['password1'], form['password2']) as password_fields %}
 
@@ -45,20 +54,25 @@
 						{{ password_field.label }}
 					  </label>
 
-					  <div class="form-outline">
-					    <div class="input-group">
+					  <div class="form-outline" id="{{ password_field.auto_id }}_form">
+					    <div class="input-group" id="{{ password_field.auto_id }}_input_group">
+
 						  <input
 							id="{{ password_field.auto_id }}"
 							name="{{ password_field.name }}"
 							type="password"
-							value="" placeholder="password"
-							class="input form-control"
+							value="{% if password_field.value %}{{ password_field.value }}{% endif %}"
+							placeholder="password"
+							class="input form-control {% if password_field.errors %}is-invalid{% endif %}"
 							aria-label="password"
+							aria-describedby="{{ password_field.auto_id }}Feedback"
 							required/>
 
-						  <div class="input-group-append">
+						  <div
+						    class="input-group-append d-flex">
 						    <span
 							  class="input-group-text"
+
 							  onclick="password_show_hide(
 									     '{{ password_field.auto_id }}',
 									     '{{ id_password_show }}',
@@ -69,8 +83,18 @@
 							  <i class="fas fa-eye-slash d-none" id="{{ id_password_hide }}"></i>
 						    </span>
 						  </div>
+
+						  <div id="{{ password_field.auto_id }}Feedback" class="invalid-feedback">
+							{% for error in password_field.errors %}
+							  {{ error }}
+							{% empty %}
+							  This field is required
+						    {% endfor %}
+					      </div>
 					    </div>
 					  </div>
+
+
 				    </div>
 
 				  {% endfor %}
@@ -82,10 +106,19 @@
 
 				  <input
 					type="text"
+					value="{% if form.email.value %}{{ form.email.value }}{% endif %}"
 					id="{{ form.email.auto_id }}"
 					name="{{ form.email.name }}"
-					class="form-control"
-					required/>
+					class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+				    aria-describedby="{{ form.email.auto_id }}Feedback"/>
+
+				  <div id="{{ form.email.auto_id }}Feedback" class="invalid-feedback">
+					{% for error in form.email.errors %}
+					  {{ error }}
+				    {% empty %}
+					  This field is required.
+			        {% endfor %}
+				  </div>
 
 			 	</div>
 
@@ -104,8 +137,8 @@
 						  type="text"
 						  id="{{ name_field.auto_id }}"
 						  name="{{ name_field.name }}"
-						  class="form-control"
-						  required/>
+						  value="{% if name_field.value %}{{ name_field.value }}{% endif %}"
+						  class="form-control"/>
 
 					  </div>
 				    </div>
@@ -127,8 +160,18 @@
 						  type="text"
 						  id="{{ profile_field.auto_id }}"
 						  name="{{ profile_field.name }}"
-						  class="form-control"
+						  value="{% if profile_field.value %}{{ profile_field.value }}{% endif %}"
+						  class="form-control {% if profile_field.errors %}is-invalid{% endif %}"
+						  aria-describedby="{{ profile_field.auto_id }}Feedback"
 						  required/>
+
+					    <div id="{{ profile_field.auto_id }}Feedback" class="invalid-feedback">
+						  {% for error in profile_field.errors %}
+						    {{ error }}
+						  {% empty %}
+						    This field is required
+						  {% endfor %}
+					    </div>
 
 					  </div>
 				    </div>
@@ -137,8 +180,28 @@
 
 			    <!--register and login buttons-->
 				<div class="row text-center">
+
+					<script>
+						(function () {
+						'use strict'
+						const forms = document.querySelectorAll('.requires-validation')
+
+						  Array.from(forms).forEach(form => {
+						    useCapture = false
+							form.addEventListener('submit', event => {
+							  if (!form.checkValidity()) {
+								event.preventDefault()
+								event.stopPropagation()
+							  }
+
+							  form.classList.add('was-validated')
+							}, useCapture)
+						  })
+						})()
+						</script>
+
 				  <button type="submit" class="btn btn-success btn-lg mb-1">Register</button>
-				  <p>Already has an account? <a href="{%url 'shop:login' %}">Login</a></p>
+				  <p class="mb-0">Already has an account? <a href="{%url 'shop:login' %}">Login</a></p>
 				</div>
 			  </div>
 			</div>

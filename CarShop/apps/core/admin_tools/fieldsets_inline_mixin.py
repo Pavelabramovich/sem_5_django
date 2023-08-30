@@ -2,7 +2,7 @@ from django import forms
 
 
 class FieldsetsInlineMixin:
-    change_form_template = 'admin/extra/admin_inlines_to_fieldsets_change_form.html'
+    change_form_template = 'core/admin_tools/admin_inlines_to_fieldsets_change_form.html'
 
     def get_fieldsets(self, request, obj=None):
         if hasattr(self, 'fieldsets_with_inlines'):
@@ -53,7 +53,7 @@ class FieldsetsInlineMixin:
 
 
 class UserFieldsetsInlineMixin(FieldsetsInlineMixin):
-    add_form_template = 'admin/extra/admin_inlines_to_fieldsets_add_form.html'
+    add_form_template = 'core/admin_tools/admin_inlines_to_fieldsets_add_form.html'
 
     def get_fieldsets(self, request, obj=None):
         if not obj:

@@ -5,6 +5,8 @@
     {% block title %}
       <title>Mater Headlight — Auto Detailing Supplies, Chemicals, Equipment, Accessories and more</title>
     {% endblock %}
+    
+    <link rel="icon" sizes="32x32" href="{% static '/shop/images/small_logo.svg' %}">
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,7 +28,7 @@
       crossorigin="anonymous" />
 
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'shop/css/styles.css' %}" />
   </head>
 
   <body style="height: {% block page_height %}5000px{% endblock %};">
@@ -34,10 +36,10 @@
       <header>
         <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
           <div class="container">
-            {%if request.user.is_authenticated %}
-              <img src="{{request.user.profile.avatar.url}}" height="47px"/>
-            {%else%}
-              <img src="{% static '/images/small_logo.svg' %}" height="47px">
+            {% if request.user.is_authenticated %}
+              <img src="{{ request.user.profile.avatar.url }}" height="47px"/>
+            {% else %}
+              <img src="{% static '/shop/images/small_logo.svg' %}" height="47px">
             {% endif %}
 
             <button
@@ -69,10 +71,10 @@
                   <a href="{% url 'shop:register' %}" class="nav-link">Register</a>
                 </li>
                 <li class="nav-item">
-                  <a href="{% url 'shop:products'%}" class="nav-link">Profile</a>
+                  <a href="{% url 'shop:products' %}" class="nav-link">Profile</a>
                 </li>
                 <li class="nav-item">
-                  <a href="{% url 'shop:products'%}" class="nav-link">Buys</a>
+                  <a href="{% url 'shop:products' %}" class="nav-link">Buys</a>
                 </li>
               </ul>
 
@@ -99,7 +101,7 @@
     {% block pagination %}
       <div class="container-fluid">
         <div class="row">
-            {% if is_paginated %}
+          {% if is_paginated %}
             <div class="pagination">
               <span class="page-links">
                 {% if page_obj.has_previous %}
@@ -113,12 +115,9 @@
                 {% endif %}
               </span>
             </div>
-            {% endif %}
-          </div>
+          {% endif %}
         </div>
-      {% endblock %}
-
-
-
+      </div>
+    {% endblock %}
   </body>
 </html>
