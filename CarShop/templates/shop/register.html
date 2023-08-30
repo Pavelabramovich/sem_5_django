@@ -1,23 +1,150 @@
 {% extends 'shop/carousel.html' %}
+{% load static %}
+{% load eval %}
 
 {% block content %}
-<form method="POST" novalidate>
-	{% csrf_token %}
-	<h2>Sign Up</h2>
+  <form method="POST" novalidate>
+    {% csrf_token %}
 
-	{% for field in form %}
-	<p>
-		{% if field.errors %}
-		<ul class="errorlist">
-			{% for error in field.errors %}
-			<li>{{ error }}</li>
-			{% endfor %}
-		</ul>
-		{% endif %}
-	 	{{ field.label_tag }} {{ field }}
-	</p>
-	{% endfor %}
-	<input type="submit" value="Register" />
-	<p>Already has an account? <a href="{%url 'shop:login' %}">Login</a></p>
-</form>
-{% endblock content%}ontent%}
+    <div class="container py-5 h-100">
+	  <div class="row d-flex justify-content-center align-items-center h-100">
+	    <div class="col-lg-8 col-xl-6">
+		  <div class="card rounded-3">
+		    <div class="card-body p-4 p-md-5">
+			  <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 px-md-2 text-center">Registration</h3>
+
+			  <div class="px-md-2">
+
+			    <!--username-->
+			    <div class="form-outline mb-4">
+				  <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+
+				  <input
+					type="text"
+					id="{{ form.username.auto_id }}"
+					name="{{ form.username.name }}"
+					class="form-control"
+					required/>
+
+				  <h2>{{ form.username.errors.as_ul }}</h2>
+			    </div>
+
+			    <!--password-->
+			    <div class="row">
+				  <script src="{% static '/js/password_show_hide.js' %}"></script>
+
+				  {% eval (form['password1'], form['password2']) as password_fields %}
+
+				  {% for password_field in password_fields %}
+				    {% eval f"{password_field.auto_id}_show" as id_password_show %}
+				    {% eval f"{password_field.auto_id}_hide" as id_password_hide %}
+
+				    <div class="col-md-6 mb-4">
+
+                      <label class="form-label" for="{{ password_field.id_for_label }}">
+						{{ password_field.label }}
+					  </label>
+
+					  <div class="form-outline">
+					    <div class="input-group">
+						  <input
+							id="{{ password_field.auto_id }}"
+							name="{{ password_field.name }}"
+							type="password"
+							value="" placeholder="password"
+							class="input form-control"
+							aria-label="password"
+							required/>
+
+						  <div class="input-group-append">
+						    <span
+							  class="input-group-text"
+							  onclick="password_show_hide(
+									     '{{ password_field.auto_id }}',
+									     '{{ id_password_show }}',
+									     '{{ id_password_hide }}'
+									   );">
+
+							  <i class="fas fa-eye" id="{{ id_password_show }}"></i>
+							  <i class="fas fa-eye-slash d-none" id="{{ id_password_hide }}"></i>
+						    </span>
+						  </div>
+					    </div>
+					  </div>
+				    </div>
+
+				  {% endfor %}
+			    </div>
+
+			    <!--email-->
+			    <div class="form-outline mb-4">
+				  <label class="form-label" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+
+				  <input
+					type="text"
+					id="{{ form.email.auto_id }}"
+					name="{{ form.email.name }}"
+					class="form-control"
+					required/>
+
+			 	</div>
+
+			    <!--first and last names-->
+			    <div class="row">
+				  {% eval (form['first_name'], form['last_name']) as name_fields %}
+
+				  {% for name_field in name_fields %}
+				    <div class="col-md-6 mb-4">
+					  <div class="form-outline">
+					    <label class="form-label" for="{{ name_field.id_for_label }}">
+						  {{ name_field.label }}
+						</label>
+
+					    <input
+						  type="text"
+						  id="{{ name_field.auto_id }}"
+						  name="{{ name_field.name }}"
+						  class="form-control"
+						  required/>
+
+					  </div>
+				    </div>
+				  {% endfor %}
+			    </div>
+
+			    <!--phone and address-->
+			    <div class="row">
+				  {% eval (form['phone'], form['address']) as profile_fields %}
+
+				  {% for profile_field in profile_fields %}
+				    <div class="col-md-6 mb-4">
+					  <div class="form-outline">
+					    <label class="form-label" for="{{ profile_field.id_for_label }}">
+						  {{ profile_field.label }}
+						</label>
+
+					    <input
+						  type="text"
+						  id="{{ profile_field.auto_id }}"
+						  name="{{ profile_field.name }}"
+						  class="form-control"
+						  required/>
+
+					  </div>
+				    </div>
+				  {% endfor %}
+				</div>
+
+			    <!--register and login buttons-->
+				<div class="row text-center">
+				  <button type="submit" class="btn btn-success btn-lg mb-1">Register</button>
+				  <p>Already has an account? <a href="{%url 'shop:login' %}">Login</a></p>
+				</div>
+			  </div>
+			</div>
+		  </div>
+	    </div>
+	  </div>
+    </div>
+  </form>
+{% endblock content%}

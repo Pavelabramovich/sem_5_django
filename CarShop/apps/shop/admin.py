@@ -17,7 +17,7 @@ from apps.core.admin_tools import (
 )
 from apps.core.db_tools import queryset_condition_filter
 from .models import Category, Product, Buy, Profile, Provider
-from .forms import ProviderChangeForm
+from .forms import UserAsProviderChangeForm
 from .matchers import match_phone_number, match_date, match_address
 from .validators import validate_provider, is_valid
 
@@ -157,7 +157,7 @@ class ProfileInline(admin.StackedInline):
 
 @admin.override(User)
 class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
-    form = ProviderChangeForm
+    form = UserAsProviderChangeForm
 
     inlines = (ProfileInline,)
 
@@ -216,7 +216,7 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
         }),
         ProfileInline,
         ('Permissions', {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups')
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', "user_permissions")
         })
     )
 

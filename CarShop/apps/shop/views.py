@@ -18,7 +18,7 @@ from .models import (
     Profile,
     Category
 )
-from .forms import RegisterForm
+from .forms import UserProfileCreationForm
 
 
 def get_weather():
@@ -78,11 +78,11 @@ class CustomLoginView(LoginView):
 
 def register(request):
     if request.method == 'GET':
-        form = RegisterForm()
+        form = UserProfileCreationForm()
         return render(request, 'shop/register.html', {'form': form})
 
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
+        form = UserProfileCreationForm(request.POST)
         if form.is_valid():
             with transaction.atomic():
                 user = form.save()
@@ -91,7 +91,7 @@ def register(request):
                     user=user,
                     phone=form.cleaned_data['phone'],
                     address=form.cleaned_data['address']
-                ).save()
+                )
 
                 messages.success(request, "You have singed up successfully.")
                 login(request, user)

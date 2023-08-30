@@ -16,6 +16,7 @@ from .validators import (
 class LoginForm(AuthenticationForm):
     username = UsernameField(max_length=65, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '', 'id': 'hello'}))
+
     password = forms.CharField(widget=forms.PasswordInput(
         attrs={
             'class': 'form-control',
@@ -25,7 +26,7 @@ class LoginForm(AuthenticationForm):
     ))
 
 
-class RegisterForm(UserCreationForm):
+class UserProfileCreationForm(UserCreationForm):
     phone = forms.CharField(max_length=64, validators=[validate_phone_number],
                             help_text="Enter a phone in format +375 (29) XXX-XX-XX")
 
@@ -36,7 +37,7 @@ class RegisterForm(UserCreationForm):
         fields = ('username', 'email', 'password1', 'password2', 'first_name', 'last_name')
 
 
-class ProviderChangeForm(UserChangeForm):
+class UserAsProviderChangeForm(UserChangeForm):
     products = forms.ModelMultipleChoiceField(
         Product.objects.all(),
         widget=admin.widgets.FilteredSelectMultiple('Products', False),
@@ -71,7 +72,7 @@ class ProviderChangeForm(UserChangeForm):
                 """
 
     def save(self, *args, **kwargs):
-        instance = super(ProviderChangeForm, self).save(*args, **kwargs)
+        instance = super(UserAsProviderChangeForm, self).save(*args, **kwargs)
 
         if instance.pk:
             is_provider = self.cleaned_data['is_provider']
