@@ -1,4 +1,4 @@
-function password_show_hide(password_id, show_password_id, hide_password_id) {
+export function password_show_hide(password_id, show_password_id, hide_password_id) {
     var input = document.getElementById(password_id);
 
     var show_password = document.getElementById(show_password_id);

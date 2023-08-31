@@ -16,26 +16,30 @@
 			  <div class="px-md-2">
 
 			    <!--username-->
-			    <div class="form-outline mb-4">
+			    <div class="form-outline mb-4 position-relative" >
 				  <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+
+				  <script src="{% static '/shop/js/validate.js' %}"></script>
+			      <script src="{% static '/shop/js/clear_field_errors.js' %}"></script>
 
 				  <input
 					type="text"
 					id="{{ form.username.auto_id }}"
 					name="{{ form.username.name }}"
 					value="{% if form.username.value %}{{ form.username.value }}{% endif %}"
+					data-validator="validate('{{ form.username.auto_id }}');"
 					class="form-control {% if form.username.errors %}is-invalid{% endif %}"
-				    aria-describedby="{{ form.username.auto_id }}Feedback"
+					oninput="clear_field_errors(this.id)"
 				    required/>
 
-
-				  <div id="{{ form.username.auto_id }}Feedback" class="invalid-feedback">
+				  <span class="invalid-feedback">
 					{% for error in form.username.errors %}
 					  {{ error }}
 				    {% empty %}
-					  This field is required.
+					  This field is required.123
 			        {% endfor %}
-				  </div>
+			      </span>
+
 			    </div>
 
 			    <!--passwords-->
@@ -54,18 +58,19 @@
 						{{ password_field.label }}
 					  </label>
 
-					  <div class="form-outline" id="{{ password_field.auto_id }}_form">
-					    <div class="input-group" id="{{ password_field.auto_id }}_input_group">
+					  <div class="form-outline">
+					    <div class="input-group">
 
 						  <input
 							id="{{ password_field.auto_id }}"
 							name="{{ password_field.name }}"
 							type="password"
+							data-validator="validate('{{ password_field.auto_id }}');"
 							value="{% if password_field.value %}{{ password_field.value }}{% endif %}"
 							placeholder="password"
 							class="input form-control {% if password_field.errors %}is-invalid{% endif %}"
 							aria-label="password"
-							aria-describedby="{{ password_field.auto_id }}Feedback"
+							oninput="clear_field_errors(this.id)"
 							required/>
 
 						  <div
@@ -84,13 +89,13 @@
 						    </span>
 						  </div>
 
-						  <div id="{{ password_field.auto_id }}Feedback" class="invalid-feedback">
+						  <span class="invalid-feedback">
 							{% for error in password_field.errors %}
 							  {{ error }}
 							{% empty %}
-							  This field is required
-						    {% endfor %}
-					      </div>
+							  This field is required.123
+							{% endfor %}
+						  </span>
 					    </div>
 					  </div>
 
@@ -182,23 +187,69 @@
 				<div class="row text-center">
 
 					<script>
-						(function () {
-						'use strict'
-						const forms = document.querySelectorAll('.requires-validation')
+				(function () {
+					'use strict'
+					const forms = document.querySelectorAll('.requires-validation')
 
-						  Array.from(forms).forEach(form => {
-						    useCapture = false
-							form.addEventListener('submit', event => {
-							  if (!form.checkValidity()) {
+					Array.from(forms).forEach(form => {
+						const useCapture = false
+
+						var fields = Array.from(form.elements);
+
+						form.addEventListener('submit', event => {
+						    var is_valid = true
+
+							fields.forEach(field => {
+
+								var error_message = ''
+
+								if ('validator' in field.dataset) {
+									try {
+										eval(field.dataset.validator)
+									} catch (error) {
+										if (error.name === 'ValidationError') {
+											error_message = error.message
+										}
+										else {
+											throw error
+										}
+									}
+								}
+
+								if (!error_message && field.checkValidity()) {
+							  		field.classList.remove('is-invalid');
+
+								} else {
+									if (error_message && field.id !== '') {
+										// var error_message_field = document.querySelector(`#${field.id} + span.invalid-feedback`)
+										var error_message_field = field.parentElement.querySelector('span.invalid-feedback')
+
+										if (error_message_field !== null) {
+
+											alert(`${field.id}   ${error_message_field}`)
+											var error_txt = document.createTextNode(error_message);
+
+											while (error_message_field.firstChild) {
+												error_message_field.removeChild(error_message_field.firstChild);
+											}
+
+											error_message_field.appendChild(error_txt)
+										}
+									}
+
+									field.classList.add('is-invalid');
+							  		is_valid = false
+								}
+							});
+
+							if (!is_valid) {
 								event.preventDefault()
 								event.stopPropagation()
-							  }
-
-							  form.classList.add('was-validated')
-							}, useCapture)
-						  })
-						})()
-						</script>
+							}
+						}, useCapture)
+					  })
+				})()
+				</script>
 
 				  <button type="submit" class="btn btn-success btn-lg mb-1">Register</button>
 				  <p class="mb-0">Already has an account? <a href="{%url 'shop:login' %}">Login</a></p>
