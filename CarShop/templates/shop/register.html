@@ -14,242 +14,119 @@
 			  <h3 class="mb-4 pb-2 pb-md-0 px-md-2 text-center">Registration</h3>
 
 			  <div class="px-md-2">
+			    <script src="{% static '/shop/js/validators.js' %}"></script>
 
-			    <!--username-->
-			    <div class="form-outline mb-4 position-relative" >
-				  <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+				{% eval ((form['username'],),) as username_fieldset %}
 
-				  <script src="{% static '/shop/js/validate.js' %}"></script>
-			      <script src="{% static '/shop/js/clear_field_errors.js' %}"></script>
+			    {% eval (
+				  (form['password1'], ),
+				  (form['password2'], f"validatePasswordConfirmation("
+				                          + f"'{form['password1'].auto_id}',"
+				                          + f"'{form['password2'].auto_id}')")) as password_fieldset %}
 
-				  <input
-					type="text"
-					id="{{ form.username.auto_id }}"
-					name="{{ form.username.name }}"
-					value="{% if form.username.value %}{{ form.username.value }}{% endif %}"
-					data-validator="validate('{{ form.username.auto_id }}');"
-					class="form-control {% if form.username.errors %}is-invalid{% endif %}"
-					oninput="clear_field_errors(this.id)"
-				    required/>
+				{% eval ((form['email'],),) as email_fieldset %}
 
-				  <span class="invalid-feedback">
-					{% for error in form.username.errors %}
-					  {{ error }}
-				    {% empty %}
-					  This field is required.123
-			        {% endfor %}
-			      </span>
+				{% eval ((form['first_name'],),
+				         (form['last_name'],)) as names_fieldset %}
 
-			    </div>
+			    {% eval ((form['phone'], f"validatePhone('{form['phone'].auto_id}')"),
+				         (form['address'], f"validateAddress('{form['address'].auto_id}')")) as profile_fieldset %}
 
-			    <!--passwords-->
-			    <div class="row">
-				  <script src="{% static '/shop/js/password_show_hide.js' %}"></script>
+			    {% eval (username_fieldset,
+				         password_fieldset,
+				         email_fieldset,
+				         names_fieldset,
+				         profile_fieldset) as fieldsets %}
 
-				  {% eval (form['password1'], form['password2']) as password_fields %}
+			    {% for fieldset in fieldsets %}
+			      <div class="row">
 
-				  {% for password_field in password_fields %}
-				    {% eval f"{password_field.auto_id}_show" as id_password_show %}
-				    {% eval f"{password_field.auto_id}_hide" as id_password_hide %}
+				    {% eval 12 // len(fieldset) as w %}
+				    {% eval f"col-md-{w} mb-4" as field_class %}
 
-				    <div class="col-md-6 mb-4">
 
-                      <label class="form-label" for="{{ password_field.id_for_label }}">
-						{{ password_field.label }}
-					  </label>
+				    {% for field_validator_pair in fieldset %}
+					  {% eval field_validator_pair[0] as field %}
 
-					  <div class="form-outline">
-					    <div class="input-group">
+					  {% if field_validator_pair|length > 1 %}
+					    {% eval field_validator_pair[1] as validator %}
+					  {% else %}
+					    {% eval "" as validator %}
+				      {% endif %}
 
-						  <input
-							id="{{ password_field.auto_id }}"
-							name="{{ password_field.name }}"
-							type="password"
-							data-validator="validate('{{ password_field.auto_id }}');"
-							value="{% if password_field.value %}{{ password_field.value }}{% endif %}"
-							placeholder="password"
-							class="input form-control {% if password_field.errors %}is-invalid{% endif %}"
-							aria-label="password"
-							oninput="clear_field_errors(this.id)"
-							required/>
 
-						  <div
-						    class="input-group-append d-flex">
-						    <span
-							  class="input-group-text"
+					  <script src="{% static '/shop/js/clear_field_errors.js' %}"></script>
 
-							  onclick="password_show_hide(
-									     '{{ password_field.auto_id }}',
-									     '{{ id_password_show }}',
-									     '{{ id_password_hide }}'
-									   );">
+				      <div class="{{ field_class }}">
+						{% eval field.field.widget.input_type == 'password' as is_password %}
 
-							  <i class="fas fa-eye" id="{{ id_password_show }}"></i>
-							  <i class="fas fa-eye-slash d-none" id="{{ id_password_hide }}"></i>
-						    </span>
-						  </div>
+					      <label class="form-label" for="{{ field.id_for_label }}">
+						    {{ field.label }}
+						  </label>
 
-						  <span class="invalid-feedback">
-							{% for error in password_field.errors %}
-							  {{ error }}
-							{% empty %}
-							  This field is required.123
-							{% endfor %}
-						  </span>
+
+
+						  {% if is_password %}<div class="input-group">{% endif %}
+
+						  {% if field.field.required %}
+							  <input
+								type="{% if is_password %}password{% else %}text{% endif %}"
+								id="{{ field.auto_id }}"
+								name="{{ field.name }}"
+								value="{% if field.value %}{{ field.value }}{% endif %}"
+								class="form-control {% if field.errors %}is-invalid{% endif %}"
+								data-validator="{{ validator }}"
+								oninput="clearFieldErrors(this.id)"
+								required/>
+						  {% else %}
+							  <input
+								type="{% if is_password %}password{% else %}text{% endif %}"
+								id="{{ field.auto_id }}"
+								name="{{ field.name }}"
+								value="{% if field.value %}{{ field.value }}{% endif %}"
+								class="form-control {% if field.errors %}is-invalid{% endif %}"
+								data-validator="{{ validator }}"
+								oninput="clearFieldErrors(this.id)"/>
+						  {% endif %}
+
+						  {% if is_password %}
+						    <script src="{% static '/shop/js/password_show_hide.js' %}"></script>
+
+						  	{% eval f"{field.auto_id}_show" as id_password_show %}
+						    {% eval f"{field.auto_id}_hide" as id_password_hide %}
+							  <div
+								class="input-group-append d-flex">
+								<span
+								  class="input-group-text"
+
+								  onclick="passwordShowHide(
+											 '{{ field.auto_id }}',
+											 '{{ id_password_show }}',
+											 '{{ id_password_hide }}'
+										   );">
+
+								  <i class="fas fa-eye" id="{{ id_password_show }}"></i>
+								  <i class="fas fa-eye-slash d-none" id="{{ id_password_hide }}"></i>
+								</span>
+							  </div>
+						  {% endif %}
+
+					      <span class="invalid-feedback">
+						    {% for error in field.errors %}
+						      {{ error }}
+						    {% endfor %}
+					      </span>
 					    </div>
-					  </div>
-
-
-				    </div>
-
-				  {% endfor %}
-			    </div>
-
-			    <!--email-->
-			    <div class="form-outline mb-4">
-				  <label class="form-label" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
-
-				  <input
-					type="text"
-					value="{% if form.email.value %}{{ form.email.value }}{% endif %}"
-					id="{{ form.email.auto_id }}"
-					name="{{ form.email.name }}"
-					class="form-control {% if form.email.errors %}is-invalid{% endif %}"
-				    aria-describedby="{{ form.email.auto_id }}Feedback"/>
-
-				  <div id="{{ form.email.auto_id }}Feedback" class="invalid-feedback">
-					{% for error in form.email.errors %}
-					  {{ error }}
-				    {% empty %}
-					  This field is required.
-			        {% endfor %}
-				  </div>
-
-			 	</div>
-
-			    <!--first and last names-->
-			    <div class="row">
-				  {% eval (form['first_name'], form['last_name']) as name_fields %}
-
-				  {% for name_field in name_fields %}
-				    <div class="col-md-6 mb-4">
-					  <div class="form-outline">
-					    <label class="form-label" for="{{ name_field.id_for_label }}">
-						  {{ name_field.label }}
-						</label>
-
-					    <input
-						  type="text"
-						  id="{{ name_field.auto_id }}"
-						  name="{{ name_field.name }}"
-						  value="{% if name_field.value %}{{ name_field.value }}{% endif %}"
-						  class="form-control"/>
-
-					  </div>
-				    </div>
-				  {% endfor %}
-			    </div>
-
-			    <!--phone and address-->
-			    <div class="row">
-				  {% eval (form['phone'], form['address']) as profile_fields %}
-
-				  {% for profile_field in profile_fields %}
-				    <div class="col-md-6 mb-4">
-					  <div class="form-outline">
-					    <label class="form-label" for="{{ profile_field.id_for_label }}">
-						  {{ profile_field.label }}
-						</label>
-
-					    <input
-						  type="text"
-						  id="{{ profile_field.auto_id }}"
-						  name="{{ profile_field.name }}"
-						  value="{% if profile_field.value %}{{ profile_field.value }}{% endif %}"
-						  class="form-control {% if profile_field.errors %}is-invalid{% endif %}"
-						  aria-describedby="{{ profile_field.auto_id }}Feedback"
-						  required/>
-
-					    <div id="{{ profile_field.auto_id }}Feedback" class="invalid-feedback">
-						  {% for error in profile_field.errors %}
-						    {{ error }}
-						  {% empty %}
-						    This field is required
-						  {% endfor %}
-					    </div>
-
-					  </div>
-				    </div>
-				  {% endfor %}
-				</div>
+					{% if is_password %}</div>{% endif %}
+				    {% endfor %}
+			      </div>
+			    {% endfor %}
 
 			    <!--register and login buttons-->
 				<div class="row text-center">
 
-					<script>
-				(function () {
-					'use strict'
-					const forms = document.querySelectorAll('.requires-validation')
-
-					Array.from(forms).forEach(form => {
-						const useCapture = false
-
-						var fields = Array.from(form.elements);
-
-						form.addEventListener('submit', event => {
-						    var is_valid = true
-
-							fields.forEach(field => {
-
-								var error_message = ''
-
-								if ('validator' in field.dataset) {
-									try {
-										eval(field.dataset.validator)
-									} catch (error) {
-										if (error.name === 'ValidationError') {
-											error_message = error.message
-										}
-										else {
-											throw error
-										}
-									}
-								}
-
-								if (!error_message && field.checkValidity()) {
-							  		field.classList.remove('is-invalid');
-
-								} else {
-									if (error_message && field.id !== '') {
-										// var error_message_field = document.querySelector(`#${field.id} + span.invalid-feedback`)
-										var error_message_field = field.parentElement.querySelector('span.invalid-feedback')
-
-										if (error_message_field !== null) {
-
-											alert(`${field.id}   ${error_message_field}`)
-											var error_txt = document.createTextNode(error_message);
-
-											while (error_message_field.firstChild) {
-												error_message_field.removeChild(error_message_field.firstChild);
-											}
-
-											error_message_field.appendChild(error_txt)
-										}
-									}
-
-									field.classList.add('is-invalid');
-							  		is_valid = false
-								}
-							});
-
-							if (!is_valid) {
-								event.preventDefault()
-								event.stopPropagation()
-							}
-						}, useCapture)
-					  })
-				})()
-				</script>
+				  <script src="{% static '/shop/js/add_presubmit_validation.js' %}"></script>
+				  <script>addPresubmitValidation()</script>
 
 				  <button type="submit" class="btn btn-success btn-lg mb-1">Register</button>
 				  <p class="mb-0">Already has an account? <a href="{%url 'shop:login' %}">Login</a></p>
