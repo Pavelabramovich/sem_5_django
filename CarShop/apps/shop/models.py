@@ -4,7 +4,6 @@ from django.db import models
 from django.utils.html import mark_safe
 from django.contrib.auth.models import User
 
-from apps.core.image_tools import get_random_color
 from apps.core.model_tools import AvatarField
 from .validators import (
     validate_phone_number, normalize_phone,
@@ -14,6 +13,7 @@ from .validators import (
 )
 from apps.core.media_tools import OverwriteCodedStorage
 from apps.core.model_tools import SvgField, NamedImageField
+import apps.shop.model_funcs as model_funcs
 
 
 class Profile(models.Model):
@@ -25,8 +25,8 @@ class Profile(models.Model):
     address = models.CharField(max_length=64, validators=[validate_address])
 
     avatar = AvatarField(upload_to='profile_avatars', default='profile_avatars/avatar_default.jpg', blank=True,
-                         get_color=lambda instance: get_random_color(instance.user.id), avatar_size=300,
-                         get_filename=lambda instance: f"avatar_{instance.user.id}",)
+                         get_color=model_funcs.get_profile_avatar_color, avatar_size=300,
+                         get_filename=model_funcs.get_profile_avatar_filename)
 
     def __str__(self):
         return f'{self.user.username} Profile'
@@ -56,10 +56,10 @@ class Category(models.Model):
                             help_text="Enter a category (e.g. Oil, Tire etc.)")
 
     logo = SvgField(upload_to='categories_logo', default='categories_logo/logo_default.svg',
-                    get_filename=lambda instance: f"logo_{instance.uuid}", storage=OverwriteCodedStorage())
+                    get_filename=model_funcs.get_category_logo_filename, storage=OverwriteCodedStorage())
 
     image = NamedImageField(upload_to='categories_images', default='categories_images/image_default.png',
-                            get_filename=lambda instance: f"image_{instance.uuid}", storage=OverwriteCodedStorage())
+                            get_filename=model_funcs.get_category_image_filename, storage=OverwriteCodedStorage())
 
     def delete(self, using=None, keep_parents=False):
         if self.logo != self.logo.field.default:

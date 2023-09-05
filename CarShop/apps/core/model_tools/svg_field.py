@@ -29,8 +29,9 @@ def validate_svg(f):
 class SvgField(NamedFileField):
     def __init__(self, *args, **kwargs):
         if 'validators' in kwargs:
-            kwargs['validators'].append(validate_svg)
+            if validate_svg not in kwargs['validators']:
+                kwargs['validators'].append(validate_svg)
         else:
             kwargs['validators'] = [validate_svg]
 
-        super().__init__(*args, get_filename=kwargs.pop('get_filename', None), **kwargs)
+        super().__init__(*args, **kwargs)

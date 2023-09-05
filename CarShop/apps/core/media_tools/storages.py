@@ -45,7 +45,9 @@ class CodedStorage(FileSystemStorage):
 
     def _open(self, name, mode="rb"):
         coded_names = self.__get_matched_filenames(name)
-        name = coded_names[0]
+
+        if coded_names:
+            name = coded_names[0]
 
         return super()._open(name, mode)
 

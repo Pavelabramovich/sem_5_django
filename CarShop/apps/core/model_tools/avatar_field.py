@@ -7,6 +7,7 @@ from PIL import Image
 
 from apps.core.image_tools import create_background, crop_to_circle
 from apps.core.media_tools import OverwriteCodedStorage
+from apps.core.model_tools import NamedImageField
 
 
 class AvatarFieldFile(ImageFieldFile):
@@ -15,22 +16,35 @@ class AvatarFieldFile(ImageFieldFile):
             self.file = None
 
 
-class AvatarField(ImageField):
+def get_default_avatar_field_filename(instance):
+    return "avatar"
+
+
+def get_default_avatar_field_color(instance):
+    return (240, 29, 0)  # Red
+
+
+class AvatarField(NamedImageField):
     attr_class = AvatarFieldFile
 
     def __init__(
         self,
         avatar_size=300,
-        get_filename=lambda instance: "avatar",
-        get_color=lambda instance: (240, 29, 0), # Red
+        get_filename=get_default_avatar_field_filename,
+        get_color=get_default_avatar_field_color,
         storage=OverwriteCodedStorage(),
         **kwargs
     ):
-        super().__init__(**kwargs)
+        super().__init__(get_filename=get_filename, **kwargs)
         self.avatar_size = avatar_size
-        self.get_filename = get_filename
         self.get_color = get_color
         self.storage = storage
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        kwargs["avatar_size"] = self.avatar_size
+        kwargs["get_color"] = self.get_color
+        return name, path, args, kwargs
 
     def __get_avatar_file(self, image):
         if image and image.name != self.default:
