@@ -4,7 +4,7 @@
 
 .aligned label.required:not(.vCheckboxLabel):after {
     content: " *";
-    padding-top: 10px;
+    padding-top: 3px;
     padding-left: 3px;
     font-weight: bold;
 }

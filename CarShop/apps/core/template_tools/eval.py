@@ -1,5 +1,6 @@
 from django import template
 from django.utils.translation import gettext_lazy as _
+from apps.core.basic_tools import internet_connection_exists
 import re
 
 
@@ -12,7 +13,7 @@ class EvalNode(template.Node):
         clist = list(context)
 
         clist.reverse()
-        context_dict = {'_': _}
+        context_dict = {'_': _, 'internet_connection_exists': internet_connection_exists}
 
         for c in clist:
             context_dict.update(c)

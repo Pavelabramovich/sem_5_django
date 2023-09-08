@@ -44,7 +44,6 @@
 				    {% eval 12 // len(fieldset) as w %}
 				    {% eval f"col-md-{w} mb-4" as field_class %}
 
-
 				    {% for field_validator_pair in fieldset %}
 					  {% eval field_validator_pair[0] as field %}
 
@@ -53,7 +52,6 @@
 					  {% else %}
 					    {% eval "" as validator %}
 				      {% endif %}
-
 
 					  <script src="{% static '/shop/js/clear_field_errors.js' %}"></script>
 
