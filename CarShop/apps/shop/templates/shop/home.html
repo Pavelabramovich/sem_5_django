@@ -11,7 +11,8 @@
           <div class="position-relative">
             <img src="{{category.image.url}}" height="100px"/>
             <p>{{ category.name }}</p>
-            <a class="stretched-link" href="{% url 'shop:products'%}"></a>
+            <a class="stretched-link" href="{{ category.get_absolute_url }}"></a>
+<!--            <a class="stretched-link" href="{% url 'shop:products'%}"></a>-->
          </div>
         </div>
       {% empty %}

@@ -101,6 +101,10 @@ def register(request):
             return render(request, 'shop/register.html', {'form': form})
 
 
+class CategoryDetailView(generic.DetailView):
+    model = Category
+
+
 class ShowProfilePageView(DetailView):
     model = Profile
     template_name = 'shop/user_profile.html'

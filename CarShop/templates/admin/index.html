@@ -56,7 +56,7 @@
           <div class="row" id="statistic">
             {% if internet_connection_exists %}
               <script src="https://www.google.com/jsapi"></script>
-              <script src="{% static '/admin/js/draw_diagram.js' %}"></script>
+              <script src="{% static '/js/draw_diagram.js' %}"></script>
 
               <div class="col-m-1 col-s-2 col-1" style="padding: 0 15px 0;">
                 <div id="diagram-categories" style="width: 85%; height: 93%;"></div>
@@ -73,7 +73,7 @@
                                            "???", "diagram-users", JSON.parse('{{ users_per_months | safe }}'))
               </script>
             {% else %}
-              <script src="{% static '/admin/js/init_table.js' %}"></script>
+              <script src="{% static '/js/init_table.js' %}"></script>
 
               <div class="col-m-1 col-s-2 col-1" style="padding: 0 15px 0;">
                 <h4>Count of products for each category</h4>

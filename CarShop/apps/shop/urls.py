@@ -13,6 +13,8 @@ urlpatterns = [
     path('products/', views.ProductListView.as_view(), name='products'),
     re_path(r'product/(?P<pk>.+)/$', views.ProductDetailView.as_view(), name='product-detail'),
 
+    re_path(r'category/(?P<pk>.+)/$', views.CategoryDetailView.as_view(), name='category-detail'),
+
     path('login/', views.CustomLoginView.as_view(authentication_form=forms.LoginForm), name='login'),
     path('logout/', LogoutView.as_view(next_page='shop:home'), name='logout'),
     path('register/', views.register, name='register'),
