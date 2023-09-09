@@ -9,11 +9,7 @@ from collections import Counter
 from apps.core.basic_tools import internet_connection_exists
 
 
-class CustomAdminConfig(AdminConfig):
-    default_site = 'apps.admin.CustomAdminSite'
-
-
-class CustomAdminSite(admin.AdminSite):
+class CustomViewsAdminSite(admin.AdminSite):
     def index(self, request, extra_context=None):
         from apps.shop.models import Category
         from django.contrib.auth.models import User

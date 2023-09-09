@@ -41,17 +41,19 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'apps.admin.CustomAdminConfig',
+    'apps.admin_override',
+    'apps.core',
+    'apps.shop',
+
+    'more_admin_filters',
+
+    'apps.admin_override.admin',
     
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'more_admin_filters',
-
-    'apps.shop',
 ]
 
 MIDDLEWARE = [
