@@ -15,7 +15,7 @@ from django.contrib.auth import login
 from .models import (
     Product,
     Buy,
-    Profile,
+    Profile, News,
     Category, CarouselItem
 )
 from .forms import UserProfileCreationForm, RegistrationForm
@@ -50,10 +50,12 @@ def get_bitcoin():
 def home(request):
     categories = Category.objects.all()
     carousel_items = CarouselItem.objects.all()
+    news = News.objects.all()
 
     return render(request, "shop/home.html", {
         'categories': categories,
-        'carousel_items': carousel_items
+        'carousel_items': carousel_items,
+        'news': news
     })
 
 
@@ -109,6 +111,10 @@ class CategoryDetailView(generic.DetailView):
 
         context['carousel_items'] = CarouselItem.objects.all()
         return context
+
+
+class NewsDetailView(generic.DetailView):
+    model = News
 
 
 class ShowProfilePageView(DetailView):

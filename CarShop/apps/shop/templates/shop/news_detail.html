@@ -1,0 +1,16 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+  <h1>{{ news.title }}</h1>
+
+<textarea
+  rows="25"
+  cols="199"
+  readonly>
+
+  {{ news.content }}
+
+
+</textarea>
+
+{% endblock %}

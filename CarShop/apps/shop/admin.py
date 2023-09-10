@@ -16,8 +16,8 @@ from apps.core.admin_tools import (
     UserFieldsetsInlineMixin
 )
 from apps.core.db_tools import queryset_condition_filter
-from .models import Category, Product, Buy, Profile, Provider, CarouselItem
-from .forms import UserAsProviderChangeForm
+from .models import Category, Product, Buy, Profile, Provider, CarouselItem, News
+from .forms import UserAsProviderChangeForm, NewsModelForm
 from .matchers import match_phone_number, match_date, match_address
 from .validators import validate_provider, is_valid
 
@@ -81,15 +81,15 @@ class ProductAdmin(ViewOnlyFieldsAdminMixin, admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('name', 'category', 'price')
+            'fields': ('name', 'category', 'price', 'image')
         }),
         ('Detailed information', {
-            'fields': ('article', 'providers')
+            'fields': ('article', 'uuid', 'providers')
         }),
     )
 
     viewonly_fields = ('category', 'providers')
-    readonly_fields = ("article",)
+    readonly_fields = ("article", 'uuid')
 
     list_per_page = 20
 
@@ -112,11 +112,13 @@ class ProductAdmin(ViewOnlyFieldsAdminMixin, admin.ModelAdmin):
 
 @admin.register(Buy)
 class BuyAdmin(admin.ModelAdmin):
-    list_display = ('date', 'product_name', 'count')
-    ordering = ('date', 'product_name', 'count')
-    list_filter = (('date', DateFieldListFilter), ('product_name', MultiSelectFilter))
-
-    search_fields = ('product_name',)
+    list_display = ('date', 'user', 'product', 'count', 'card_num')
+    ordering = ('date', 'product', 'count')
+    list_filter = (
+        ('date', DateFieldListFilter),
+        ('user', MultiSelectRelatedFilter),
+        ('product', MultiSelectRelatedFilter)
+    )
 
     def get_search_results(self, request, queryset, search_term):
         date_matches = queryset.condition_filter(lambda obj: match_date(obj.date, search_term) > 0.75)
@@ -134,6 +136,9 @@ class BuyAdmin(admin.ModelAdmin):
     list_per_page = 20
 
     def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request):
         return False
 
 
@@ -240,6 +245,12 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
     def delete_queryset(self, request, queryset):
         for obj in queryset:
             obj.delete()
+
+
+@admin.register(News)
+class NewsAdmin(admin.ModelAdmin):
+    form = NewsModelForm
+
 
 
 @admin.register(CarouselItem)

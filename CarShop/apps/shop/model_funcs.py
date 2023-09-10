@@ -22,3 +22,7 @@ def get_profile_avatar_color(instance):
 
 def get_carousel_item_image_filename(instance):
     return f"carousel_item_{instance.uuid}"
+
+
+def get_product_image_filename(instance):
+    return f"image_{instance.uuid}"

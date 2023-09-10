@@ -20,6 +20,21 @@
     </div>
   </div>
 
+<h2 class="text-center my-5">News</h2>
+  {% for n in news %}
+  <dt><a href="{{ n.get_absolute_url }}">{{ n.title }}</a></dt>
+
+
+    {% empty %}
+      <dt>No news now</dt>
+    {% endfor %}
+
+
+
+
+
+
+
   <h2>About Us!</h2>
   <h3 style="text-align: center;">Welcome To Mater Headlight</h3>
   <p>Mater Headlight is a Professional Shop Platform. Here we will provide you only quality accessories, which you will like very much.

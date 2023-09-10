@@ -4,7 +4,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm, UsernameField
 
 from apps.core.form_tools import LabelOnlyWidget
-from .models import Product, Provider, Profile
+from django.forms import ModelForm, Textarea
+
+from .models import Product, Provider, Profile, News
 from .validators import (
     validate_provider,
     validate_phone_number,
@@ -129,3 +131,13 @@ class UserAsProviderChangeForm(UserChangeForm):
                 provider.save()
 
         return instance
+
+
+class NewsModelForm(ModelForm):
+    class Meta:
+        model = News
+        fields = '__all__'
+        widgets = {
+            'content': Textarea(attrs={'cols': 80, 'rows': 20}),
+        }
+

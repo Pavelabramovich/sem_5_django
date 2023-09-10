@@ -14,6 +14,7 @@ urlpatterns = [
     re_path(r'product/(?P<pk>.+)/$', views.ProductDetailView.as_view(), name='product-detail'),
 
     re_path(r'category/(?P<pk>.+)/$', views.CategoryDetailView.as_view(), name='category-detail'),
+    re_path(r'news/(?P<pk>.+)/$', views.NewsDetailView.as_view(), name='news-detail'),
     path("terms_of_service/", TemplateView.as_view(template_name="shop/terms_of_service.html"), name='terms_of_service'),
 
     path('login/', views.CustomLoginView.as_view(authentication_form=forms.LoginForm), name='login'),

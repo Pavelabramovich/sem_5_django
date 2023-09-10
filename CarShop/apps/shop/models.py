@@ -88,25 +88,6 @@ class Category(models.Model):
         ordering = ("name",)
 
 
-class Buy(models.Model):
-    date = models.DateField()
-
-    product_name = models.CharField(max_length=64, help_text="Name of product")
-
-    count = models.IntegerField(validators=[get_positive_validator('Count')])
-
-    def __str__(self):
-        return f"Buy {self.product_name} x{self.count}"
-
-    def get_absolute_url(self):
-        return f'buy/{self.id}/'
-
-    class Meta:
-        verbose_name = "buy"
-        verbose_name_plural = "buys"
-        ordering = ("-date", "product_name", "count")
-
-
 class Provider(User):
     pass
 
@@ -123,6 +104,11 @@ class Product(models.Model):
 
     providers = models.ManyToManyField(Provider, help_text="Select a provider for this product",
                                        blank=True, related_name='products')
+
+    image = NamedImageField(upload_to='products_images',
+                            get_filename=model_funcs.get_product_image_filename, storage=OverwriteCodedStorage())
+
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
     def get_absolute_url(self):
         return f"/product/{self.article}/"
@@ -162,3 +148,44 @@ class CarouselItem(models.Model):
 
     def get_image_as_html_image(self, height):
         return mark_safe(f'<img src = "{self.image.url}" height = "{height}"/>')
+
+    def delete(self, using=None, keep_parents=False):
+        self.image.delete(save=False)
+        super().delete(using=using, keep_parents=keep_parents)
+
+
+class Buy(models.Model):
+    date = models.DateField()
+
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
+
+    count = models.IntegerField(validators=[get_positive_validator('Count')])
+
+    card_num = models.IntegerField(validators=[get_not_negative_validator('Card number')])
+
+    def __str__(self):
+        return f"Buy {self.product.name if self.product else None} x{self.count}"
+
+    def get_absolute_url(self):
+        return f'buy/{self.id}/'
+
+    class Meta:
+        verbose_name = "buy"
+        verbose_name_plural = "buys"
+        ordering = ("-date", "product", "count")
+
+
+class News(models.Model):
+    title = models.CharField(max_length=64, blank=True)
+    content = models.TextField()
+
+    class Meta:
+        verbose_name = "news"
+        verbose_name_plural = "news"
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return f"/news/{self.id}/"
