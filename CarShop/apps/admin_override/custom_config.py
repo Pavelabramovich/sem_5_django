@@ -6,7 +6,7 @@ from .views import CustomViewsAdminSite
 
 
 class CustomAdminConfig(AdminConfig):
-    default_site = 'apps.admin_override.config.CustomAdminSite'
+    default_site = 'apps.admin_override.custom_config.CustomAdminSite'
 
 
 overrides = (

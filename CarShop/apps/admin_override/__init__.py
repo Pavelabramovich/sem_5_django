@@ -1,1 +1,1 @@
-from .config import CustomAdminConfig as admin
+from .custom_config import CustomAdminConfig as config
