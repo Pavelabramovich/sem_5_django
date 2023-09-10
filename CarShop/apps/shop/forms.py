@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm, UsernameField
 
 from apps.core.form_tools import LabelOnlyWidget
-from .models import Product, Provider
+from .models import Product, Provider, Profile
 from .validators import (
     validate_provider,
     validate_phone_number,
@@ -32,9 +32,46 @@ class UserProfileCreationForm(UserCreationForm):
 
     address = forms.CharField(max_length=64, validators=[validate_address])
 
+    def save(self, *args, **kwargs):
+        user = super().save(*args, **kwargs)
+
+        if user.pk:
+            phone = self.cleaned_data['phone']
+            address = self.cleaned_data['address']
+
+            Profile.objects.create(
+                user=user,
+                phone=phone,
+                address=address
+            )
+
+        return user
+
     class Meta:
         model = User
         fields = ('username', 'email', 'password1', 'password2', 'first_name', 'last_name')
+
+
+class RegistrationForm(UserProfileCreationForm):
+    terms_of_service_accepted = forms.BooleanField(
+        required=False,
+        label="Provider status",
+        help_text="Determines whether the user can provide products."
+    )
+
+    def clean(self):
+        super().clean()
+
+        terms_of_service_accepted = self.cleaned_data.get('terms_of_service_accepted')
+
+        print(terms_of_service_accepted)
+
+        if not terms_of_service_accepted:
+            self._errors['terms_of_service_accepted'] = self.error_class([
+                'You must accept all terms of the user agreement.'
+            ])
+
+        return self.cleaned_data
 
 
 class UserAsProviderChangeForm(UserChangeForm):
@@ -72,14 +109,12 @@ class UserAsProviderChangeForm(UserChangeForm):
                 """
 
     def save(self, *args, **kwargs):
-        instance = super(UserAsProviderChangeForm, self).save(*args, **kwargs)
+        instance = super().save(*args, **kwargs)
 
         if instance.pk:
             is_provider = self.cleaned_data['is_provider']
 
             if self.provider:
-                print(self.fields['is_provider'].__dict__)
-
                 if is_provider:
                     self.provider.products.clear()
                     self.provider.products.add(*self.cleaned_data['products'])

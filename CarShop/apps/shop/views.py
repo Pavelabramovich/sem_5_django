@@ -16,9 +16,9 @@ from .models import (
     Product,
     Buy,
     Profile,
-    Category
+    Category, CarouselItem
 )
-from .forms import UserProfileCreationForm
+from .forms import UserProfileCreationForm, RegistrationForm
 
 
 def get_weather():
@@ -49,9 +49,11 @@ def get_bitcoin():
 
 def home(request):
     categories = Category.objects.all()
+    carousel_items = CarouselItem.objects.all()
 
     return render(request, "shop/home.html", {
-        'categories': categories
+        'categories': categories,
+        'carousel_items': carousel_items
     })
 
 
@@ -62,6 +64,12 @@ class ProductListView(generic.ListView):
 
 class ProductDetailView(generic.DetailView):
     model = Product
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['carousel_items'] = CarouselItem.objects.all()
+        return context
 
 
 class CustomLoginView(LoginView):
@@ -78,31 +86,29 @@ class CustomLoginView(LoginView):
 
 def register(request):
     if request.method == 'GET':
-        form = UserProfileCreationForm()
+        form = RegistrationForm()
         return render(request, 'shop/register.html', {'form': form})
 
     if request.method == 'POST':
-        form = UserProfileCreationForm(request.POST)
-        if form.is_valid():
+        form = RegistrationForm(request.POST)
+        if form.is_valid() and form.cleaned_data['phone']:
             with transaction.atomic():
                 user = form.save()
-
-                Profile.objects.create(
-                    user=user,
-                    phone=form.cleaned_data['phone'],
-                    address=form.cleaned_data['address']
-                )
-
                 messages.success(request, "You have singed up successfully.")
                 login(request, user)
                 return redirect('shop:home')
         else:
-
             return render(request, 'shop/register.html', {'form': form})
 
 
 class CategoryDetailView(generic.DetailView):
     model = Category
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['carousel_items'] = CarouselItem.objects.all()
+        return context
 
 
 class ShowProfilePageView(DetailView):

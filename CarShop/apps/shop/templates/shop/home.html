@@ -9,10 +9,9 @@
       {% for category in categories %}
         <div class="col-md-3 col-sm-4 col-6 text-center" style="padding:0 4%;">
           <div class="position-relative">
-            <img src="{{category.image.url}}" height="100px"/>
+            <img src="{{ category.image.url }}" height="100px"/>
             <p>{{ category.name }}</p>
             <a class="stretched-link" href="{{ category.get_absolute_url }}"></a>
-<!--            <a class="stretched-link" href="{% url 'shop:products'%}"></a>-->
          </div>
         </div>
       {% empty %}
@@ -20,6 +19,16 @@
       {% endfor %}
     </div>
   </div>
+
+  <h2>About Us!</h2>
+  <h3 style="text-align: center;">Welcome To Mater Headlight</h3>
+  <p>Mater Headlight is a Professional Shop Platform. Here we will provide you only quality accessories, which you will like very much.
+     We're dedicated to providing you the best of services, with a focus on dependability and car details.
+     We're working to turn our passion for shop into a booming online website.
+     We hope you enjoy our store as much as we enjoy offering them to you.</p>
+<p>I will keep posting more important posts on my Website for all of you. Please give your support and love.</p>
+<p style="font-weight: bold; text-align: center;">Thanks For Visiting Our Site<br><br>
+<span style="color: blue; font-size: 16px; font-weight: bold; text-align: center;">Have a nice day!</span></p>
 {% endblock %}
 
 {% block carousel_interval %}5000{% endblock %}

@@ -120,6 +120,30 @@
 			      </div>
 			    {% endfor %}
 
+				<div class="row text-center">
+				  <div class="col-md-12 mb-4">
+					  <div class="form-check justify-content-center">
+				  <input
+				    class="form-check-input {% if form.terms_of_service_accepted.errors %}is-invalid{% endif %}"
+					type="checkbox"
+					style="float: none; margin-left: 0;"
+					name="{{ form.terms_of_service_accepted.name }}"
+					id="{{ form.terms_of_service_accepted.auto_id }}">
+
+					<label>
+                      I agree all statements in <a href="{% url 'shop:terms_of_service' %}">Terms of service</a>
+                    </label>
+
+					<span class="invalid-feedback">
+					  {% for error in form.terms_of_service_accepted.errors %}
+					    {{ error }}
+					  {% endfor %}
+				    </span>
+                  </div>
+				  </div>
+
+				</div>
+
 			    <!--register and login buttons-->
 				<div class="row text-center">
 

@@ -16,7 +16,7 @@ from apps.core.admin_tools import (
     UserFieldsetsInlineMixin
 )
 from apps.core.db_tools import queryset_condition_filter
-from .models import Category, Product, Buy, Profile, Provider
+from .models import Category, Product, Buy, Profile, Provider, CarouselItem
 from .forms import UserAsProviderChangeForm
 from .matchers import match_phone_number, match_date, match_address
 from .validators import validate_provider, is_valid
@@ -40,10 +40,10 @@ class CategoryAdmin(admin.ModelAdmin):
     readonly_fields = ("uuid",)
 
     def get_logo_as_html_image(self, obj):
-        return obj.get_logo_as_html_image(height=75)
+        return obj.get_logo_as_html_image(width=75)
 
     def get_image_as_html_image(self, obj):
-        return obj.get_image_as_html_image(height=75)
+        return obj.get_image_as_html_image(width=75)
 
     get_logo_as_html_image.short_description = "Logo"
     get_image_as_html_image.short_description = "Image"
@@ -98,9 +98,9 @@ class ProductAdmin(ViewOnlyFieldsAdminMixin, admin.ModelAdmin):
         providers_id = ','.join([str(provider.id) for provider in providers])
 
         link = (
-            reverse("admin:auth_user_changelist") +
-            "?" +
-            urlencode({"id__in": providers_id})
+                reverse("admin:auth_user_changelist") +
+                "?" +
+                urlencode({"id__in": providers_id})
         )
 
         few_providers = obj.get_few_providers()
@@ -236,6 +236,26 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
     get_avatar_as_html_image.short_description = "Avatar"
 
     list_per_page = 20
+
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            obj.delete()
+
+
+@admin.register(CarouselItem)
+class CarouselItemAdmin(admin.ModelAdmin):
+    list_display = ('get_image_as_html_image', 'title', 'subtitle')
+    list_editable = ('title', 'subtitle')
+    ordering = ('title', 'subtitle')
+
+    search_fields = ('title', 'subtitle')
+
+    list_per_page = 20
+
+    def get_image_as_html_image(self, obj):
+        return obj.get_image_as_html_image(height=100)
+
+    get_image_as_html_image.short_description = "Image"
 
     def delete_queryset(self, request, queryset):
         for obj in queryset:

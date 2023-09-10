@@ -39,9 +39,9 @@ class CodedStorage(FileSystemStorage):
             only_name = os.extsep.join(only_name)
 
             file_matches = [str(path) for path in Path(self.location).glob(f'{only_name}*')]
-            file_codes = [path.split(os.extsep)[-2] for path in file_matches]
+            file_code_extension = [path.split(os.extsep)[-2::] for path in file_matches]
 
-            return [f"{only_name}{os.extsep}{file_code}{os.extsep}{extension}" for file_code in file_codes]
+            return [f"{only_name}{os.extsep}{code}{os.extsep}{extension}" for code, extension in file_code_extension]
 
     def _open(self, name, mode="rb"):
         coded_names = self.__get_matched_filenames(name)

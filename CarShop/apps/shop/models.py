@@ -76,11 +76,11 @@ class Category(models.Model):
     def get_absolute_url(self):
         return f'/category/{self.id}/'
 
-    def get_logo_as_html_image(self, height):
-        return mark_safe(f'<img src = "{self.logo.url}" width = "{height}"/>')
+    def get_logo_as_html_image(self, width):
+        return mark_safe(f'<img src = "{self.logo.url}" width = "{width}"/>')
 
-    def get_image_as_html_image(self, height):
-        return mark_safe(f'<img src = "{self.image.url}" width = "{height}"/>')
+    def get_image_as_html_image(self, width):
+        return mark_safe(f'<img src = "{self.image.url}" width = "{width}"/>')
 
     class Meta:
         verbose_name = "category"
@@ -148,4 +148,17 @@ class Product(models.Model):
         ordering = ("name",)
 
 
+class CarouselItem(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
+    image = NamedImageField(upload_to='carousel_items_images',
+                            get_filename=model_funcs.get_carousel_item_image_filename, storage=OverwriteCodedStorage())
+
+    title = models.CharField(max_length=64, blank=True)
+    subtitle = models.CharField(max_length=64, blank=True)
+
+    def __str__(self):
+        return self.title
+
+    def get_image_as_html_image(self, height):
+        return mark_safe(f'<img src = "{self.image.url}" height = "{height}"/>')

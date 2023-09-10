@@ -15,7 +15,10 @@
         bottom:0;
         left:0;
         right:0;
-        background:rgba(0,0,0,0.6);
+      }
+
+      .darken-image {
+         filter: brightness(35%);
       }
     </style>
 
@@ -27,15 +30,15 @@
 
       <div class="carousel-inner">
         {% block carousel_items %}
-          <div class="carousel-item active">
-            <img class="d-block w-100" src="{% static '/shop/images/carousel_1.png' %}" alt="">
+        {% for carousel_item in carousel_items %}
+          <div class="carousel-item {% if forloop.counter0 == 0 %} active {% endif %}">
+            <img class="d-block w-100 darken-image" src="{{ carousel_item.image.url }}">
+            <div class="carousel-caption d-none d-md-block">
+              <h1 class="animate__animated animate__fadeInDown" style='margin-bottom:100px;font: 62.5% "Roboto","Arial","Helvetica",sans-serif;font-size: 5em;font-weight: 700;'>{{ carousel_item.title }}</h1>
+              <h3 class="animate__animated animate__zoomIn" style='font: 62.5% "Roboto","Arial","Helvetica",sans-serif;font-size: 1.9em;'>{{ carousel_item.subtitle }}</h3>
+            </div>
           </div>
-          <div class="carousel-item">
-            <img class="d-block w-100" src="{% static '/shop/images/carousel_2.png' %}" alt="">
-          </div>
-          <div class="carousel-item">
-            <img class="d-block w-100" src="{% static '/shop/images/carousel_3.png' %}" alt="">
-          </div>
+        {% endfor %}
         {% endblock %}
       </div>
     </div>
