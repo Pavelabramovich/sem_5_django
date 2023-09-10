@@ -3,6 +3,13 @@
 {% load static %}
 
 
+
+{% block extrahead %}
+  {% block icon %}
+    <link rel="icon" sizes="32x32" href="{% static '/admin/images/logo.svg' %}">
+  {% endblock %}
+{% endblock %}
+
 {% block userlinks %}
   {% if site_url %}
       <a href="{{ site_url }}">{% translate 'View site' %}</a> /

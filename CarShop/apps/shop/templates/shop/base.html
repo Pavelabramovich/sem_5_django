@@ -5,8 +5,10 @@
     {% block title %}
       <title>Mater Headlight — Auto Detailing Supplies, Chemicals, Equipment, Accessories and more</title>
     {% endblock %}
-    
-    <link rel="icon" sizes="32x32" href="{% static '/shop/images/small_logo.svg' %}">
+
+    {% block icon %}
+      <link rel="icon" sizes="32x32" href="{% static '/shop/images/small_logo.svg' %}">
+    {% endblock %}
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
