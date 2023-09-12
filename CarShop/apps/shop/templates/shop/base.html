@@ -2,6 +2,7 @@
 {% load static %}
 <html lang="en">
   <head>
+    <meta name="description" content="Car shop Mater headlight">
     {% block title %}
       <title>Mater Headlight — Auto Detailing Supplies, Chemicals, Equipment, Accessories and more</title>
     {% endblock %}
@@ -81,6 +82,10 @@
                 {% if user.is_superuser %}
                   <li class="nav-item">
                     <a href="/admin/" class="nav-link">Admin panel</a>
+                  </li>
+                {% else %}
+                  <li class="nav-item">
+                    <a href="/faqs/" class="nav-link">FAQ</a>
                   </li>
                 {% endif %}
               </ul>

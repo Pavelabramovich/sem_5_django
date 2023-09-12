@@ -29,11 +29,13 @@
       <dt>No news now</dt>
     {% endfor %}
 
+<h2>Our providers</h2>
 
-
-
-
-
+{% for provider in providers %}
+    <hr>
+    <p><strong>Name:</strong> {{provider.username}}</p>
+    <p class="text-muted"><strong>Phone:</strong> {{provider.profile.phone}}</p>
+{% endfor %}
 
   <h2>About Us!</h2>
   <h3 style="text-align: center;">Welcome To Mater Headlight</h3>

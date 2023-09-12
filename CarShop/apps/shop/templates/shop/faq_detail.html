@@ -1,0 +1,17 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+  <h1 style="margin-top:20px;">{{ faq.title }}</h1>
+
+<textarea
+  rows="25"
+  cols="199"
+  readonly
+>
+
+  {{ faq.content }}
+
+
+</textarea>
+
+{% endblock %}

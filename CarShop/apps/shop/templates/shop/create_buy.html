@@ -1,0 +1,36 @@
+{% extends "shop/base.html" %}
+{% load template_tools %}
+
+{% block content %}
+<form method="POST" class="requires-validation" novalidate>
+  {% csrf_token %}
+  <h1>Name: {{ product.name }}</h1>
+
+  {% if discount == 0 %}
+    <p><strong>Price:</strong> {{ product.price }}</p>
+  {% else %}
+    {% eval int(product.price - (product.price / 100 * discount)) as total_price %}
+    <p><strong>Price:</strong> {{ product.price }}</p>
+    <p><strong>Price with discount:</strong> {{ total_price }}</p>
+  {% endif %}
+
+  <div style="margin-left:20px;margin-top:20px">
+    <h4>Count</h4>
+    <input
+      type="number"
+      name="{{ form.count.name }}"
+      id="{{ form.count.auto_id }}"
+      min="0" oninput="validity.valid||(value='');">
+
+    <h4>Card number</h4>
+    <input
+      type="number"
+      name="{{ form.card_num.name }}"
+      id="{{ form.card_num.auto_id }}"
+      min="0" oninput="validity.valid||(value='');">
+
+  </div>
+
+<input type="submit" value="Complete buy"/>
+</form>
+{% endblock %}

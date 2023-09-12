@@ -68,6 +68,11 @@ def validate_provider(user):
         raise ValidationError(f"{user.username} does not have provider permissions.")
 
 
+def validate_discount(discount):
+    if discount < 1 or discount > 100:
+        raise ValidationError("Incorrect discount")
+
+
 def is_valid(*args):
     validator = args[0]
 

@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm, Authenti
 from apps.core.form_tools import LabelOnlyWidget
 from django.forms import ModelForm, Textarea
 
-from .models import Product, Provider, Profile, News
+from .models import Product, Provider, Profile, News, Review, Faq
 from .validators import (
     validate_provider,
     validate_phone_number,
@@ -141,3 +141,29 @@ class NewsModelForm(ModelForm):
             'content': Textarea(attrs={'cols': 80, 'rows': 20}),
         }
 
+
+class ReviewModelForm(ModelForm):
+    class Meta:
+        model = Review
+        fields = '__all__'
+        widgets = {
+            'content': Textarea(attrs={'cols': 80, 'rows': 20}),
+        }
+
+
+class FaqModelForm(ModelForm):
+    class Meta:
+        model = Faq
+        fields = '__all__'
+        widgets = {
+            'content': Textarea(attrs={'cols': 80, 'rows': 20}),
+        }
+
+
+class CreateBuyForm(forms.Form):
+    count = forms.IntegerField()
+    card_num = forms.IntegerField()
+
+
+class CreateReviewForm(forms.Form):
+    content = forms.CharField(widget=Textarea(attrs={'cols': 80, 'rows': 20}))

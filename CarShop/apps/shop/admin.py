@@ -16,8 +16,8 @@ from apps.core.admin_tools import (
     UserFieldsetsInlineMixin
 )
 from apps.core.db_tools import queryset_condition_filter
-from .models import Category, Product, Buy, Profile, Provider, CarouselItem, News
-from .forms import UserAsProviderChangeForm, NewsModelForm
+from .models import Category, Product, Buy, Profile, Provider, CarouselItem, News, Review, Faq, Coupon
+from .forms import UserAsProviderChangeForm, NewsModelForm, ReviewModelForm, FaqModelForm
 from .matchers import match_phone_number, match_date, match_address
 from .validators import validate_provider, is_valid
 
@@ -119,6 +119,8 @@ class BuyAdmin(admin.ModelAdmin):
         ('user', MultiSelectRelatedFilter),
         ('product', MultiSelectRelatedFilter)
     )
+
+    search_fields = ('count',)
 
     def get_search_results(self, request, queryset, search_term):
         date_matches = queryset.condition_filter(lambda obj: match_date(obj.date, search_term) > 0.75)
@@ -251,6 +253,26 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
 class NewsAdmin(admin.ModelAdmin):
     form = NewsModelForm
 
+
+@admin.register(Faq)
+class FaqAdmin(admin.ModelAdmin):
+    form = FaqModelForm
+
+
+@admin.register(Coupon)
+class CouponAdmin(admin.ModelAdmin):
+    fields = ('discount', 'user')
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    form = ReviewModelForm
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request):
+        return False
 
 
 @admin.register(CarouselItem)

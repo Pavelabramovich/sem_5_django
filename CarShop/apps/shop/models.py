@@ -7,13 +7,25 @@ from django.contrib.auth.models import User
 from apps.core.model_tools import AvatarField
 from .validators import (
     validate_phone_number, normalize_phone,
-    validate_address,
+    validate_address, validate_discount,
     get_positive_validator,
     get_not_negative_validator, validate_provider
 )
 from apps.core.media_tools import OverwriteCodedStorage
 from apps.core.model_tools import SvgField, NamedImageField
 import apps.shop.model_funcs as model_funcs
+
+
+class Coupon(models.Model):
+    discount = models.IntegerField(validators=[validate_discount])
+
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"-{self.discount} %"
+
+    def get_absolute_url(self):
+        return f"/coupon/{self.id}/"
 
 
 class Profile(models.Model):
@@ -189,3 +201,28 @@ class News(models.Model):
 
     def get_absolute_url(self):
         return f"/news/{self.id}/"
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    content = models.TextField()
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return (' '.join(str(self.content).split()[:3]))[:15] + '...'
+
+
+class Faq(models.Model):
+    date = models.DateTimeField(auto_now_add=True, editable=False)
+
+    title = models.CharField(max_length=64, blank=True)
+    content = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return f"/faq/{self.id}/"
+
+

@@ -1,0 +1,9 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+  {% for f in faqs %}
+    <dt style="margin: 20px;"><a href="{{ f.get_absolute_url }}">{{ f.title }}</a></dt>
+      {% empty %}
+        <dt>No FAQ now</dt>
+      {% endfor %}
+{% endblock %}

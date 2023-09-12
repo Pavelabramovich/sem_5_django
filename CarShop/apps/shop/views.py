@@ -1,5 +1,6 @@
 import requests
 from datetime import date, timedelta
+from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.views import generic
@@ -13,12 +14,12 @@ from django.urls import reverse_lazy
 from django.contrib.auth import login
 
 from .models import (
-    Product,
-    Buy,
-    Profile, News,
+    Product, Coupon,
+    Buy,Review, Provider,
+    Profile, News, Faq,
     Category, CarouselItem
 )
-from .forms import UserProfileCreationForm, RegistrationForm
+from .forms import UserProfileCreationForm, RegistrationForm, CreateBuyForm, CreateReviewForm
 
 
 def get_weather():
@@ -47,16 +48,90 @@ def get_bitcoin():
     return btc_price
 
 
+def faqs(request):
+    f = Faq.objects.all()
+
+    return render(request, "shop/faqs.html", {
+        'faqs': f
+    })
+
+
 def home(request):
     categories = Category.objects.all()
     carousel_items = CarouselItem.objects.all()
     news = News.objects.all()
+    providers = Provider.objects.all()
 
     return render(request, "shop/home.html", {
         'categories': categories,
         'carousel_items': carousel_items,
-        'news': news
+        'news': news,
+        'providers': providers
     })
+
+
+def create_buy(request, *, pk):
+    product = Product.objects.filter(pk=pk)[0]
+    discount = Coupon.objects.filter(user=request.user)
+
+    if not discount.exists():
+        discount = 0;
+    else:
+        discount = discount[0].discount
+
+    if request.method == 'GET':
+        form = CreateBuyForm()
+        return render(request, "shop/create_buy.html", {'product': product, 'form': form, 'discount': discount})
+
+    if request.method == 'POST':
+        form = CreateBuyForm(request.POST)
+        if form.is_valid():
+            with transaction.atomic():
+                user = request.user
+                date = datetime.now()
+                count = form.cleaned_data['count']
+                card_num = form.cleaned_data['card_num']
+
+                Buy.objects.create(
+                    user=user,
+                    product=product,
+                    count=count,
+                    date=date,
+                    card_num=card_num
+                )
+
+                messages.success(request, "You have buy successfully.")
+                return redirect(f'shop:category-detail', pk=product.category.pk)
+        else:
+            return render(request, "shop/create_buy.html", {'product': product, 'form': form, 'discount': discount})
+
+
+def create_review(request, *, pk):
+    product = Product.objects.filter(pk=pk)[0]
+
+    if request.method == 'GET':
+        form = CreateReviewForm()
+        return render(request, "shop/create_review.html", {'product': product, 'form': form})
+
+    if request.method == 'POST':
+        form = CreateReviewForm(request.POST)
+
+        if form.is_valid():
+            with transaction.atomic():
+                user = request.user
+
+                content = form.cleaned_data['content']
+
+                Review.objects.create(
+                    user=user,
+                    product=product,
+                    content=content
+                )
+
+                messages.success(request, "You create review successfully.")
+                return redirect(f'shop:product-detail', pk=product.pk)
+        else:
+            return render(request, "shop/create_review.html", {'product': product, 'form': form})
 
 
 class ProductListView(generic.ListView):
@@ -93,7 +168,7 @@ def register(request):
 
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
-        if form.is_valid() and form.cleaned_data['phone']:
+        if form.is_valid():
             with transaction.atomic():
                 user = form.save()
                 messages.success(request, "You have singed up successfully.")
@@ -115,6 +190,10 @@ class CategoryDetailView(generic.DetailView):
 
 class NewsDetailView(generic.DetailView):
     model = News
+
+
+class FaqDetailView(generic.DetailView):
+    model = Faq
 
 
 class ShowProfilePageView(DetailView):

@@ -14,8 +14,14 @@ urlpatterns = [
     re_path(r'product/(?P<pk>.+)/$', views.ProductDetailView.as_view(), name='product-detail'),
 
     re_path(r'category/(?P<pk>.+)/$', views.CategoryDetailView.as_view(), name='category-detail'),
+    re_path(r'faq/(?P<pk>.+)/$', views.FaqDetailView.as_view(), name='faq-detail'),
     re_path(r'news/(?P<pk>.+)/$', views.NewsDetailView.as_view(), name='news-detail'),
+
+    re_path(r'buys/(?P<pk>.+)/$', views.create_buy, name='create_buy'),
+    re_path(r'reviews/(?P<pk>.+)/$', views.create_review, name='create_review'),
+
     path("terms_of_service/", TemplateView.as_view(template_name="shop/terms_of_service.html"), name='terms_of_service'),
+    path("faqs/", views.faqs, name='faqs'),
 
     path('login/', views.CustomLoginView.as_view(authentication_form=forms.LoginForm), name='login'),
     path('logout/', LogoutView.as_view(next_page='shop:home'), name='logout'),

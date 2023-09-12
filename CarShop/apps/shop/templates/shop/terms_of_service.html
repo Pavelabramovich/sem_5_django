@@ -171,6 +171,14 @@ For the purpose of applicable data protection laws, we are the data controller o
 </textarea>
 </label>
 
+{% load static %}
+<video
+   width="360" height="240"
+   src="{% static '/shop/videos/repair.mp4' %}"
+       autoplay controls preload="none" muted>
+    Video cannot be displayed
+</video>
+
 <img src="{% static '/shop/images/certificate.png' %}" height="1000px">
 
 {% endblock %}
