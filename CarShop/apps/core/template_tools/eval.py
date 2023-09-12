@@ -1,6 +1,5 @@
 from django import template
 from django.utils.translation import gettext_lazy as _
-from apps.core.basic_tools import internet_connection_exists
 import re
 
 
@@ -13,7 +12,7 @@ class EvalNode(template.Node):
         clist = list(context)
 
         clist.reverse()
-        context_dict = {'_': _, 'internet_connection_exists': internet_connection_exists}
+        context_dict = {'_': _}
 
         for c in clist:
             context_dict.update(c)
@@ -21,6 +20,7 @@ class EvalNode(template.Node):
             for item in c:
                 if isinstance(item, dict):
                     context_dict.update(item)
+
         try:
             if self.var_name:
                 context[self.var_name] = eval(self.eval_string,  context_dict)
@@ -36,7 +36,7 @@ class EvalNode(template.Node):
 tag_with_as_regex = re.compile(r'(.*?)\s+as\s+(\w+)', re.DOTALL)
 
 
-def do_eval(parser, token):
+def eval_tag(parser, token):
     try:
         tag_name, arg = token.contents.split(None, 1)
     except ValueError:
@@ -51,6 +51,3 @@ def do_eval(parser, token):
         eval_string, var_name = arg, None
 
     return EvalNode(eval_string, var_name)
-
-
-

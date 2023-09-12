@@ -16,27 +16,31 @@
 			  <div class="px-md-2">
 			    <script src="{% static '/shop/js/validators.js' %}"></script>
 
-				{% eval ((form['username'],),) as username_fieldset %}
+			    {% exec
+                   username_fieldset = ((form['username'],),)
 
-			    {% eval (
-				  (form['password1'], ),
-				  (form['password2'], f"validatePasswordConfirmation("
-				                          + f"'{form['password1'].auto_id}',"
-				                          + f"'{form['password2'].auto_id}')")) as password_fieldset %}
+                   password_fieldset = (
+                       (form['password1'], ),
+                       (form['password2'], f"""validatePasswordConfirmation(
+                                                 '{form['password1'].auto_id}',
+                                                 '{form['password2'].auto_id}')"""))
 
-				{% eval ((form['email'],),) as email_fieldset %}
+                   email_fieldset = ((form['email'],),)
 
-				{% eval ((form['first_name'],),
-				         (form['last_name'],)) as names_fieldset %}
+                   names_fieldset = ((form['first_name'],),
+				                     (form['last_name'],))
 
-			    {% eval ((form['phone'], f"validatePhone('{form['phone'].auto_id}')"),
-				         (form['address'], f"validateAddress('{form['address'].auto_id}')")) as profile_fieldset %}
+                   profile_fieldset = ((form['phone'], f"validatePhone('{form['phone'].auto_id}')"),
+				                       (form['address'], f"validateAddress('{form['address'].auto_id}')"))
 
-			    {% eval (username_fieldset,
-				         password_fieldset,
-				         email_fieldset,
-				         names_fieldset,
-				         profile_fieldset) as fieldsets %}
+                   fieldsets = (
+                       username_fieldset,
+                       password_fieldset,
+                       email_fieldset,
+                       names_fieldset,
+                       profile_fieldset
+                   )
+			    %}
 
 			    {% for fieldset in fieldsets %}
 			      <div class="row">
