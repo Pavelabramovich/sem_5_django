@@ -2,6 +2,7 @@ from django import template
 
 from .eval import eval_tag
 from .exec import exec_tag
+from .exec_full import exec_full_tag
 
 # Make django templates multiline
 import re
@@ -11,7 +12,9 @@ base.tag_re = re.compile(base.tag_re.pattern, re.DOTALL)
 
 tags = {
     'eval': eval_tag,
-    'exec': exec_tag
+    'exec': exec_tag,
+    'from': exec_full_tag,
+    'import': exec_full_tag
 }
 
 register = template.Library()

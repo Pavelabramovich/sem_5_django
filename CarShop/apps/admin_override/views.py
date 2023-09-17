@@ -61,5 +61,4 @@ class CustomViewsAdminSite(admin.AdminSite):
                 users_per_months.append([month.isoformat(), tmp_sum])
 
         return super().index(request, extra_context={'categories_counts': json.dumps(categories_counts),
-                                                     'users_per_months': json.dumps(users_per_months),
-                                                     'internet_connection_exists': internet_connection_exists()})
+                                                     'users_per_months': json.dumps(users_per_months)})

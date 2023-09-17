@@ -167,7 +167,7 @@ class CarouselItem(models.Model):
 
 
 class Buy(models.Model):
-    date = models.DateField()
+    date = models.DateField(auto_now_add=True, editable=False)
 
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)

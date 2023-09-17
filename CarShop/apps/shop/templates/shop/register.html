@@ -45,32 +45,24 @@
 			    {% for fieldset in fieldsets %}
 			      <div class="row">
 
-				    {% eval 12 // len(fieldset) as w %}
-				    {% eval f"col-md-{w} mb-4" as field_class %}
+				    {% eval f"col-md-{12 // len(fieldset)} mb-4" as col_class %}
 
 				    {% for field_validator_pair in fieldset %}
-					  {% eval field_validator_pair[0] as field %}
-
-					  {% if field_validator_pair|length > 1 %}
-					    {% eval field_validator_pair[1] as validator %}
-					  {% else %}
-					    {% eval "" as validator %}
-				      {% endif %}
+					  {% exec
+					     field = field_validator_pair[0]
+					     validator = field_validator_pair[1] if len(field_validator_pair) > 1 else ""
+					  %}
 
 					  <script src="{% static '/shop/js/clear_field_errors.js' %}"></script>
 
-				      <div class="{{ field_class }}">
+				      <div class="{{ col_class }}">
 						{% eval field.field.widget.input_type == 'password' as is_password %}
-
 					      <label class="form-label" for="{{ field.id_for_label }}">
 						    {{ field.label }}
 						  </label>
 
-
-
 						  {% if is_password %}<div class="input-group">{% endif %}
 
-						  {% if field.field.required %}
 							  <input
 								type="{% if is_password %}password{% else %}text{% endif %}"
 								id="{{ field.auto_id }}"
@@ -79,17 +71,8 @@
 								class="form-control {% if field.errors %}is-invalid{% endif %}"
 								data-validator="{{ validator }}"
 								oninput="clearFieldErrors(this.id)"
-								required/>
-						  {% else %}
-							  <input
-								type="{% if is_password %}password{% else %}text{% endif %}"
-								id="{{ field.auto_id }}"
-								name="{{ field.name }}"
-								value="{% if field.value %}{{ field.value }}{% endif %}"
-								class="form-control {% if field.errors %}is-invalid{% endif %}"
-								data-validator="{{ validator }}"
-								oninput="clearFieldErrors(this.id)"/>
-						  {% endif %}
+								{% if field.field.required %}required{% endif %}/>
+					
 
 						  {% if is_password %}
 						    <script src="{% static '/shop/js/password_show_hide.js' %}"></script>

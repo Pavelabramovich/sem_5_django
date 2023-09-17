@@ -1,6 +1,7 @@
 {% extends "admin/base_site.html" %}
 {% load i18n static %}
 {% load static %}
+{% load template_tools %}
 
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}">{% endblock %}
 
@@ -55,6 +56,9 @@
       <div class="col-l-3 col-m-2 col-1" style="padding: 0 15px 0;">
         <div class="container-fluid">
           <div class="row" id="statistic">
+
+            {% from apps.core.basic_tools import internet_connection_exists %}
+
             {% if internet_connection_exists %}
               <script src="https://www.google.com/jsapi"></script>
               <script src="{% static '/js/draw_diagram.js' %}"></script>
@@ -86,8 +90,8 @@
               </div>
 
               <script>
-                  initTable(3,"table-categories",['Category', 'Count'], JSON.parse('{{ categories_counts | safe }}'))
-                  initTable(3,"table-users",['Date', 'Count'], JSON.parse('{{ users_per_months | safe }}'))
+                  initTable(3, "table-categories", ['Category', 'Count'], JSON.parse('{{ categories_counts | safe }}'))
+                  initTable(3, "table-users", ['Date', 'Count'], JSON.parse('{{ users_per_months | safe }}'))
               </script>
             {% endif %}
           </div>

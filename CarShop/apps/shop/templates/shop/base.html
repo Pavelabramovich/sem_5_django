@@ -81,11 +81,11 @@
                 </li>
                 {% if user.is_superuser %}
                   <li class="nav-item">
-                    <a href="/admin/" class="nav-link">Admin panel</a>
+                    <a href="{% url 'admin:index' %}" class="nav-link">Admin panel</a>
                   </li>
                 {% else %}
                   <li class="nav-item">
-                    <a href="/faqs/" class="nav-link">FAQ</a>
+                    <a href="{% url 'shop:faqs' %}" class="nav-link">FAQ</a>
                   </li>
                 {% endif %}
               </ul>
