@@ -8,7 +8,11 @@ from django.core.files.storage import FileSystemStorage
 class OverwriteStorage(FileSystemStorage):
     def _save(self, name, content):
         if self.exists(name):
-            self.delete(name)
+            try:
+                self.delete(name)
+            except IOError:
+                # If this exception was caught, then the selected file was already inside the storage.
+                pass
 
         return super()._save(name, content)
 
@@ -29,19 +33,23 @@ class CodedStorage(FileSystemStorage):
         return bool(self.__get_matched_filenames(name))
 
     def __get_matched_filenames(self, name):
-        if super().exists(name):
-            return [name]
 
-        else:
-            splitted_name = name.split(os.extsep)
+        splitted_name = name.split(os.extsep)
 
-            *only_name, extension = splitted_name
+        *only_name, extension = splitted_name
+        only_name = os.extsep.join(only_name)
+
+        file_matches = {str(path) for path in Path(self.location).glob(f'{only_name}*')}
+
+        if len(splitted_name) >= 3:
+            *only_name, code, extension = splitted_name
             only_name = os.extsep.join(only_name)
 
-            file_matches = [str(path) for path in Path(self.location).glob(f'{only_name}*')]
-            file_code_extension = [path.split(os.extsep)[-2::] for path in file_matches]
+            file_matches = {*file_matches} | {str(path) for path in Path(self.location).glob(f'{only_name}*')}
 
-            return [f"{only_name}{os.extsep}{code}{os.extsep}{extension}" for code, extension in file_code_extension]
+        print(file_matches)
+
+        return list(file_matches)
 
     def _open(self, name, mode="rb"):
         coded_names = self.__get_matched_filenames(name)
@@ -53,6 +61,7 @@ class CodedStorage(FileSystemStorage):
 
     def delete(self, name):
         coded_names = self.__get_matched_filenames(name)
+        print(f"{coded_names = }")
         for coded_name in coded_names:
             super().delete(coded_name)
 

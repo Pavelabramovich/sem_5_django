@@ -19,8 +19,6 @@ import apps.shop.model_funcs as model_funcs
 class Coupon(models.Model):
     discount = models.IntegerField(validators=[validate_discount])
 
-    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
-
     def __str__(self):
         return f"-{self.discount} %"
 
@@ -39,6 +37,9 @@ class Profile(models.Model):
     avatar = AvatarField(upload_to='profile_avatars', default='profile_avatars/avatar_default.jpg', blank=True,
                          get_color=model_funcs.get_profile_avatar_color, avatar_size=300,
                          get_filename=model_funcs.get_profile_avatar_filename)
+
+    coupons = models.ManyToManyField(Coupon, help_text="Select a coupon for this user",
+                                    blank=True, related_name='users')
 
     def __str__(self):
         return f'{self.user.username} Profile'
@@ -62,7 +63,7 @@ class Profile(models.Model):
 
 
 class Category(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    image_key = models.UUIDField(default=uuid.uuid4, editable=False)
 
     name = models.CharField(max_length=64, unique=True,
                             help_text="Enter a category (e.g. Oil, Tire etc.)")
@@ -120,7 +121,7 @@ class Product(models.Model):
     image = NamedImageField(upload_to='products_images',
                             get_filename=model_funcs.get_product_image_filename, storage=OverwriteCodedStorage())
 
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    image_key = models.UUIDField(default=uuid.uuid4, editable=False)
 
     def get_absolute_url(self):
         return f"/product/{self.article}/"
@@ -140,6 +141,9 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def get_image_as_html_image(self, height):
+        return mark_safe(f'<img src="{self.image.url}" height="{height}"/>')
+
     class Meta:
         verbose_name = "product"
         verbose_name_plural = "products"
@@ -147,7 +151,7 @@ class Product(models.Model):
 
 
 class CarouselItem(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    image_key = models.UUIDField(default=uuid.uuid4, editable=False)
 
     image = NamedImageField(upload_to='carousel_items_images',
                             get_filename=model_funcs.get_carousel_item_image_filename, storage=OverwriteCodedStorage())

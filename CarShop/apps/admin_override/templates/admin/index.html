@@ -81,17 +81,18 @@
               <script src="{% static '/js/init_table.js' %}"></script>
 
               <div class="col-m-1 col-s-2 col-1" style="padding: 0 15px 0;">
-                <h4>Count of products for each category</h4>
                 <table id="table-categories"></table>
               </div>
               <div class="col-m-1 col-s-2 col-1" style="padding: 15px 15px 0;">
-                <h4>Count of users for each month</h4>
                 <table id="table-users"></table>
               </div>
 
               <script>
-                  initTable(3, "table-categories", ['Category', 'Count'], JSON.parse('{{ categories_counts | safe }}'))
-                  initTable(3, "table-users", ['Date', 'Count'], JSON.parse('{{ users_per_months | safe }}'))
+                  initTable(3, "table-categories", "Count of products for each category",
+                            ['Category', 'Count'], JSON.parse('{{ categories_counts | safe }}'))
+
+                  initTable(3, "table-users", "Count of users for each month",
+                            ['Date', 'Count'], JSON.parse('{{ users_per_months | safe }}'))
               </script>
             {% endif %}
           </div>

@@ -6,7 +6,7 @@ from django.utils.html import format_html
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.db.models.query import QuerySet
-from more_admin_filters import MultiSelectRelatedFilter, MultiSelectFilter
+from more_admin_filters import MultiSelectRelatedFilter
 
 from apps.core.admin_tools import (
     admin_override,
@@ -33,11 +33,11 @@ class CategoryAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('name', 'uuid', 'image', 'logo')
+            'fields': ('name', 'image_key', 'image', 'logo')
         }),
     )
 
-    readonly_fields = ("uuid",)
+    readonly_fields = ("image_key",)
 
     def get_logo_as_html_image(self, obj):
         return obj.get_logo_as_html_image(width=75)
@@ -60,7 +60,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(ViewOnlyFieldsAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'category', 'price', 'get_providers_as_link')
+    list_display = ('name', 'get_image_as_html_image', 'category', 'price', 'get_providers_as_link')
     ordering = ('name', 'category', 'price')
 
     price_range_list_filter = make_range_field_list_filter([
@@ -84,12 +84,12 @@ class ProductAdmin(ViewOnlyFieldsAdminMixin, admin.ModelAdmin):
             'fields': ('name', 'category', 'price', 'image')
         }),
         ('Detailed information', {
-            'fields': ('article', 'uuid', 'providers')
+            'fields': ('article', 'image_key', 'providers')
         }),
     )
 
     viewonly_fields = ('category', 'providers')
-    readonly_fields = ("article", 'uuid')
+    readonly_fields = ("article", 'image_key')
 
     list_per_page = 20
 
@@ -108,6 +108,11 @@ class ProductAdmin(ViewOnlyFieldsAdminMixin, admin.ModelAdmin):
         return format_html('<a href="{}">{}</a>', link, few_providers)
 
     get_providers_as_link.short_description = "Providers"
+
+    def get_image_as_html_image(self, obj):
+        return obj.get_image_as_html_image(height=100)
+
+    get_image_as_html_image.short_description = "Image"
 
 
 @admin.register(Buy)
@@ -146,7 +151,7 @@ class BuyAdmin(admin.ModelAdmin):
 
 class ProfileInline(admin.StackedInline):
     model = Profile
-    fields = ('avatar', 'phone', 'address')
+    fields = ('avatar', 'phone', 'address', 'coupons')
 
     verbose_name_plural = 'Profile'
 

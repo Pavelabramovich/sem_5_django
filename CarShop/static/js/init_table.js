@@ -1,5 +1,13 @@
-function initTable(maxColumnCount, tableId, vHeader, columns) {
+function initTable(maxColumnCount, tableId, title, vHeader, columns) {
     var table = document.getElementById(tableId)
+
+    var caption = document.createElement("caption")
+    var head = document.createElement("h4")
+    title = document.createTextNode(title)
+
+    head.appendChild(title)
+    caption.appendChild(head)
+    table.appendChild(caption)
 
     var totalLen = maxColumnCount ? Math.ceil(columns.length / maxColumnCount) * maxColumnCount : columns.length
 

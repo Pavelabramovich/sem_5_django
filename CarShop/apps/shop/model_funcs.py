@@ -5,11 +5,11 @@ from apps.core.image_tools import get_random_color
 
 
 def get_category_logo_filename(instance):
-    return f"logo_{instance.uuid}"
+    return f"logo_{instance.image_key}"
 
 
 def get_category_image_filename(instance):
-    return f"image_{instance.uuid}"
+    return f"image_{instance.image_key}"
 
 
 def get_profile_avatar_filename(instance):
@@ -21,8 +21,8 @@ def get_profile_avatar_color(instance):
 
 
 def get_carousel_item_image_filename(instance):
-    return f"carousel_item_{instance.uuid}"
+    return f"carousel_item_{instance.image_key}"
 
 
 def get_product_image_filename(instance):
-    return f"image_{instance.uuid}"
+    return f"image_{instance.image_key}"
