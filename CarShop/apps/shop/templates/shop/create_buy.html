@@ -15,22 +15,31 @@
   {% endif %}
 
   <div style="margin-left:20px;margin-top:20px">
-    <h4>Count</h4>
+
+    <label class="form-label" for="{{ form.count.id_for_label }}">
+      {{ form.count.label }}
+    </label>
+
     <input
       type="number"
       name="{{ form.count.name }}"
       id="{{ form.count.auto_id }}"
-      min="0" oninput="validity.valid||(value='');">
+      min="1"
+      oninput="validity.valid||(value='');">
 
-    <h4>Card number</h4>
+    <label class="form-label" for="{{ form.card_num.id_for_label }}">
+      {{ form.card_num.label }}
+    </label>
+
     <input
       type="number"
       name="{{ form.card_num.name }}"
       id="{{ form.card_num.auto_id }}"
-      min="0" oninput="validity.valid||(value='');">
+      min="0"
+      oninput="validity.valid||(value='');">
 
   </div>
 
-<input type="submit" value="Complete buy"/>
+  <input type="submit" value="Complete buy" />
 </form>
 {% endblock %}

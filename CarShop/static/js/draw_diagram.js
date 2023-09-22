@@ -10,6 +10,7 @@ function drawPieDiagram(name, parameter, title, pieResidueSliceLabel, containerI
         var options = {
              title: title,
              is3D: true,
+             backgroundColor: 'transparent',
              pieResidueSliceLabel: pieResidueSliceLabel
         };
 
@@ -38,6 +39,7 @@ function drawDateTrendLineDiagram(hAxis, vAxis, title, legend, containerId, date
             hAxis: {title: hAxis},
             vAxis: {title: vAxis},
             legend: legend || 'none',
+            backgroundColor: 'transparent',
             trendlines: { 0: {type: 'polynomial'} }
         };
 

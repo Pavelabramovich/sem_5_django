@@ -72,12 +72,14 @@ def home(request):
 
 def create_buy(request, *, pk):
     product = Product.objects.filter(pk=pk)[0]
-    discount = Coupon.objects.filter(user=request.user)
+    # discount = Coupon.objects.filter(user=request.user)
+    #
+    # if not discount.exists():
+    #     discount = 0
+    # else:
+    #     discount = discount[0].discount
 
-    if not discount.exists():
-        discount = 0;
-    else:
-        discount = discount[0].discount
+    discount = 0
 
     if request.method == 'GET':
         form = CreateBuyForm()
@@ -87,18 +89,13 @@ def create_buy(request, *, pk):
         form = CreateBuyForm(request.POST)
         if form.is_valid():
             with transaction.atomic():
-                user = request.user
-                date = datetime.now()
-                count = form.cleaned_data['count']
-                card_num = form.cleaned_data['card_num']
+                buy = form.save(commit=False)
 
-                Buy.objects.create(
-                    user=user,
-                    product=product,
-                    count=count,
-                    date=date,
-                    card_num=card_num
-                )
+                buy.user = request.user
+                buy.product = product
+                buy.date = datetime.now()
+
+                buy.save()
 
                 messages.success(request, "You have buy successfully.")
                 return redirect(f'shop:category-detail', pk=product.category.pk)

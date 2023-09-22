@@ -1,0 +1,7 @@
+.colMS, .colMS * {
+    box-sizing: border-box;
+}
+
+.dashboard #content {
+    width: 100% !important;
+}

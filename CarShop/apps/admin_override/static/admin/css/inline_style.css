@@ -1,8 +1,8 @@
-.no-upper h2 {
+.inline-group h2 {
     text-transform: unset;
 }
 
-.no-title h3  {
+.inline-related h3  {
     visibility: hidden;
     height: 0px;
 }

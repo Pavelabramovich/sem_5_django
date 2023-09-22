@@ -6,13 +6,70 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm, Authenti
 from apps.core.form_tools import LabelOnlyWidget
 from django.forms import ModelForm, Textarea
 
-from .models import Product, Provider, Profile, News, Review, Faq
+from .models import Product, Provider, Profile, News, Review, Faq, Buy
 from .validators import (
     validate_provider,
     validate_phone_number,
     validate_address,
     is_valid
 )
+
+
+class UserAsProviderChangeForm(UserChangeForm):
+    products = forms.ModelMultipleChoiceField(
+        Product.objects.all(),
+        widget=admin.widgets.FilteredSelectMultiple('Products', False),
+        required=False
+    )
+
+    is_provider = forms.BooleanField(
+        required=False,
+        label="Provider status",
+        help_text="Determines whether the user can provide products."
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.instance.pk:
+            self.provider = Provider.objects.filter(user_ptr_id=self.instance.id).first()
+
+            if self.provider:
+                self.initial['is_provider'] = True
+                self.initial['products'] = self.provider.products.values_list('pk', flat=True)
+            else:
+                self.initial['is_provider'] = False
+                products_field = self.fields['products']
+
+                products_field.widget = LabelOnlyWidget()
+                products_field.disabled = True
+
+                products_field.label = """
+                This user is not provider. 
+                To grant provider permissions to a user, set his provider status and save.
+                """
+
+    def save(self, *args, **kwargs):
+        instance = super().save(*args, **kwargs)
+
+        if instance.pk:
+            is_provider = self.cleaned_data['is_provider']
+
+            if self.provider:
+                if is_provider:
+                    self.provider.products.clear()
+                    self.provider.products.add(*self.cleaned_data['products'])
+                else:
+                    # Downcast
+                    self.provider.delete(keep_parents=True)
+
+            elif is_provider:
+                # Upcast
+                provider = Provider(pk=self.instance.pk)
+                provider.__dict__.update(self.instance.__dict__)
+                provider.save()
+
+        return instance
 
 
 class LoginForm(AuthenticationForm):
@@ -66,8 +123,6 @@ class RegistrationForm(UserProfileCreationForm):
 
         terms_of_service_accepted = self.cleaned_data.get('terms_of_service_accepted')
 
-        print(terms_of_service_accepted)
-
         if not terms_of_service_accepted:
             self._errors['terms_of_service_accepted'] = self.error_class([
                 'You must accept all terms of the user agreement.'
@@ -76,61 +131,7 @@ class RegistrationForm(UserProfileCreationForm):
         return self.cleaned_data
 
 
-class UserAsProviderChangeForm(UserChangeForm):
-    products = forms.ModelMultipleChoiceField(
-        Product.objects.all(),
-        widget=admin.widgets.FilteredSelectMultiple('Products', False),
-        required=False,
-    )
 
-    is_provider = forms.BooleanField(
-        required=False,
-        label="Provider status",
-        help_text="Determines whether the user can provide products."
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        if self.instance.pk:
-            self.provider = Provider.objects.filter(user_ptr_id=self.instance.id).first()
-
-            if self.provider:
-                self.initial['is_provider'] = True
-                self.initial['products'] = self.provider.products.values_list('pk', flat=True)
-            else:
-                self.initial['is_provider'] = False
-                products_field = self.fields['products']
-
-                products_field.widget = LabelOnlyWidget()
-                products_field.disabled = True
-
-                products_field.label = """
-                This user is not provider. 
-                To grant provider permissions to a user, set his provider status and save.
-                """
-
-    def save(self, *args, **kwargs):
-        instance = super().save(*args, **kwargs)
-
-        if instance.pk:
-            is_provider = self.cleaned_data['is_provider']
-
-            if self.provider:
-                if is_provider:
-                    self.provider.products.clear()
-                    self.provider.products.add(*self.cleaned_data['products'])
-                else:
-                    # Downcast
-                    self.provider.delete(keep_parents=True)
-
-            elif is_provider:
-                # Upcast
-                provider = Provider(pk=self.instance.pk)
-                provider.__dict__.update(self.instance.__dict__)
-                provider.save()
-
-        return instance
 
 
 class NewsModelForm(ModelForm):
@@ -142,27 +143,20 @@ class NewsModelForm(ModelForm):
         }
 
 
-class ReviewModelForm(ModelForm):
-    class Meta:
-        model = Review
-        fields = '__all__'
-        widgets = {
-            'content': Textarea(attrs={'cols': 80, 'rows': 20}),
-        }
-
-
 class FaqModelForm(ModelForm):
     class Meta:
         model = Faq
         fields = '__all__'
+
         widgets = {
             'content': Textarea(attrs={'cols': 80, 'rows': 20}),
         }
 
 
-class CreateBuyForm(forms.Form):
-    count = forms.IntegerField()
-    card_num = forms.IntegerField()
+class CreateBuyForm(forms.ModelForm):
+    class Meta:
+        model = Buy
+        fields = ('count', 'card_num')
 
 
 class CreateReviewForm(forms.Form):

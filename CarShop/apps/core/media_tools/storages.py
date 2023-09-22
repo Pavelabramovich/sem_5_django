@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from datetime import datetime
+from os import extsep
 
 from django.core.files.storage import FileSystemStorage
 
@@ -39,15 +40,13 @@ class CodedStorage(FileSystemStorage):
         *only_name, extension = splitted_name
         only_name = os.extsep.join(only_name)
 
-        file_matches = {str(path) for path in Path(self.location).glob(f'{only_name}*')}
+        file_matches = {str(path) for path in Path(self.location).glob(f'{only_name}{extsep}*')}
 
         if len(splitted_name) >= 3:
             *only_name, code, extension = splitted_name
             only_name = os.extsep.join(only_name)
 
-            file_matches = {*file_matches} | {str(path) for path in Path(self.location).glob(f'{only_name}*')}
-
-        print(file_matches)
+            file_matches = {*file_matches} | {str(path) for path in Path(self.location).glob(f'{only_name}{extsep}*')}
 
         return list(file_matches)
 
@@ -61,7 +60,6 @@ class CodedStorage(FileSystemStorage):
 
     def delete(self, name):
         coded_names = self.__get_matched_filenames(name)
-        print(f"{coded_names = }")
         for coded_name in coded_names:
             super().delete(coded_name)
 

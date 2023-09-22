@@ -3,31 +3,40 @@
 {% load static %}
 
 
-
 {% block extrahead %}
   {% block icon %}
     <link rel="icon" sizes="32x32" href="{% static '/admin/images/logo.svg' %}">
   {% endblock %}
 {% endblock %}
 
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static '/css/container_fluid.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/no_horizontal_scrolling.css' %}" />
+  <link rel="stylesheet" href="{% static '/css/scrollbar.css' %}" />
+  <link rel="stylesheet" href="{% static 'admin/css/inline_style.css' %}" />
+{% endblock %}
+
 {% block userlinks %}
   {% if site_url %}
-      <a href="{{ site_url }}">{% translate 'View site' %}</a> /
+    <a href="{{ site_url }}">{% translate 'View site' %}</a> /
   {% endif %}
   {% if user.is_active and user.is_staff %}
-      {% url 'django-admindocs-docroot' as docsroot %}
-      {% if docsroot %}
-          <a href="{{ docsroot }}">{% translate 'Documentation' %}</a> /
-      {% endif %}
-  {% endif %}
-  {% if user.has_usable_password %}
-  <a href="{% url 'admin:password_change' %}">{% translate 'Change password' %}</a> /
-  {% endif %}
-  <form id="logout-form" method="post" action="{% url 'shop:logout' %}">
-      {% csrf_token %}
-      <button type="submit">{% translate 'Log out' %}</button>
-  </form>
-  {% include "admin/color_theme_toggle.html" %}
+    {% url 'django-admindocs-docroot' as docsroot %}
 
-  <link rel="stylesheet" href="{% static '/css/container-fluid.css' %}" />
+    {% if docsroot %}
+      <a href="{{ docsroot }}">{% translate 'Documentation' %}</a> /
+    {% endif %}
+  {% endif %}
+
+  {% if user.has_usable_password %}
+    <a href="{% url 'admin:password_change' %}">{% translate 'Change password' %}</a> /
+  {% endif %}
+
+  <form id="logout-form" method="post" action="{% url 'shop:logout' %}">
+    {% csrf_token %}
+    <button type="submit">{% translate 'Log out' %}</button>
+  </form>
+
+  {% include "admin/color_theme_toggle.html" %}
 {% endblock %}

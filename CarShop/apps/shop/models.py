@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.html import mark_safe
 from django.contrib.auth.models import User
 
-from apps.core.model_tools import AvatarField
+from apps.core.model_tools import AvatarField, IntegerRangeField
 from .validators import (
     validate_phone_number, normalize_phone,
     validate_address, validate_discount,
@@ -14,16 +14,6 @@ from .validators import (
 from apps.core.media_tools import OverwriteCodedStorage
 from apps.core.model_tools import SvgField, NamedImageField
 import apps.shop.model_funcs as model_funcs
-
-
-class Coupon(models.Model):
-    discount = models.IntegerField(validators=[validate_discount])
-
-    def __str__(self):
-        return f"-{self.discount} %"
-
-    def get_absolute_url(self):
-        return f"/coupon/{self.id}/"
 
 
 class Profile(models.Model):
@@ -38,8 +28,8 @@ class Profile(models.Model):
                          get_color=model_funcs.get_profile_avatar_color, avatar_size=300,
                          get_filename=model_funcs.get_profile_avatar_filename)
 
-    coupons = models.ManyToManyField(Coupon, help_text="Select a coupon for this user",
-                                    blank=True, related_name='users')
+    coupons = models.ManyToManyField('Coupon', help_text="Select a coupon for this user",
+                                     blank=True, related_name='users')
 
     def __str__(self):
         return f'{self.user.username} Profile'
@@ -55,18 +45,21 @@ class Profile(models.Model):
         super().delete(using=using, keep_parents=keep_parents)
 
     def get_avatar_as_html_image(self, size):
-        return mark_safe(f'<img src = "{self.avatar.url}" width = "{size}"/>')
+        return mark_safe(f'<img src = "{self.avatar.url}" width="{size}" />')
 
     class Meta:
         verbose_name = "profile"
         verbose_name_plural = "profiles"
 
 
-class Category(models.Model):
-    image_key = models.UUIDField(default=uuid.uuid4, editable=False)
+class Provider(User):
+    pass
 
+
+class Category(models.Model):
     name = models.CharField(max_length=64, unique=True,
                             help_text="Enter a category (e.g. Oil, Tire etc.)")
+    image_key = models.UUIDField(default=uuid.uuid4, editable=False)
 
     logo = SvgField(upload_to='categories_logo', default='categories_logo/logo_default.svg',
                     get_filename=model_funcs.get_category_logo_filename, storage=OverwriteCodedStorage())
@@ -89,20 +82,16 @@ class Category(models.Model):
     def get_absolute_url(self):
         return f'/category/{self.id}/'
 
-    def get_logo_as_html_image(self, width):
-        return mark_safe(f'<img src = "{self.logo.url}" width = "{width}"/>')
+    def get_logo_as_html_image(self, *, height, width=None):
+        return mark_safe(f'<img src="{self.logo.url}" height="{height}" {f"width={width}" if width else ""} />')
 
-    def get_image_as_html_image(self, width):
-        return mark_safe(f'<img src = "{self.image.url}" width = "{width}"/>')
+    def get_image_as_html_image(self, *, height, width=None):
+        return mark_safe(f'<img src="{self.image.url}" height="{height}" {f"width={width}" if width else ""} />')
 
     class Meta:
         verbose_name = "category"
         verbose_name_plural = "categories"
         ordering = ("name",)
-
-
-class Provider(User):
-    pass
 
 
 class Product(models.Model):
@@ -113,15 +102,15 @@ class Product(models.Model):
     article = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,
                                help_text="Unique ID for this product")
 
-    price = models.IntegerField(validators=[get_not_negative_validator('Price')])
+    price = IntegerRangeField(min_value=0)
 
     providers = models.ManyToManyField(Provider, help_text="Select a provider for this product",
                                        blank=True, related_name='products')
 
+    image_key = models.UUIDField(default=uuid.uuid4, editable=False)
+
     image = NamedImageField(upload_to='products_images',
                             get_filename=model_funcs.get_product_image_filename, storage=OverwriteCodedStorage())
-
-    image_key = models.UUIDField(default=uuid.uuid4, editable=False)
 
     def get_absolute_url(self):
         return f"/product/{self.article}/"
@@ -141,8 +130,8 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-    def get_image_as_html_image(self, height):
-        return mark_safe(f'<img src="{self.image.url}" height="{height}"/>')
+    def get_image_as_html_image(self, *, height, width=None):
+        return mark_safe(f'<img src="{self.image.url}" height="{height}" {f"width={width}" if width else ""} />')
 
     class Meta:
         verbose_name = "product"
@@ -150,38 +139,17 @@ class Product(models.Model):
         ordering = ("name",)
 
 
-class CarouselItem(models.Model):
-    image_key = models.UUIDField(default=uuid.uuid4, editable=False)
-
-    image = NamedImageField(upload_to='carousel_items_images',
-                            get_filename=model_funcs.get_carousel_item_image_filename, storage=OverwriteCodedStorage())
-
-    title = models.CharField(max_length=64, blank=True)
-    subtitle = models.CharField(max_length=64, blank=True)
-
-    def __str__(self):
-        return self.title
-
-    def get_image_as_html_image(self, height):
-        return mark_safe(f'<img src = "{self.image.url}" height = "{height}"/>')
-
-    def delete(self, using=None, keep_parents=False):
-        self.image.delete(save=False)
-        super().delete(using=using, keep_parents=keep_parents)
-
-
 class Buy(models.Model):
     date = models.DateField(auto_now_add=True, editable=False)
 
-    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    product = models.ForeignKey('Product', null=True, on_delete=models.CASCADE)
 
-    count = models.IntegerField(validators=[get_positive_validator('Count')])
-
-    card_num = models.IntegerField(validators=[get_not_negative_validator('Card number')])
+    count = IntegerRangeField(min_value=1)
+    card_num = IntegerRangeField(min_value=0, max_value=1000000)
 
     def __str__(self):
-        return f"Buy {self.product.name if self.product else None} x{self.count}"
+        return f"Buy {self.product.name} x{self.count} by {self.user}"
 
     def get_absolute_url(self):
         return f'buy/{self.id}/'
@@ -189,7 +157,32 @@ class Buy(models.Model):
     class Meta:
         verbose_name = "buy"
         verbose_name_plural = "buys"
-        ordering = ("-date", "product", "count")
+        ordering = ("-date", "product", 'user', "count")
+
+
+class Coupon(models.Model):
+    discount = IntegerRangeField(min_value=1, max_value=100)
+
+    def __str__(self):
+        return f"-{self.discount} %"
+
+    def get_absolute_url(self):
+        return f"/coupon/{self.id}/"
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    content = models.TextField()
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def __str__(self):
+        # The first 3 words are taken and if their length exceeds 15 then a words are slice.
+        return (' '.join(str(self.content).split()[:3]))[:15] + '...'
+
+    class Meta:
+        verbose_name = "review"
+        verbose_name_plural = "reviews"
 
 
 class News(models.Model):
@@ -207,16 +200,6 @@ class News(models.Model):
         return f"/news/{self.id}/"
 
 
-class Review(models.Model):
-    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    content = models.TextField()
-
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return (' '.join(str(self.content).split()[:3]))[:15] + '...'
-
-
 class Faq(models.Model):
     date = models.DateTimeField(auto_now_add=True, editable=False)
 
@@ -228,5 +211,34 @@ class Faq(models.Model):
 
     def get_absolute_url(self):
         return f"/faq/{self.id}/"
+
+
+class CarouselItem(models.Model):
+    image_key = models.UUIDField(default=uuid.uuid4, editable=False)
+
+    image = NamedImageField(upload_to='carousel_items_images',
+                            get_filename=model_funcs.get_carousel_item_image_filename, storage=OverwriteCodedStorage())
+
+    title = models.CharField(max_length=64, blank=True)
+    subtitle = models.CharField(max_length=64, blank=True)
+
+    def __str__(self):
+        return self.title
+
+    def get_image_as_html_image(self, *, height, width=None):
+        return mark_safe(f'<img src="{self.image.url}" height="{height}" {f"width={width}" if width else ""} />')
+
+    def delete(self, using=None, keep_parents=False):
+        self.image.delete(save=False)
+        super().delete(using=using, keep_parents=keep_parents)
+
+
+
+
+
+
+
+
+
 
 

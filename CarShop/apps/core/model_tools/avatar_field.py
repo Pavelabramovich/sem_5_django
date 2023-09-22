@@ -74,6 +74,8 @@ class AvatarField(NamedImageField):
             avatar_file = self.__get_avatar_file(image)
             image.save(filename, avatar_file, save=False)
 
+        image.file.close()
+
         return image
 
 
