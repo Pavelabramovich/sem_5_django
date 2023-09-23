@@ -7,9 +7,7 @@ from django.contrib.auth.models import User
 from apps.core.model_tools import AvatarField, IntegerRangeField
 from .validators import (
     validate_phone_number, normalize_phone,
-    validate_address, validate_discount,
-    get_positive_validator,
-    get_not_negative_validator, validate_provider
+    validate_address
 )
 from apps.core.media_tools import OverwriteCodedStorage
 from apps.core.model_tools import SvgField, NamedImageField

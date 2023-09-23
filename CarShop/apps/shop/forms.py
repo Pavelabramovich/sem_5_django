@@ -114,7 +114,7 @@ class UserProfileCreationForm(UserCreationForm):
 class RegistrationForm(UserProfileCreationForm):
     terms_of_service_accepted = forms.BooleanField(
         required=False,
-        label="Provider status",
+        label="Terms of service",
         help_text="Determines whether the user can provide products."
     )
 

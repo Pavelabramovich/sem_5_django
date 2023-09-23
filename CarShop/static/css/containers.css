@@ -1,0 +1,39 @@
+[class|="container"] {
+    --gutter-x: 1.5rem;
+    --gutter-y: 0;
+    width: 100%;
+    padding-right: calc(var(--gutter-x) * .5);
+    padding-left: calc(var(--gutter-x) * .5);
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.container-fluid {
+    display: flex;
+    flex-direction: column;
+}
+
+
+@media (min-width: 576px) {
+    .container, .container-s {
+        max-width: 560px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container, .container-m {
+        max-width: 750px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container, .container-l {
+        max-width: 980px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container, .container-xl {
+        max-width: 1180px;
+    }
+}
