@@ -1,17 +1,15 @@
 .card {
-    background-color: #ffffff;
+    background-color: white;
     border: 1px solid rgba(0, 0, 0, 0.175);
-    border-radius: 0.5rem;;
+    border-radius: 0.5rem;
 }
 
-.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+.card h1, .card h2, .card h3,
+.card h4, .card h5, .card h6 {
     margin-top: 0;
     margin-bottom: 0.5rem;
     font-weight: 500;
-    line-height: 1.2;
-    color: var(--bs-heading-color);
-}
-
-.h3, h3 {
     font-size: calc(1.3rem + .6vw);
+    font-family: inherit;
+    line-height: 1.2;
 }

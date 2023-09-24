@@ -1,0 +1,7 @@
+.form-label {
+    margin-bottom: 0.5rem;
+}
+
+label {
+    display: inline-block;
+}

@@ -1,4 +1,4 @@
-[class|="container"] {
+[class|="container"], .container {
     --gutter-x: 1.5rem;
     --gutter-y: 0;
     width: 100%;

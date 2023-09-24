@@ -11,10 +11,12 @@
 
 {% block extrastyle %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static '/css/containers.css' %}" />
-  <link rel="stylesheet" href="{% static '/css/rows_cols.css' %}" />
-  <link rel="stylesheet" href="{% static '/css/no_horizontal_scrolling.css' %}" />
-  <link rel="stylesheet" href="{% static '/css/scrollbar.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/containers.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/rows_cols.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/no_horizontal_scrolling.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/scrollbar.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/indentation_margin.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/indentation_padding.css' %}" />
   <link rel="stylesheet" href="{% static 'admin/css/inline_style.css' %}" />
 {% endblock %}
 

@@ -1,5 +1,5 @@
-function clearFieldErrors(input_id) {
-    var input = document.getElementById(input_id);
+function clearFieldErrors(inputId) {
+    var input = document.getElementById(inputId);
     input.classList.remove('is-invalid');
 
     var errorMessageField = input.parentElement.querySelector('span.invalid-feedback')

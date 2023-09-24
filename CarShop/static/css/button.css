@@ -1,0 +1,57 @@
+.btn, [class|="btn"] {
+    padding: 0.5rem 1rem;
+    font-size: 1.25rem;
+    color: white;
+    border: 1px solid white;
+    border-radius: 0.5rem;
+}
+
+[type="button"]:not(:disabled),
+[type="submit"]:not(:disabled),
+button:not(:disabled) {
+    cursor: pointer;
+}
+
+
+[type="button"]:disabled,
+[type="submit"]:disabled,
+button:disabled {
+    cursor: default !important;
+    background: silver !important;
+}
+
+
+
+[class|="btn"][class*="green"] {
+    background-color: #198754;
+}
+
+[class|="btn"][class*="green"][type="button"]:hover,
+[class|="btn"][class*="green"][type="submit"]:hover,
+button[class|="btn"][class*="green"]:hover {
+    background: #188050;
+}
+
+[class|="btn"][class*="green"][type="button"]:active,
+[class|="btn"][class*="green"][type="submit"]:active,
+button[class|="btn"][class*="green"]:active {
+    background: #177040;
+}
+
+
+
+[class|="btn"][class*="yellow"] {
+    background-color: #FFC107;
+}
+
+[class|="btn"][class*="yellow"][type="button"]:hover,
+[class|="btn"][class*="yellow"][type="submit"]:hover,
+button[class|="btn"][class*="yellow"]:hover {
+    background: #FDBE03;
+}
+
+[class|="btn"][class*="yellow"][type="button"]:active,
+[class|="btn"][class*="yellow"][type="submit"]:active,
+button[class|="btn"][class*="yellow"]:active {
+    background: #FAB000;
+}

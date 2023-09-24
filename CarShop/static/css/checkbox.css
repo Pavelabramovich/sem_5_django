@@ -1,0 +1,43 @@
+.form-check-input[type=checkbox] {
+    border-radius: 0.25em;
+}
+
+.form-check-input:checked {
+    background-color: #0D6EFD;
+    border-color: #0D6EFD;
+    background-image: url('../images/check_mark.svg');
+    background-size: 100% 100%;
+    background-position: center center;
+}
+
+.form-check {
+    display: block;
+    min-height: 1.5rem;
+    padding-left: 1.5em;
+    margin-bottom: 0.125rem;
+}
+
+.form-check-input.is-invalid {
+  border-color: red;
+  outline: 0;
+  box-shadow: none;
+}
+
+.form-check-input {
+    width: 1em;
+    height: 1em;
+    margin-top: 0.25em;
+    vertical-align: top;
+    border: 1px solid #DEE2E6;
+    -webkit-appearance: none;
+}
+
+.form-check-input:checked:focus {
+  border-color: #86B7FE !important;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+}
+
+.form-check-input:not(:disabled) {
+    cursor: pointer;
+}

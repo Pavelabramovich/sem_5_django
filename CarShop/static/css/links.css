@@ -1,0 +1,20 @@
+a {
+    color: rgba(13,110,253,100);
+    text-decoration: underline;
+}
+
+a:hover {
+    color: rgba(130,10,203,100) !important;
+    text-decoration: underline !important;
+}
+
+a:active {
+    color: rgba(180,2,2,100) !important;
+    text-decoration: underline !important;
+}
+
+a:visited {
+    color: rgb(0,70,195);
+    text-decoration: underline;
+}
+

@@ -1,4 +1,4 @@
-{% extends "admin/base_site.html" %}
+{% extends "admin/index.html" %}
 {% load i18n static %}
 {% load static %}
 {% load template_tools %}
@@ -9,24 +9,16 @@
   <link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}">
 {% endblock %}
 
-{% block coltype %}colMS{% endblock %}
-
-{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
-
-{% block nav-breadcrumbs %}{% endblock %}
-
-{% block nav-sidebar %}{% endblock %}
-
 {% block content %}
   <div class="container-fluid">
     <div class="row">
-      <div class="col-l-6 col-m-12 col-12" style="padding: 0 15px 0;">
+      <div class="col-l-6 col-m-12 col-12">
         <div id="content-main">
           {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
         </div>
       </div>
-      <div class="col-l-2 col-m-6 col-12" style="padding: 0 15px 0;">
-        <div id="content-related" style="margin-right:0; float:none; width: 100%;">
+      <div class="col-l-2 col-m-6 col-12">
+        <div id="content-related" >
           <div class="module" id="recent-actions-module">
             <h2>{% translate 'Recent actions' %}</h2>
             <h3>{% translate 'My actions' %}</h3>
@@ -57,21 +49,20 @@
           </div>
         </div>
       </div>
-      <div class="col-l-4 col-m-6 col-12" style="padding: 0 15px 0;">
+      <div class="col-l-4 col-m-6 col-12">
         <div class="container-fluid">
           <div class="row" id="statistic">
-
             {% from apps.core.basic_tools import internet_connection_exists %}
 
             {% if internet_connection_exists %}
               <script src="https://www.google.com/jsapi"></script>
               <script src="{% static '/js/draw_diagram.js' %}"></script>
 
-              <div class="col-m-12 col-s-6 col-12" style="padding: 0 15px 0;">
-                <div id="diagram-categories" style="width: 85%; height: 93%;"></div>
+              <div class="col-m-12 col-s-6 col-12 py-0 px-2">
+                <div id="diagram-categories" class="diagram"></div>
               </div>
-              <div class="col-m-12 col-s-6 col-12" style="padding: 0 15px 0;">
-                <div id="diagram-users" style="width: 85%; height: 93%;"></div>
+              <div class="col-m-12 col-s-6 col-12 py-0 px-2">
+                <div id="diagram-users" class="diagram"></div>
               </div>
 
               <script>
@@ -84,10 +75,10 @@
             {% else %}
               <script src="{% static '/js/init_table.js' %}"></script>
 
-              <div class="col-m-12 col-s-6 col-12" style="padding: 0 15px 0;">
+              <div class="col-m-12 col-s-6 col-12 py-0 px-2">
                 <table id="table-categories"></table>
               </div>
-              <div class="col-m-12 col-s-6 col-12" style="padding: 0 15px 0;">
+              <div class="col-m-12 col-s-6 col-12 py-0 px-2">
                 <table id="table-users"></table>
               </div>
 
@@ -106,7 +97,7 @@
   </div>
 {% endblock %}
 
-
+{% block sidebar %}{# This block is already added to block content #}{% endblock %}
 
 
 

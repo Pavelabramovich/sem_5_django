@@ -33,7 +33,11 @@ function addPresubmitValidation() {
 
                 } else {
                     if (!defaultValid) {
-                        errorMessage = "This field is required."
+                        if ('errorMessage' in field.dataset) {
+                            errorMessage = field.dataset.errorMessage
+                        } else {
+                            errorMessage = "This field is required."
+                        }
                     }
 
                     if (field.id !== '') {
