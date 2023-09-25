@@ -217,11 +217,19 @@ class CarouselItem(models.Model):
     image = NamedImageField(upload_to='carousel_items_images',
                             get_filename=model_funcs.get_carousel_item_image_filename, storage=OverwriteCodedStorage())
 
-    title = models.CharField(max_length=64, blank=True)
-    subtitle = models.CharField(max_length=64, blank=True)
+    content = models.TextField(default="""
+    <div style="text-align: center;color: #f2f2f2;font-size: 15px;">
+        <h1 style='margin-bottom:100px; font: 62.5% "Roboto","Arial","Helvetica",sans-serif; font-size: 5em; font-weight: 700;'>
+            CREATE
+        </h1>
+        <h3 style='font: 62.5% "Roboto","Arial","Helvetica",sans-serif; font-size: 1.9em;'>
+            Our workers are the best
+        </h3>
+    </div>
+    """.replace('\n    ', '\n').replace('\n', '', 1))
 
     def __str__(self):
-        return self.title
+        return (' '.join(str(self.content).split()[:3]))[:15] + '...'
 
     def get_image_as_html_image(self, *, height, width=None):
         return mark_safe(f'<img src="{self.image.url}" height="{height}" {f"width={width}" if width else ""} />')

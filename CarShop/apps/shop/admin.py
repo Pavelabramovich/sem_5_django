@@ -20,6 +20,7 @@ from .models import Category, Product, Buy, Profile, Provider, CarouselItem, New
 from .forms import UserAsProviderChangeForm
 from .matchers import match_phone_number, match_date, match_address
 from .validators import validate_provider, is_valid
+from django.forms import ModelForm, Textarea
 
 
 admin.site.empty_value_display = '???'
@@ -279,14 +280,17 @@ admin.site.register(Faq)
 
 
 @admin.register(CarouselItem)
-class CarouselItemAdmin(admin.ModelAdmin):
-    list_display = ('get_image_as_html_image', 'title', 'subtitle')
-    list_editable = ('title', 'subtitle')
-    ordering = ('title', 'subtitle')
+class CarouselItemAdmin(FieldsWidgetsMixin, admin.ModelAdmin):
+    list_display = ('get_image_as_html_image', )
+    ordering = ('content', )
 
-    search_fields = ('title', 'subtitle')
+    search_fields = ('content', )
 
     list_per_page = 20
+
+    fields_widgets = {
+        'content': Textarea(attrs={'cols': 140, 'rows': 20})
+    }
 
     def get_image_as_html_image(self, obj):
         return obj.get_image_as_html_image(height=100)

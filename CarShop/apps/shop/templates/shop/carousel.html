@@ -83,10 +83,8 @@
   {% for carousel_item in carousel_items %}
   <div class="mySlides">
     <img class="d-block w-100 darken-image" src="{{ carousel_item.image.url }}" style="width:100%">
-    <div class="wrapper">
-      <h1 style='margin-bottom:100px;font: 62.5% "Roboto","Arial","Helvetica",sans-serif;font-size: 5em;font-weight: 700;'>{{ carousel_item.title }}</h1>
-      <h3 style='font: 62.5% "Roboto","Arial","Helvetica",sans-serif;font-size: 1.9em;'>{{ carousel_item.subtitle }}</h3>
-    </div>
+    <div class="wrapper">{{ carousel_item.content | safe }}</div>
+
   </div>
   {% endfor %}
 </div>

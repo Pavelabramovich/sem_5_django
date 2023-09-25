@@ -131,9 +131,6 @@ class RegistrationForm(UserProfileCreationForm):
         return self.cleaned_data
 
 
-
-
-
 class NewsModelForm(ModelForm):
     class Meta:
         model = News

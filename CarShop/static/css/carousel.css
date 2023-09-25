@@ -14,24 +14,13 @@
 
 
 /* Caption text */
-.text {
-  color: #f2f2f2;
-  font-size: 15px;
-  padding: 8px 12px;
-  position: absolute;
-  bottom: 50%;
-  width: 100%;
-  text-align: center;
-}
 
 .wrapper {
   color: #f2f2f2;
-  font-size: 15px;
   padding: 8px 12px;
   position: absolute;
   bottom: 0px;
   width: 100%;
-  text-align: center;
 }
 
 /* Fading animation */
