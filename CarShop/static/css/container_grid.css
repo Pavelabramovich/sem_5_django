@@ -1,0 +1,263 @@
+.container-grid {
+    display: grid;
+}
+
+
+.container-grid.c-1 {
+    grid-template-columns: repeat(1, 1fr);
+}
+
+.container-grid.c-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.container-grid.c-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+
+.container-grid.c-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.container-grid.c-5 {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.container-grid.c-6 {
+    grid-template-columns: repeat(6, 1fr);
+}
+
+
+.container-grid.g-0 {
+    gap:0;
+}
+
+.container-grid.g-1 {
+    gap:0.25rem;
+}
+
+.container-grid.g-2 {
+    gap:0.5rem;
+}
+
+.container-grid.g-3 {
+    gap:1rem;
+}
+
+.container-grid.g-4 {
+    gap:1.5rem;
+}
+
+.container-grid.g-5 {
+    gap:3rem;
+}
+
+
+
+@media (min-width: 576px) {
+    .container-grid.c-s-1 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .container-grid.c-s-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .container-grid.c-s-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .container-grid.c-s-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .container-grid.c-s-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .container-grid.c-s-6 {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+
+    .container-grid.g-s-0 {
+        gap:0;
+    }
+
+    .container-grid.g-s-1 {
+        gap:0.25rem;
+    }
+
+    .container-grid.g-s-2 {
+        gap:0.5rem;
+    }
+
+    .container-grid.g-s-3 {
+        gap:1rem;
+    }
+
+    .container-grid.g-s-4 {
+        gap:1.5rem;
+    }
+
+    .container-grid.g-s-5 {
+        gap:3rem;
+    }
+}
+
+
+
+@media (min-width: 768px) {
+    .container-grid.c-m-1 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .container-grid.c-m-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .container-grid.c-m-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .container-grid.c-m-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .container-grid.c-m-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .container-grid.c-m-6 {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .container-grid.g-m-0 {
+        gap:0;
+    }
+
+    .container-grid.g-m-1 {
+        gap:0.25rem;
+    }
+
+    .container-grid.g-m-2 {
+        gap:0.5rem;
+    }
+
+    .container-grid.g-m-3 {
+        gap:1rem;
+    }
+
+    .container-grid.g-m-4 {
+        gap:1.5rem;
+    }
+
+    .container-grid.g-m-5 {
+        gap:3rem;
+    }
+}
+
+
+
+@media (min-width: 992px) {
+    .container-grid.c-l-1 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .container-grid.c-l-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .container-grid.c-l-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .container-grid.c-l-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .container-grid.c-l-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .container-grid.c-l-6 {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .container-grid.g-l-0 {
+        gap:0;
+    }
+
+    .container-grid.g-l-1 {
+        gap:0.25rem;
+    }
+
+    .container-grid.g-l-2 {
+        gap:0.5rem;
+    }
+
+    .container-grid.g-l-3 {
+        gap:1rem;
+    }
+
+    .container-grid.g-l-4 {
+        gap:1.5rem;
+    }
+
+    .container-grid.g-l-5 {
+        gap:3rem;
+    }
+}
+
+
+
+@media (min-width: 1200px) {
+    .container-grid.c-xl-1 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .container-grid.c-xl-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .container-grid.c-xl-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .container-grid.c-xl-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .container-grid.c-xl-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .container-grid.c-xl-6 {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .container-grid.g-xl-0 {
+        gap:0;
+    }
+
+    .container-grid.g-xl-1 {
+        gap:0.25rem;
+    }
+
+    .container-grid.g-xl-2 {
+        gap:0.5rem;
+    }
+
+    .container-grid.g-xl-3 {
+        gap:1rem;
+    }
+
+    .container-grid.g-xl-4 {
+        gap:1.5rem;
+    }
+
+    .container-grid.g-xl-5 {
+        gap:3rem;
+    }
+}
