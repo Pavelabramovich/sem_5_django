@@ -1,52 +1,53 @@
-.slideshow-container {
-  position: relative;
-  margin: auto;
-}
-
-/* Hide the images by default */
-.mySlides {
-  display: none;
-}
-
-.mySlides.active-item {
-  display: block;
+.carousel {
+    position: relative;
+    height:400px;
+    margin: auto;
 }
 
 
-/* Caption text */
-
-.wrapper {
-  color: #f2f2f2;
-  padding: 8px 12px;
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
+.carousel-item {
+    display: none;
+    height: inherit;
 }
 
-/* Fading animation */
-.active {
-  animation: slide-to 1000ms;
+.carousel-item > img,
+.carousel-item > .carousel-item-image {
+    object-fit: cover;
+    height: inherit;
 }
 
-.passive {
-  animation: slide-from 1000ms;
-  transform: translateX(-100%);
+
+.carousel-item-text {
+    color: #f2f2f2;
+    padding: 8px 12px;
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+}
+
+.carousel-item.active {
+    animation: slide-to 1000ms;
+}
+
+.carousel-item.passive {
+    animation: slide-from 1000ms;
+    transform: translateX(-100%);
 }
 
 @keyframes slide-to {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0%);
-  }
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0%);
+    }
 }
 
 @keyframes slide-from {
-  from {
+    from {
     transform: translateX(0%);
-  }
-  to {
-    transform: translateX(100%);
-  }
+    }
+    to {
+        transform: translateX(100%);
+    }
 }

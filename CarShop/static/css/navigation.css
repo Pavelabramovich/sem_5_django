@@ -1,0 +1,24 @@
+.nav-link {
+    display: block;
+    padding: 0.5rem 0.5rem;
+    font-size: var(--bs-nav-link-font-size);
+    font-weight: var(--bs-nav-link-font-weight);
+    color: rgba(255, 255, 255, 0.55);
+    text-decoration: none;
+    background: 0 0;
+    border: 0;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+}
+
+.nav-link:hover,
+.nav-link:focus,
+.nav-link:visited {
+    color: rgba(255, 255, 255, 0.55) !important;
+}
+
+
+.nav-link.disabled {
+    color: rgba(255, 255, 255, 0.55) !important;
+    pointer-events: none;
+    cursor: default;
+}

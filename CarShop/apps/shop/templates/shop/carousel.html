@@ -1,98 +1,30 @@
 {% extends "shop/base.html" %}
 {% load static %}
+{% load template_tools %}
 
 {% block extrastyle %}
-<!--  <link-->
-<!--      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"-->
-<!--      rel="stylesheet" crossorigin="anonymous"-->
-<!--      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM">-->
-
-<!--    <script-->
-<!--      defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"-->
-<!--      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"-->
-<!--      crossorigin="anonymous"></script>-->
-
-
-    <script src="{% static '/js/carousel.js' %}"></script>
-    <script>addDiagramTimer('carousel_id', 4000)</script>
-
-<style type="text/css">
-      .slideshow-container img {
-        object-fit: cover;
-        height: 350px;
-      }
-      .mySlides:after {
-        content:"";
-        position:absolute;
-        top:0;
-        bottom:0;
-        left:0;
-        right:0;
-      }
-
-      .darken-image {
-         filter: brightness(35%);
-      }
-  </style>
+  <link rel="stylesheet" href="{% static 'css/image_filters.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
 {% endblock %}
 
 {% block content %}
   {% block carousel %}
-<!--    <style type="text/css">-->
-<!--      .carousel-inner img{-->
-<!--        object-fit: cover;-->
-<!--        height: 350px;-->
-<!--      }-->
-<!--      .carousel-item:after {-->
-<!--        content:"";-->
-<!--        position:absolute;-->
-<!--        top:0;-->
-<!--        bottom:0;-->
-<!--        left:0;-->
-<!--        right:0;-->
-<!--      }-->
-
-<!--      .darken-image {-->
-<!--         filter: brightness(35%);-->
-<!--      }-->
-<!--    </style>-->
-
-<!--    <div-->
-<!--      class="carousel slide"-->
-<!--      data-bs-interval="{% block carousel_interval %}3000{% endblock %}"-->
-<!--      id="carouselControls"-->
-<!--      data-bs-ride="carousel">-->
-
-<!--      <div class="carousel-inner">-->
-<!--        {% block carousel_items %}-->
-<!--        {% for carousel_item in carousel_items %}-->
-<!--          <div class="carousel-item {% if forloop.counter0 == 0 %} active {% endif %}">-->
-<!--            <img class="d-block w-100 darken-image" src="{{ carousel_item.image.url }}">-->
-<!--            <div class="carousel-caption d-none d-md-block">-->
-<!--              <h1 class="animate__animated animate__fadeInDown" style='margin-bottom:100px;font: 62.5% "Roboto","Arial","Helvetica",sans-serif;font-size: 5em;font-weight: 700;'>{{ carousel_item.title }}</h1>-->
-<!--              <h3 class="animate__animated animate__zoomIn" style='font: 62.5% "Roboto","Arial","Helvetica",sans-serif;font-size: 1.9em;'>{{ carousel_item.subtitle }}</h3>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        {% endfor %}-->
-<!--        {% endblock %}-->
-<!--      </div>-->
-<!--    </div>-->
-
-    <!-- Slideshow container -->
-<div class="slideshow-container" id="carousel_id">
-  {% for carousel_item in carousel_items %}
-  <div class="mySlides">
-    <img class="d-block w-100 darken-image" src="{{ carousel_item.image.url }}" style="width:100%">
-    <div class="wrapper">{{ carousel_item.content | safe }}</div>
-
-  </div>
-  {% endfor %}
-</div>
-<br>
-
-<link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
+    <div class="carousel" id="id_carousel" style="height: 350px;">
+      {% for carousel_item in carousel_items %}
+        <div class="carousel-item">
+          <img class="d-block w-100 darken-image" src="{{ carousel_item.image.url }}" style="width:100%">
+          <div class="carousel-item-text">
+            {{ carousel_item.content | safe }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
   {% endblock %}
 
   {% block under_carousel %}{% endblock %}
+{% endblock %}
 
+{% block scripts %}
+  <script src="{% static '/js/carousel.js' %}"></script>
+  <script>StartCarouselScrolling("id_carousel", {% block carousel_interval %}3000{% endblock %})</script>
 {% endblock %}

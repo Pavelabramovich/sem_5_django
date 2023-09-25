@@ -1,13 +1,13 @@
-function addDiagramTimer(carousel_id, time) {
+function StartCarouselScrolling(carouselId, time) {
     document.addEventListener("DOMContentLoaded", function () {
         var slideNum = 0;
         var timeoutId = null;
-        const slides = document.querySelectorAll(`#${carousel_id} > *`);
+        const slides = document.querySelectorAll(`#${carouselId} > .carousel-item`);
 
         for (i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";
             slides[i].className += " passive";
-            slides[i].style.marginBottom = -`${slides[0].offsetHeight}px`;
+            slides[i].style.marginBottom = `-${slides[0].offsetHeight}px`;
         }
 
         showSlides();
