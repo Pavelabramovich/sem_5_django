@@ -1,16 +1,13 @@
 {% extends "shop/base.html" %}
 
 {% block content %}
+
+<article>
   <h1>{{ news.title }}</h1>
 
-<textarea
-  rows="25"
-  cols="199"
-  readonly>
-
-  {{ news.content }}
-
-
-</textarea>
+  <pre>
+    {{ news.content }}
+  </pre>
+</article>
 
 {% endblock %}

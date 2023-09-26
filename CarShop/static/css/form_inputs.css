@@ -18,6 +18,11 @@ button, input, select, textarea {
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
+.form-control.not-focused:focus {
+    border-color: transparent;
+    box-shadow: 0 0 0 0 transparent;
+}
+
 
 .form-control.is-invalid {
     border-color: #DC3545;

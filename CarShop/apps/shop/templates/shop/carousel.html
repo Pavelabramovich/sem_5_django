@@ -5,11 +5,13 @@
 {% block extrastyle %}
   <link rel="stylesheet" href="{% static 'css/image_filters.css' %}" />
   <link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
+
+  <link rel="stylesheet" href="{% static 'shop/css/carousel_style.css' %}" />
 {% endblock %}
 
 {% block content %}
   {% block carousel %}
-    <div class="carousel" id="id_carousel" style="height: 350px;">
+    <div class="carousel" id="id_carousel">
       {% for carousel_item in carousel_items %}
         <div class="carousel-item">
           <img class="d-block w-100 darken-image" src="{{ carousel_item.image.url }}" style="width:100%">
@@ -25,6 +27,8 @@
 {% endblock %}
 
 {% block scripts %}
+  {{ block.super }}
+
   <script src="{% static '/js/carousel.js' %}"></script>
   <script>StartCarouselScrolling("id_carousel", {% block carousel_interval %}3000{% endblock %})</script>
 {% endblock %}

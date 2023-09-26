@@ -27,3 +27,36 @@ a:visited {
     z-index: 1;
     content: "";
 }
+
+
+
+.nav-link {
+    display: block;
+    padding: 0.5rem 0.5rem;
+    font-size: var(--bs-nav-link-font-size);
+    font-weight: var(--bs-nav-link-font-weight);
+    color: rgba(255, 255, 255, 0.55);
+    text-decoration: none !important;
+    background: 0 0;
+    border: 0;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+}
+
+
+.nav-link:focus,
+.nav-link:visited {
+    color: rgba(255, 255, 255, 0.55) !important;
+    text-decoration: none !important;
+}
+.nav-link:hover,
+.nav-link:active {
+    color: rgba(255, 255, 255, 0.90) !important;
+    text-decoration: none !important;
+}
+
+
+.nav-link.disabled {
+    color: rgba(255, 255, 255, 0.55) !important;
+    pointer-events: none;
+    cursor: default;
+}
