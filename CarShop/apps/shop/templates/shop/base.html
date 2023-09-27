@@ -1,5 +1,7 @@
 <!doctype html>
 {% load static %}
+{% load template_tools %}
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -20,18 +22,6 @@
       integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
       crossorigin="anonymous" />
 
-<!--    <link-->
-<!--      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"-->
-<!--      rel="stylesheet" crossorigin="anonymous"-->
-<!--      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM">-->
-
-<!--    <script-->
-<!--      defer-->
-<!--      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"-->
-<!--      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"-->
-<!--      crossorigin="anonymous">-->
-<!--    </script>-->
-
     <link rel="stylesheet" href="{% static 'css/border_box_sizing.css' %}" />
     <link rel="stylesheet" href="{% static 'css/alignment.css' %}" />
     <link rel="stylesheet" href="{% static 'css/indentation_margin.css' %}" />
@@ -42,6 +32,7 @@
     <link rel="stylesheet" href="{% static 'css/button.css' %}" />
     <link rel="stylesheet" href="{% static 'css/form_inputs.css' %}" />
     <link rel="stylesheet" href="{% static 'css/containers.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/links.css' %}" />
 
     <link rel="stylesheet" href="{% static 'shop/css/base_style.css' %}" />
     {% block extrastyle %}{% endblock %}
@@ -49,85 +40,70 @@
   </head>
 
   <body>
-      <header>
-        <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
-          <div class="container">
-            {% if request.user.is_authenticated %}
-              <img src="{{ request.user.profile.avatar.url }}" height="47px"/>
-            {% else %}
-              <img src="{% static '/shop/images/small_logo.svg' %}" height="47px">
-            {% endif %}
+    <header>
+      <nav class="navbar--expand--m--dark fixed-top">
+        <div class="container">
+          {% if request.user.is_authenticated %}
+            <img src="{{ request.user.profile.avatar.url }}" height="47px"/>
+          {% else %}
+            <img src="{% static '/shop/images/small_logo.svg' %}" height="47px">
+          {% endif %}
 
-            <button
-              class="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarContent"
-              aria-controls="navbarContent"
-              aria-expanded="false">
-
-              <div class="navbar-toggler-inner">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-              </div>
-
-
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarContent">
-              <ul class="navbar-nav navbar-nav-left">
-                <li class="nav-item">
-                  <a href="{% url 'shop:home' %}" class="nav-link">Home</a>
-                </li>
-                {% if request.user.is_authenticated %}
-                  <li class="nav-item">
-                    <a href="{% url 'shop:logout' %}" class="nav-link">Logout</a>
-                  </li>
-                {% else %}
-                  <li class="nav-item">
-                    <a href="{% url 'shop:login' %}" class="nav-link">Login</a>
-                  </li>
-                {% endif %}
-                <li class="nav-item">
-                  <a href="{% url 'shop:register' %}" class="nav-link">Register</a>
-                </li>
-                <li class="nav-item">
-                  <a href="{% url 'shop:products' %}" class="nav-link">Profile</a>
-                </li>
-                <li class="nav-item">
-                  <a href="{% url 'shop:products' %}" class="nav-link">Buys</a>
-                </li>
-                {% if user.is_superuser %}
-                  <li class="nav-item">
-                    <a href="{% url 'admin:index' %}" class="nav-link">Admin&nbsp;panel</a>
-                  </li>
-                {% else %}
-                  <li class="nav-item">
-                    <a href="{% url 'shop:faqs' %}" class="nav-link">FAQ</a>
-                  </li>
-                {% endif %}
-              </ul>
-
-              <ul class="navbar-nav navbar-nav-right">
-                <li class="nav-item">
-                  <form action="" class="d-flex">
-                    <input type="search" placeholder="Search" class="form-control not-focused me-2">
-
-                    <button
-                      type="button"
-                      class="btn-outline-yellow"
-                      data-toggle="button"
-                      aria-pressed="false">
-                      Search
-                    </button>
-                  </form>
-                </li>
-              </ul>
+          <button class="navbar__toggler" type="button">
+            <div class="navbar__toggler__inner">
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
             </div>
+          </button>
+
+          <div class="navbar__collapse">
+            <ul class="navbar__collapse__left">
+              {% url 'shop:home' as home_url %}
+              {% url 'shop:login' as login_url %}
+              {% url 'shop:logout' as logout_url %}
+              {% url 'shop:register' as register_url %}
+              {% url 'shop:products' as products_url %}
+              {% url 'admin:index' as admin_url %}
+              {% url 'shop:faqs' as faqs_url %}
+
+              {% exec
+                 nav_links = (
+                     (home_url, "Home"),
+                     (logout_url, "Logout") if request.user.is_authenticated else (login_url, "Login"),
+                     (register_url, "Register"),
+                     (products_url, "Profile"),
+                     (products_url, "Buys"),
+                     (admin_url, "Admin panel") if user.is_superuser else (faqs_url, "FAQ"),
+                 )
+              %}
+
+              {% for nav_link in nav_links %}
+                <li class="navbar__collapse__item">
+                  <a href="{{ nav_link.0 }}" class="nav-link">{{ nav_link.1 }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+
+            <ul class="navbar__collapse__right">
+              <li class="navbar__collapse__item">
+                <form action="" class="d-flex">
+                  <input type="search" class="form-control not-focused" placeholder="Search">
+
+                  <button
+                    type="button"
+                    class="btn-outline-yellow ml-1"
+                    data-toggle="button"
+                    aria-pressed="false">
+                    Search
+                  </button>
+                </form>
+              </li>
+            </ul>
           </div>
-        </nav>
-      </header>
+        </div>
+      </nav>
+    </header>
 
     <main>
       {% block content %}{% endblock %}
@@ -156,28 +132,7 @@
     {% endblock %}
 
     {% block scripts %}
-      <script>
-        const hamburger = document.querySelector(".navbar-toggler");
-        const navMenu = document.querySelector(".navbar-collapse");
-
-        hamburger.addEventListener("click", mobileMenu);
-
-        function mobileMenu() {
-            hamburger.classList.toggle("active");
-            navMenu.classList.toggle("active");
-        }
-
-        const navLink = document.querySelectorAll(".nav-link");
-
-        navLink.forEach(n => n.addEventListener("click", closeMenu));
-
-        function closeMenu() {
-            hamburger.classList.remove("active");
-            navMenu.classList.remove("active");
-        }
-      </script>
-
-
-      {% endblock %}
+      <script src="{% static '/js/navigation.js' %}"></script>
+    {% endblock %}
   </body>
 </html>

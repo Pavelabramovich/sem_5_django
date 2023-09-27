@@ -1,5 +1,5 @@
 function StartCarouselScrolling(carouselId, time) {
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         var slideNum = 0;
         var timeoutId = null;
         const slides = document.querySelectorAll(`#${carouselId} > .carousel-item`);

@@ -10,3 +10,27 @@ h1, h2, h3, h4, h5, h6 {
 main {
     padding-top: 60px;
 }
+
+
+.navbar__toggler.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.navbar__toggler.active .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.navbar__toggler.active .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+
+.bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    -webkit-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    background-color: white;
+}

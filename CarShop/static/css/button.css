@@ -62,11 +62,11 @@ button:disabled {
     --btn-background: #FFC107;
     --btn-border-color: #FFC107;
 
-    --btn-hover-background: #FDBE03;
-    --btn-hover-border-color: #FDBE03;
+    --btn-hover-background: #EDAE03;
+    --btn-hover-border-color: #EDAE03;
 
-    --btn-active-background: #FAB000;
-    --btn-active-border-color: #FAB000;
+    --btn-active-background: #D9A000;
+    --btn-active-border-color: #D9A000;
 }
 
 
