@@ -59,6 +59,7 @@ def faqs(request):
 def home(request):
     categories = Category.objects.all()
     carousel_items = CarouselItem.objects.all()
+  #  carousel_items = list(CarouselItem.objects.all())[-2:-3:-1]
     news = News.objects.all()
     providers = Provider.objects.all()
 
@@ -168,6 +169,7 @@ def register(request):
         if form.is_valid():
             with transaction.atomic():
                 user = form.save()
+
                 messages.success(request, "You have singed up successfully.")
                 login(request, user)
                 return redirect('shop:home')

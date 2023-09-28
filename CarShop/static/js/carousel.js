@@ -4,6 +4,13 @@ function StartCarouselScrolling(carouselId, time) {
         var timeoutId = null;
         const slides = document.querySelectorAll(`#${carouselId} > .carousel-item`);
 
+        if (slides.length < 1) {
+            return;
+        } else if (slides.length == 1) {
+            slides[0].style.display = "block";
+            return;
+        }
+
         for (i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";
             slides[i].className += " passive";

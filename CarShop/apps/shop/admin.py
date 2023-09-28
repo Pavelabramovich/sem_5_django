@@ -266,6 +266,29 @@ class CouponAdmin(FieldsWidgetsMixin, admin.ModelAdmin):
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'user', 'product', 'date')
+    ordering = ('user', 'product', 'date')
+    list_filter = (
+        ('user', MultiSelectRelatedFilter),
+        ('product', MultiSelectRelatedFilter),
+        ('date', DateFieldListFilter),
+    )
+
+    fields = ("user", "product", 'date', 'content')
+
+    search_fields = ('user__username', 'product__name')
+
+    def get_search_results(self, request, queryset, search_term):
+        date_matches = queryset.condition_filter(lambda obj: match_date(obj.date, search_term) > 0.75)
+
+        (other_matches, may_have_duplicates) = super().get_search_results(
+            request,
+            queryset,
+            search_term,
+        )
+
+        return date_matches | other_matches, may_have_duplicates
+
     def has_change_permission(self, request, obj=None):
         return False
 

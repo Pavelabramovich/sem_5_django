@@ -23,11 +23,9 @@ class EvalNode(template.Node):
 
         try:
             if self.var_name:
-                print(f"{self.eval_string = }")
                 context[self.var_name] = eval(self.eval_string,  context_dict)
                 return ''
             else:
-                print(f"{self.eval_string = }")
                 return str(eval(self.eval_string,  context_dict))
 
         except SyntaxError as e:

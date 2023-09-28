@@ -170,9 +170,10 @@ class Coupon(models.Model):
 
 class Review(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    content = models.TextField()
-
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    date = models.DateField(auto_now_add=True, editable=False)
+    content = models.TextField()
 
     def __str__(self):
         # The first 3 words are taken and if their length exceeds 15 then a words are slice.
@@ -220,7 +221,7 @@ class CarouselItem(models.Model):
     content = models.TextField(default="""
     <div style="text-align: center;color: #f2f2f2;font-size: 15px;">
         <h1 style='margin-bottom:100px; font: 62.5% "Roboto","Arial","Helvetica",sans-serif; font-size: 5em; font-weight: 700;'>
-            CREATE
+            Create
         </h1>
         <h3 style='font: 62.5% "Roboto","Arial","Helvetica",sans-serif; font-size: 1.9em;'>
             Our workers are the best
@@ -237,6 +238,9 @@ class CarouselItem(models.Model):
     def delete(self, using=None, keep_parents=False):
         self.image.delete(save=False)
         super().delete(using=using, keep_parents=keep_parents)
+
+    class Meta:
+        ordering = ("id", )
 
 
 

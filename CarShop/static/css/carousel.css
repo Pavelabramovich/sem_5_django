@@ -26,15 +26,15 @@
 }
 
 .carousel-item.active {
-    animation: slide-to 1000ms;
+    animation: slide-next-appear 1000ms;
 }
 
 .carousel-item.passive {
-    animation: slide-from 1000ms;
+    animation: slide-prev-disappear 1000ms;
     transform: translateX(-100%);
 }
 
-@keyframes slide-to {
+@keyframes slide-next-appear {
     from {
         transform: translateX(-100%);
     }
@@ -43,9 +43,9 @@
     }
 }
 
-@keyframes slide-from {
+@keyframes slide-prev-disappear {
     from {
-    transform: translateX(0%);
+        transform: translateX(0%);
     }
     to {
         transform: translateX(100%);

@@ -5,7 +5,22 @@
 
 <label class="marketing-input-wrapper">
 
+<iframe src="https://www.w3schools.com" title="W3Schools Free Online Web Tutorials"></iframe>
+
 <span class="marketing-label"></span>
+
+
+    <dl>
+  <dt>User</dt>
+  <dd>
+    User - a person receiving car repair services for a monetary reward.
+  </dd>
+
+  <dt>Site</dt>
+  <dd>
+    Site - Company providing repair services.
+  </dd>
+</dl>
 <textarea
   rows="210"
   cols="199"
@@ -172,9 +187,18 @@ For the purpose of applicable data protection laws, we are the data controller o
 </label>
 
 {% load static %}
+
+<p><a href="{% static '/docs/terms_of_service.pdf' %}" download>Download term of service</a>
+
+<select id="fruits" name="fruits">
+  <option value="apple">Apple</option>
+  <option value="banana">Banana</option>
+  <option value="orange">Orange</option>
+</select>
+
 <video
-   width="360" height="240"
-   src="{% static '/shop/videos/repair.mp4' %}"
+   width="500" height="500"
+   src="{% static 'videos/cars.mp4' %}"
        autoplay controls preload="none" muted>
     Video cannot be displayed
 </video>

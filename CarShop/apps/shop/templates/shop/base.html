@@ -74,13 +74,13 @@
                      (register_url, "Register"),
                      (products_url, "Profile"),
                      (products_url, "Buys"),
-                     (admin_url, "Admin panel") if user.is_superuser else (faqs_url, "FAQ"),
+                     (admin_url, "Admin panel") if user.is_superuser else (faqs_url, "<abbr>FAQ</abbr>"),
                  )
               %}
 
               {% for nav_link in nav_links %}
                 <li class="navbar__collapse__item">
-                  <a href="{{ nav_link.0 }}" class="nav-link">{{ nav_link.1 }}</a>
+                  <a href="{{ nav_link.0 }}" class="nav-link">{{ nav_link.1|safe }}</a>
                 </li>
               {% endfor %}
             </ul>
@@ -105,7 +105,7 @@
       </nav>
     </header>
 
-    <main>
+    <main itemtype="https://schema.org/Movie">
       {% block content %}{% endblock %}
     </main>
 
