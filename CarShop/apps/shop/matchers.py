@@ -124,3 +124,6 @@ def match_date(date, string):
 
     except ValueError:
         return 0
+
+
+match_content = LevenshteinStringMatcher(flag="partial token set")

@@ -1,4 +1,5 @@
 import uuid
+import datetime
 
 from django.db import models
 from django.utils.html import mark_safe
@@ -185,6 +186,8 @@ class Review(models.Model):
 
 
 class News(models.Model):
+    date = models.DateField(auto_now_add=True, editable=False)
+
     title = models.CharField(max_length=64, blank=True)
     content = models.TextField()
 
@@ -200,7 +203,7 @@ class News(models.Model):
 
 
 class Faq(models.Model):
-    date = models.DateTimeField(auto_now_add=True, editable=False)
+    date = models.DateField(auto_now_add=True, editable=False)
 
     title = models.CharField(max_length=64, blank=True)
     content = models.TextField()

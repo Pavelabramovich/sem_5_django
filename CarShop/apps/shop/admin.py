@@ -18,7 +18,7 @@ from apps.core.admin_tools import (
 from apps.core.db_tools import queryset_condition_filter
 from .models import Category, Product, Buy, Profile, Provider, CarouselItem, News, Review, Faq, Coupon
 from .forms import UserAsProviderChangeForm
-from .matchers import match_phone_number, match_date, match_address
+from .matchers import match_phone_number, match_date, match_address, match_content
 from .validators import validate_provider, is_valid
 from django.forms import ModelForm, Textarea
 
@@ -59,7 +59,7 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
     provider_filter = make_condition_filter(is_valid(validate_provider), "provider status", "provider_status")
     list_filter = ('is_staff', 'is_superuser', provider_filter)
 
-    search_fields = ('username', 'email', 'first_name', 'last_name')
+    search_fields = ('username', 'email', 'first_name', 'last_name')  # + profile__phone, profile__address
 
     def get_search_results(self, request, queryset, search_term):
         check_high_phone_match = lambda obj: match_phone_number(obj.profile.phone, search_term) > 0.75
@@ -218,14 +218,14 @@ class ProductAdmin(ViewOnlyFieldsAdminMixin, admin.ModelAdmin):
 @admin.register(Buy)
 class BuyAdmin(admin.ModelAdmin):
     list_display = ('date', 'get_user_as_link', 'get_product_as_link', 'count', 'card_num')
-    ordering = ('date', 'user', 'product', 'count')
+    ordering = ('-date', 'user', 'product', 'count')
     list_filter = (
         ('date', DateFieldListFilter),
     )
 
     fields = ("date", "user", 'product', 'count', 'card_num')
 
-    search_fields = ('count', 'user__username', 'product__name')
+    search_fields = ('count', 'user__username', 'product__name') # + date
 
     def get_search_results(self, request, queryset, search_term):
         date_matches = queryset.condition_filter(lambda obj: match_date(obj.date, search_term) > 0.75)
@@ -267,7 +267,7 @@ class CouponAdmin(FieldsWidgetsMixin, admin.ModelAdmin):
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'user', 'product', 'date')
-    ordering = ('user', 'product', 'date')
+    ordering = ('user', 'product', '-date')
     list_filter = (
         ('user', MultiSelectRelatedFilter),
         ('product', MultiSelectRelatedFilter),
@@ -276,7 +276,7 @@ class ReviewAdmin(admin.ModelAdmin):
 
     fields = ("user", "product", 'date', 'content')
 
-    search_fields = ('user__username', 'product__name')
+    search_fields = ('user__username', 'product__name') # + date
 
     def get_search_results(self, request, queryset, search_term):
         date_matches = queryset.condition_filter(lambda obj: match_date(obj.date, search_term) > 0.75)
@@ -296,10 +296,52 @@ class ReviewAdmin(admin.ModelAdmin):
         return False
 
 
-admin.site.register(News)
+@admin.register(News)
+class NewsAdmin(admin.ModelAdmin):
+    list_display = ('title', 'date')
+    ordering = ('-date', 'title')
+    list_filter = (('date', DateFieldListFilter), )
+
+    fields = ("title", 'date', 'content')
+    readonly_fields = ('date', )
+
+    search_fields = ('title', ) # + date, content
+
+    def get_search_results(self, request, queryset, search_term):
+        date_matches = queryset.condition_filter(lambda obj: match_date(obj.date, search_term) > 0.75)
+        content_matches = queryset.condition_filter(lambda obj: match_content(obj.content, search_term) > 0.75)
+
+        (other_matches, may_have_duplicates) = super().get_search_results(
+            request,
+            queryset,
+            search_term,
+        )
+
+        return (date_matches | content_matches | other_matches), may_have_duplicates
 
 
-admin.site.register(Faq)
+@admin.register(Faq)
+class FaqAdmin(admin.ModelAdmin):
+    list_display = ('title', 'date')
+    ordering = ('-date', 'title')
+    list_filter = (('date', DateFieldListFilter), )
+
+    fields = ("title", 'date', 'content')
+    readonly_fields = ('date', )
+
+    search_fields = ('title', ) # + date, content
+
+    def get_search_results(self, request, queryset, search_term):
+        date_matches = queryset.condition_filter(lambda obj: match_date(obj.date, search_term) > 0.75)
+        content_matches = queryset.condition_filter(lambda obj: match_content(obj.content, search_term) > 0.75)
+
+        (other_matches, may_have_duplicates) = super().get_search_results(
+            request,
+            queryset,
+            search_term,
+        )
+
+        return (date_matches | content_matches | other_matches), may_have_duplicates
 
 
 @admin.register(CarouselItem)

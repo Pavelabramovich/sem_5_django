@@ -109,6 +109,11 @@
     background-size: 100%;
 }
 
+.navbar__toggler:hover {
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(180, 180, 180, 0.25);
+}
+
 
 .navbar__collapse {
     flex-basis: 100%;
