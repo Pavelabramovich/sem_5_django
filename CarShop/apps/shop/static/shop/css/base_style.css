@@ -34,34 +34,3 @@ main {
     transition: all 0.3s ease-in-out;
     background-color: white;
 }
-
-
-q[lang="ru"] {
-    quotes: '-' '-';
-}
-
-::selection {
-    color: red;
-    background-color:black;
-}
-
-.footer-img {
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.cert {
-    border-image: url('../images/certificate.png') 30 round round;
-    border-image-width: 34px 98px;
-    padding: 20px;
-    background-repeat: no-repeat;
-    background-image: url('../images/big_logo.svg');
-    background-size: cover;
-}
-
-.cert p {
-    background: linear-gradient(to top, #FF0000, #0000FF);
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip: text;
-    z-index: 10;
-    font: 62.5% "Roboto","Arial","Helvetica",sans-serif;
-}

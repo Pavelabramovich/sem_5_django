@@ -19,7 +19,7 @@
     padding: 0.5rem 1rem;
     font-size: 1.25rem;
 
-    transition: color 0.15s ease-in-out,background-color 0.15s ease-in-out,border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 
     cursor: pointer;
 }
