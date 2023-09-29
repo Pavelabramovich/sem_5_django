@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 from django.db import models
@@ -185,8 +186,15 @@ class Review(models.Model):
 
 
 class News(models.Model):
+    date = models.DateField(auto_now_add=True, editable=False)
+
     title = models.CharField(max_length=64, blank=True)
     content = models.TextField()
+
+    image_key = models.UUIDField(default=uuid.uuid4, editable=False)
+
+    image = NamedImageField(upload_to='news_images', blank=True,
+                            get_filename=model_funcs.get_news_image_filename, storage=OverwriteCodedStorage())
 
     class Meta:
         verbose_name = "news"
@@ -200,7 +208,7 @@ class News(models.Model):
 
 
 class Faq(models.Model):
-    date = models.DateTimeField(auto_now_add=True, editable=False)
+    date = models.DateField(auto_now_add=True, editable=False)
 
     title = models.CharField(max_length=64, blank=True)
     content = models.TextField()

@@ -6,7 +6,33 @@ body {
 
 
 
+ul.coupons {
+    list-style: none;
+    padding: 0px;
+}
 
+ul.coupons li:before
+{
+    content: '★';
+    margin: 0 1em;
+}
+
+
+.ellipsised {
+    white-space: nowrap;
+    width: 20rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.logo:hover {
+  transform: scale(1.2);
+  transition: 0.2s ease-in-out;
+}
+
+.logo {
+  transition: 0.2s ease-in-out;
+}
 
 /*
 .container-grid.c-4>*:nth-child(4n + 1):nth-last-child(-n + 4),

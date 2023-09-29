@@ -1,5 +1,7 @@
 {% extends "shop/base.html" %}
 
+
+
 {% block content %}
 <form method="POST" class="requires-validation" novalidate>
   {% csrf_token %}
@@ -10,10 +12,11 @@
       rows="25"
       name="{{ form.content.name }}"
       id="{{ form.content.auto_id }}"
+      style='62.5% "Roboto","Arial","Helvetica",sans-serif; font-weight: 400;'
       cols="180">
     </textarea>
   </div>
 
-<input type="submit" value="Create review" />
+<input type="submit" value="Create review" class="btn-green" />
 </form>
 {% endblock %}

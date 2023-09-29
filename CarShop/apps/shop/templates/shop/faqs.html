@@ -1,9 +1,13 @@
 {% extends "shop/base.html" %}
+{% load template_tools %}
 
 {% block content %}
   {% for f in faqs %}
-    <dt style="margin: 20px;"><a href="{{ f.get_absolute_url }}">{{ f.title }}</a></dt>
-      {% empty %}
-        <dt>No FAQ now</dt>
-      {% endfor %}
+    <dt style="margin: 20px;">
+      <time datetime="{% eval f.date.strftime('%Y-%m-%d') %}">{{ f.date }}</time>
+      <a href="{{ f.get_absolute_url }}">{{ f.title }}</a>
+    </dt>
+  {% empty %}
+    <dt>No FAQ now</dt>
+  {% endfor %}
 {% endblock %}

@@ -60,13 +60,15 @@ def home(request):
     categories = Category.objects.all()
     carousel_items = CarouselItem.objects.all()
   #  carousel_items = list(CarouselItem.objects.all())[-2:-3:-1]
-    news = News.objects.all()
+    news = News.objects.order_by('-date')[:3]
     providers = Provider.objects.all()
+    coupons = Coupon.objects.all()
 
     return render(request, "shop/home.html", {
         'categories': categories,
         'carousel_items': carousel_items,
         'news': news,
+        'coupons': coupons,
         'providers': providers
     })
 

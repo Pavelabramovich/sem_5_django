@@ -24,5 +24,9 @@ def get_product_image_filename(instance):
     return f"image_{instance.image_key}"
 
 
+def get_news_image_filename(instance):
+    return f"news_{instance.image_key}"
+
+
 def get_carousel_item_image_filename(instance):
     return f"carousel_item_{instance.image_key}"
