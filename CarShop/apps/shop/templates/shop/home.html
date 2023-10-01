@@ -17,7 +17,7 @@
     {% for category in categories %}
       <div class="text-center px-1 position-relative">
         <div>
-          <img src="{{ category.image.url }}" height="100px"/>
+          <img src="{{ category.image.url }}" height="100"/>
           <p>{{ category.name }}</p>
           <a class="stretched-link" href="{{ category.get_absolute_url }}"></a>
         </div>

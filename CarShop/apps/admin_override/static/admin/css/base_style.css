@@ -1,0 +1,11 @@
+html[data-theme="light"], :root {
+    --primary: rgb(43,47,51);
+    --secondary: rgb(33,37,41);
+    --header-color: #EDAE03;
+    --breadcrumbs-fg: #EDAE03;
+
+}
+
+html[data-theme="dark"] {
+    --primary: #204050;
+}

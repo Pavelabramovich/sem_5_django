@@ -260,7 +260,7 @@ class BuyAdmin(admin.ModelAdmin):
 
 
 @admin.register(Coupon)
-class CouponAdmin(FieldsWidgetsMixin, admin.ModelAdmin):
+class CouponAdmin(admin.ModelAdmin):
     pass
 
 
@@ -346,8 +346,9 @@ class FaqAdmin(admin.ModelAdmin):
 
 @admin.register(CarouselItem)
 class CarouselItemAdmin(FieldsWidgetsMixin, admin.ModelAdmin):
-    list_display = ('get_image_as_html_image', )
-    ordering = ('content', )
+    list_display = ('get_image_as_html_image', 'get_context_text')
+    list_display_links = ('get_image_as_html_image', 'get_context_text')
+    ordering = ('id', )
 
     search_fields = ('content', )
 
@@ -360,7 +361,11 @@ class CarouselItemAdmin(FieldsWidgetsMixin, admin.ModelAdmin):
     def get_image_as_html_image(self, obj):
         return obj.get_image_as_html_image(height=100)
 
+    def get_context_text(self, obj):
+        return obj.get_context_text()
+
     get_image_as_html_image.short_description = "Image"
+    get_context_text.short_description = "Text"
 
     def delete_queryset(self, request, queryset):
         for obj in queryset:

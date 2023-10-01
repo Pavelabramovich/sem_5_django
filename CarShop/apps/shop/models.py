@@ -4,6 +4,7 @@ import datetime
 from django.db import models
 from django.utils.html import mark_safe
 from django.contrib.auth.models import User
+from bs4 import BeautifulSoup
 
 from apps.core.model_tools import AvatarField, IntegerRangeField
 from .validators import (
@@ -233,10 +234,25 @@ class CarouselItem(models.Model):
     """.replace('\n    ', '\n').replace('\n', '', 1))
 
     def __str__(self):
-        return (' '.join(str(self.content).split()[:3]))[:15] + '...'
+        return self.get_context_text()
 
     def get_image_as_html_image(self, *, height, width=None):
         return mark_safe(f'<img src="{self.image.url}" height="{height}" {f"width={width}" if width else ""} />')
+
+    def get_context_text(self):
+        soup = BeautifulSoup(self.content, features="html.parser")
+
+        for script in soup(["script", "style"]):
+            script.extract()
+
+        text = soup.get_text()
+
+        lines = (line.strip() for line in text.splitlines())
+        chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+
+        text = ' | '.join(chunk for chunk in chunks if chunk)
+
+        return text if len(text) <= 25 else text[:22] + '...'
 
     def delete(self, using=None, keep_parents=False):
         self.image.delete(save=False)
@@ -244,14 +260,3 @@ class CarouselItem(models.Model):
 
     class Meta:
         ordering = ("id", )
-
-
-
-
-
-
-
-
-
-
-
