@@ -11,7 +11,7 @@ var phone_re = /^\+375\s*\(\s*29\s*\)\s*(\d{3})\s*-\s*(\d{2})\s*-\s*(\d{2})$/;
 
 function validatePhone(inputId) {
     var input = document.getElementById(inputId);
-    var string = input.value
+    var string = input.value;
 
     var result = string.match(phone_re);
 
@@ -24,7 +24,7 @@ var address_re = /^((\b([A-Za-z]+)\b)|(\b([\d\.\-]+)\b)|([\s,\.\:\!]*))*$/;
 
 function validateAddress(inputId) {
     var input = document.getElementById(inputId);
-    var string = input.value
+    var string = input.value;
 
     var result = string.match(address_re);
 

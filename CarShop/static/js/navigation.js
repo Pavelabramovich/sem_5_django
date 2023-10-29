@@ -5,11 +5,3 @@ navbarToggler.addEventListener("click", function() {
     navbarToggler.classList.toggle("active");
     navMenu.classList.toggle("active");
 });
-
-const navLinks = document.querySelectorAll(".nav-link");
-
-navLinks.forEach(link =>
-    link.addEventListener("click", function() {
-        navMenu.classList.remove("active");
-    })
-);

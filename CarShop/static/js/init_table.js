@@ -9,7 +9,6 @@ function initTable(maxColumnCount, tableId, title, vHeader, columns) {
     caption.appendChild(head)
     table.appendChild(caption)
 
-    var origLen = columns.length
     var totalLen = maxColumnCount ? Math.ceil(columns.length / maxColumnCount) * maxColumnCount : columns.length
 
     if (columns.length > 0 && columns[0].length > vHeader.length) {
@@ -26,7 +25,6 @@ function initTable(maxColumnCount, tableId, title, vHeader, columns) {
     var rows = new Array(height).fill().map(r => (document.createElement("tr")));
 
     for (var i = 0; i < totalLen; i++) {
-        // Add vertical header.
         if (i % maxColumnCount == 0) {
             for (var j = 0; j < height; j++) {
                 const cell = document.createElement(j == 0 ? "th" : "td");
@@ -41,14 +39,6 @@ function initTable(maxColumnCount, tableId, title, vHeader, columns) {
             const cell = document.createElement(j == 0 ? "th" : "td");
             const cellText = document.createTextNode(columns[i][j]);
             cell.appendChild(cellText);
-
-            if (i === origLen - 1) {
-                cell.setAttribute("colspan", totalLen - origLen + 1);
-
-                if (j === height - 1) {
-                    i = totalLen - 1
-                }
-            }
 
             rows[j].appendChild(cell);
         }
