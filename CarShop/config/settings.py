@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from django.utils import timezone
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -134,6 +135,10 @@ TIME_ZONE = 'Europe/Minsk'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
+TEMPLATES[0]['OPTIONS']['context_processors'].append("apps.shop.context_processor.timer_processor")
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TEST_RUNNER = "apps.core.test_tools.RunnerWithTestModels"
+
+SITE_START_TIME = timezone.now()

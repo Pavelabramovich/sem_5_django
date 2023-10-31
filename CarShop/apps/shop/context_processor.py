@@ -1,0 +1,19 @@
+from django.utils import timezone
+import datetime
+import config.settings as settings
+
+
+def timer_processor(request):
+    start_time = settings.SITE_START_TIME
+    now = timezone.now()
+
+    delta = now - start_time
+
+    seconds = 3600 - delta.seconds
+
+    timer_value = str(datetime.timedelta(seconds=seconds + 1))
+
+    if timer_value.startswith('0'):
+        timer_value = timer_value[2:]
+
+    return {'seconds': seconds, 'tamer_value': timer_value}

@@ -88,7 +88,7 @@
             <ul class="navbar__collapse__right">
               <li class="navbar__collapse__item">
                 <form action="" class="d-flex">
-                  <input type="search" class="form-control not-focused" placeholder="Search">
+                  <input type="search" class="form-control not-focused" placeholder="Search" value="{{ timer_value }}">
 
                   <button
                     type="button"
@@ -97,6 +97,9 @@
                     aria-pressed="false">
                     Search
                   </button>
+
+                  <span id="timer" style="color: white; font-size: 30px; margin-left: 10px;">{{ tamer_value }}</span>
+
                 </form>
               </li>
             </ul>
@@ -133,6 +136,8 @@
 
     {% block scripts %}
       <script src="{% static '/js/navigation.js' %}"></script>
+      <script src="{% static '/shop/js/timer.js' %}"></script>
+      <script>foo({{ seconds }}, "timer")</script>
     {% endblock %}
   </body>
 </html>

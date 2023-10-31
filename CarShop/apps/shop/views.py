@@ -1,6 +1,8 @@
 import requests
 from datetime import date, timedelta
 from datetime import datetime
+import json
+from django.utils import timezone
 
 from django.contrib.auth.models import User
 from django.views import generic
@@ -12,6 +14,7 @@ from django.db import transaction
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib.auth import login
+import config.settings as settings
 
 from .models import (
     Product, Coupon,
@@ -59,15 +62,20 @@ def faqs(request):
 def home(request):
     categories = Category.objects.all()
     carousel_items = CarouselItem.objects.all()
-  #  carousel_items = list(CarouselItem.objects.all())[-2:-3:-1]
     news = News.objects.all()
     providers = Provider.objects.all()
+
+    start_time = settings.SITE_START_TIME
+    now = timezone.now()
+
+    seconds = 3600 - (now - start_time).seconds
 
     return render(request, "shop/home.html", {
         'categories': categories,
         'carousel_items': carousel_items,
         'news': news,
-        'providers': providers
+        'providers': providers,
+        'seconds': seconds,
     })
 
 
