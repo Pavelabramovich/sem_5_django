@@ -3,6 +3,9 @@
 
 {% block content %}
 
+
+<link rel="stylesheet" href="{% static '/shop/css/term_of_service_style.css' %}" />
+
 <label class="marketing-input-wrapper">
 
 <span class="marketing-label"></span>
@@ -192,7 +195,23 @@ For the purpose of applicable data protection laws, we are the data controller o
   <option value="orange">Orange</option>
 </select>
 
+<article class="article">
 
-<img src="{% static '/shop/images/certificate.png' %}" height="1000px">
+  <div class="article__image"></div>
+
+  <div class="article__text">
+    <h1 class="article__title">
+      Certificate<br>
+      Mater Headlight
+    </h1>
+
+    <span class="article__type">Lorem ipsum dolor sit amet</span>
+  </div>
+
+
+</article>
+
+
+<script src="{% static '/shop/js/term_of_service.js' %}"></script>
 
 {% endblock %}
