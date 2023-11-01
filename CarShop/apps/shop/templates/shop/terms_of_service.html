@@ -209,13 +209,24 @@ For the purpose of applicable data protection laws, we are the data controller o
     body.style.background = 'white';
 }">
 
-{% load static %}
+<button
+  data-tmp="1"
+  data-pi2="1"
+  data-counter="1"
+  onclick="
+  var i = this.dataset.counter;
 
-<select id="fruits" name="fruits">
-  <option value="apple">Apple</option>
-  <option value="banana">Banana</option>
-  <option value="orange">Orange</option>
-</select>
+  this.dataset.tmp *= i / (2 * i + 1);
+  this.dataset.pi2 = +this.dataset.tmp + +this.dataset.pi2;
+  this.dataset.counter++;
+
+  this.innerText = ` Pi = ${2 * this.dataset.pi2}`;">
+
+  Pi = 2
+</button>
+
+
+{% load static %}
 
 <article class="article">
 
