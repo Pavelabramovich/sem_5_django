@@ -5,6 +5,7 @@
 
 
 <link rel="stylesheet" href="{% static '/shop/css/term_of_service_style.css' %}" />
+<link rel="stylesheet" href="{% static '/shop/css/trucks.css' %}" />
 
 <label class="marketing-input-wrapper">
 
@@ -225,6 +226,11 @@ For the purpose of applicable data protection laws, we are the data controller o
   Pi = 2
 </button>
 
+<span id="trucks">
+  <img src="{% static '/shop/images/truck_left.png' %}" class="truck" id="truck_left" width="100%">
+  <img src="{% static '/shop/images/truck_right.png' %}" class="truck" id="truck_right" width="100%">
+</span>
+
 
 {% load static %}
 
@@ -240,9 +246,8 @@ For the purpose of applicable data protection laws, we are the data controller o
 
     <span class="article__type">Lorem ipsum dolor sit amet</span>
   </div>
-
-
 </article>
+
 
 <table id="students">
   <caption><h4>Students</h4></caption>
@@ -264,5 +269,6 @@ For the purpose of applicable data protection laws, we are the data controller o
 
 
 <script src="{% static '/shop/js/term_of_service.js' %}"></script>
+<script src="{% static '/shop/js/trucks.js' %}"></script>
 
 {% endblock %}

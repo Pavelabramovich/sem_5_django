@@ -36,7 +36,5 @@ function addStudents() {
         }
 
         table.appendChild(row);
-
-
     }
 }
