@@ -30,8 +30,6 @@
 			  <h3 class="mb-4 pb-0 pb-m-4 px-m-2 text-center">Registration</h3>
 
 			  <div class="px-m-2">
-			    <script src="{% static '/shop/js/validators.js' %}"></script>
-
 			    {% exec
                    username_fieldset = ((form['username'], ""),)
 
@@ -47,15 +45,18 @@
                    names_fieldset = ((form['first_name'], ""),
 				                     (form['last_name'], ""))
 
-                   profile_fieldset = ((form['phone'], f"validatePhone('{form['phone'].auto_id}')"),
-				                       (form['address'], f"validateAddress('{form['address'].auto_id}')"))
+                   phone_address_fieldset = ((form['phone'], f"validatePhone('{form['phone'].auto_id}')"),
+				                            (form['address'], f"validateAddress('{form['address'].auto_id}')"))
+
+                   birthday_fieldset = ((form['birthday'], f"validateBirthday('{form['birthday'].auto_id}')"),)
 
                    fieldsets = (
                        username_fieldset,
                        password_fieldset,
                        email_fieldset,
                        names_fieldset,
-                       profile_fieldset
+                       phone_address_fieldset,
+                       birthday_fieldset
                    )
 			    %}
 
@@ -64,11 +65,7 @@
 
 				    {% eval f"col-m-{12 // len(fieldset)} mb-4" as col_class %}
 
-				    {% for field_validator_pair in fieldset %}
-					  {% exec  field, validator = field_validator_pair %}
-
-					  <script src="{% static '/shop/js/clear_field_errors.js' %}"></script>
-
+				    {% for field, validator in fieldset %}
 				      <div class="{{ col_class }}">
 						{% eval field.field.widget.input_type == 'password' as is_password %}
 
@@ -79,14 +76,15 @@
 					    {% if is_password %}<div class="input-group">{% endif %}
 
 						<input
-						  type="{% if is_password %}password{% else %}text{% endif %}"
+						  type="{{ field.field.widget.input_type }}"
 						  id="{{ field.auto_id }}"
 						  name="{{ field.name }}"
 						  value="{% if field.value %}{{ field.value }}{% endif %}"
 						  class="form-control {% if field.errors %}is-invalid{% endif %}"
 						  data-validator="{{ validator }}"
 						  oninput="clearFieldErrors(this.id)"
-						  {% if field.field.required %}required{% endif %}/>
+						  {% if field.field.required %}required{% endif %}
+						  {% if field.field.widget.attrs.max %}max="{{ field.field.widget.attrs.max }}"{% endif %}/>
 
 					    {% if is_password %}
 						  <script src="{% static '/shop/js/password_show_hide.js' %}"></script>
@@ -162,6 +160,9 @@
 
 {% block scripts %}
   {{ block.super }}
+
+  <script src="{% static '/shop/js/clear_field_errors.js' %}"></script>
+  <script src="{% static '/shop/js/validators.js' %}"></script>
 
   <script src="{% static '/shop/js/add_presubmit_validation.js' %}"></script>
   <script>addPresubmitValidation()</script>

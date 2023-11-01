@@ -30,7 +30,9 @@ QuerySet.condition_filter = queryset_condition_filter
 
 class ProfileInline(FieldsWidgetsMixin, admin.StackedInline):
     model = Profile
-    fields = ('avatar', 'phone', 'address', 'coupons')
+    fields = ('avatar', 'phone', 'address', 'birthday', 'coupons')
+
+    readonly_fields = ('birthday', )
 
     # This field is also used by m2m inlines, where there can be more than one inline.
     # This ensures that inlines fields are required when creating a user.
@@ -50,7 +52,7 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
     inlines = (ProfileInline,)
 
     list_display = ('username', 'get_avatar_as_html_image', 'email', 'first_name', 'last_name',
-                    'get_address', 'get_phone')
+                    'get_birthday', 'get_address', 'get_phone')
 
     list_display_links = ('username', 'get_avatar_as_html_image')
 
@@ -116,12 +118,16 @@ class UserProfileAdmin(UserFieldsetsInlineMixin, UserAdmin):
     def get_address(self, obj):
         return obj.profile.address
 
+    def get_birthday(self, obj):
+        return obj.profile.birthday
+
     def get_avatar_as_html_image(self, obj):
         return obj.profile.get_avatar_as_html_image(size=65)
 
     get_phone.short_description = "Phone"
     get_address.short_description = "Address"
     get_avatar_as_html_image.short_description = "Avatar"
+    get_birthday.short_description = "Birthday"
 
     list_per_page = 20
 

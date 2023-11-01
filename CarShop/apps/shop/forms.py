@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import User
@@ -90,6 +92,11 @@ class UserProfileCreationForm(UserCreationForm):
                             help_text="Enter a phone in format +375 (29) XXX-XX-XX")
 
     address = forms.CharField(max_length=64, validators=[validate_address])
+
+    birthday = forms.DateField(widget=forms.DateInput(attrs={
+        'class': 'form-control',
+        'type': 'date',
+        'max': f"{datetime.now():%Y-%m-%d}"}))
 
     def save(self, *args, **kwargs):
         user = super().save(*args, **kwargs)

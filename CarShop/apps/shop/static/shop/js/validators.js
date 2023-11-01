@@ -32,3 +32,28 @@ function validateAddress(inputId) {
         throw { name: 'ValidationError', message: 'Address is incorrect. It must consist of words, numbers and codes.' };
     }
 }
+
+
+function validateBirthday(inputId) {
+
+    var input = document.getElementById(inputId);
+
+    var birthday = input.value;
+    birthday = new Date(birthday);
+
+
+    var today = new Date();
+
+    var ageInSeconds = today - birthday;
+
+    const secondsInYear = 1000 * 60 * 60 * 24 * 365.25
+
+    if (ageInSeconds < 18 * secondsInYear) {
+        throw { name: 'ValidationError', message: 'You must be at least 18 years old.' };
+    } else {
+        const age = Math.floor(ageInSeconds / secondsInYear);
+        const weekDay = birthday.toLocaleString('en-us', {weekday:'long'})
+
+        alert(`Your age is ${age}, day of week your birthday is ${weekDay}`)
+    }
+}

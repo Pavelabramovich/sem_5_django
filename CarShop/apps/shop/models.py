@@ -31,6 +31,8 @@ class Profile(models.Model):
     coupons = models.ManyToManyField('Coupon', help_text="Select a coupon for this user",
                                      blank=True, related_name='users')
 
+    birthday = models.DateField(editable=False)
+
     def __str__(self):
         return f'{self.user.username} Profile'
 
