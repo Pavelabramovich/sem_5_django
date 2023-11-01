@@ -25,6 +25,7 @@
 <textarea
   rows="210"
   cols="199"
+  id="text_id"
   readonly>
 
 Mater Headlight Privacy Policy.
@@ -186,6 +187,27 @@ Should you have any questions about our privacy practices or this Privacy Policy
 For the purpose of applicable data protection laws, we are the data controller of your personal information.
 </textarea>
 </label>
+
+
+<input type="checkbox" onclick="
+  var text = document.querySelector('#text_id');
+  var body = document.body;
+
+  if (this.dataset.counter === '1') {
+    this.dataset.counter = '2';
+
+    text.style.color = 'red';
+    text.style.fontSize = '20px';
+
+    body.style.background = 'yellow';
+  } else {
+    this.dataset.counter = '1';
+    
+    text.style.color = 'blue';
+    text.style.fontSize = '10px'
+
+    body.style.background = 'white';
+}">
 
 {% load static %}
 
