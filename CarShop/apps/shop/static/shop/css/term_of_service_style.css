@@ -61,3 +61,7 @@ article {
 .article__type {
     font-size: 3vw;
 }
+
+.selected {
+  background-color: yellow;
+}
