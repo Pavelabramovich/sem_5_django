@@ -92,8 +92,8 @@ function onCellMouseOver(e) {
     const cell = e.target;
 
     if (
-        isLmbDown && !cell.classList.contains("selected") ||  // paint
-        isRmbDown && cell.classList.contains("selected")      // erase
+        isLmbDown && !cell.classList.contains("selected")   // paint
+        || isRmbDown && cell.classList.contains("selected")      // erase
     ) {
         selectCell(cell)
     }
@@ -105,17 +105,13 @@ function onCellMouseClick(e) {
 }
 
 
-
-
 function selectCell(cell) {
     const maxSelection = document.getElementById("maxSelect").value;
 
     const row = cell.parentElement;
-    const rowCells = Array.from(row.cells);
-    const cellIndex = rowCells.indexOf(cell);
+    const cellIndex = Array.prototype.indexOf.call(row.cells, cell);
 
-    const selectedInRow = rowCells.filter(c => c.classList.contains("selected"));
-    const columnCells = Array.from(cell.parentElement.parentElement.rows);
+    const selectedInRow = Array.prototype.filter.call(row.cells, c => c.classList.contains("selected"));
 
     const selectedInColumn = Array.prototype
         .map.call(randomTable.rows, r => r.cells[cellIndex])
@@ -124,30 +120,32 @@ function selectCell(cell) {
     if (cell.classList.contains("selected")) {
         cell.classList.remove("selected");
     } else if (
-        selectedInRow.length < maxSelection &&
-        selectedInColumn.length < maxSelection &&
-        !hasNeighborSelected(rowCells, cellIndex)
+        selectedInRow.length < maxSelection
+        && selectedInColumn.length < maxSelection
+        && !hasNeighborSelected(row.cells, cellIndex)
     ) {
         cell.classList.add("selected");
     }
 }
 
 function hasNeighborSelected(cells, i) {
-    if (i > 0 && cells[i - 1].classList.contains("selected")) {
-        return true;
-    }
-    if (i < cells.length - 1 && cells[i + 1].classList.contains("selected")) {
-        return true;
-    }
-    return false;
+    return i > 0 && cells.item(i - 1).classList.contains("selected")
+           || i < cells.length - 1 && cells.item(i + 1).classList.contains("selected");
 }
 
 
 var isLmbDown = false;
+var isRmbDown = false;
 
 document.addEventListener('mousedown', function(event) {
     if (event.button === 0) {
         isLmbDown = true;
+    }
+
+    if ("which" in event && event.which === 3) {
+        isRmbDown = true;
+    } else if ("button" && event.button === 2) {
+        isRmbDown = true;
     }
 });
 
@@ -155,37 +153,13 @@ document.addEventListener('mouseup', function(event) {
     if (event.button === 0) {
         isLmbDown = false;
     }
-});
 
-
-var isRmbDown = false;
-
-document.addEventListener('mousedown', function(event) {
-    var isRmb;
-
-    if ("which" in event)
-        isRmb = event.which == 3;
-    else if ("button" in event)
-        isRmb = event.button == 2;
-
-    if (isRmb) {
-        isRmbDown = true;
-    }
-
-
-});
-
-document.addEventListener('mouseup', function(event) {
-    var isRmb;
-
-    if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-        isRmb = event.which == 3;
-    else if ("button" in event)  // IE, Opera
-        isRmb = event.button == 2;
-
-    if (isRmb) {
+    if ("which" in event && event.which === 3) {
+        isRmbDown = false;
+    } else if ("button" && event.button === 2) {
         isRmbDown = false;
     }
 });
 
+// disable default menu on rmb
 randomTable.addEventListener("contextmenu", e => e.preventDefault());

@@ -189,6 +189,8 @@ For the purpose of applicable data protection laws, we are the data controller o
 </textarea>
 </label>
 
+<button id="details"></button>
+
 
 <input type="checkbox" onclick="
   var text = document.querySelector('#text_id');
@@ -221,9 +223,9 @@ For the purpose of applicable data protection laws, we are the data controller o
   this.dataset.pi2 = +this.dataset.tmp + +this.dataset.pi2;
   this.dataset.counter++;
 
-  this.innerText = ` Pi = ${2 * this.dataset.pi2}`;">
+  this.innerText = ` π = ${2 * this.dataset.pi2}`;">
 
-  Pi = 2
+  π = 2
 </button>
 
 <div>
@@ -328,5 +330,6 @@ For the purpose of applicable data protection laws, we are the data controller o
   <script src="{% static '/shop/js/term_of_service.js' %}"></script>
   <script src="{% static '/shop/js/trucks.js' %}"></script>
   <script src="{% static '/shop/js/random_table.js' %}"></script>
+  <script src="{% static '/shop/js/detail.js' %}"></script>
 
 {% endblock %}

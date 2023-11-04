@@ -9,7 +9,7 @@ def timer_processor(request):
 
     delta = now - start_time
 
-    seconds = 3600 - delta.seconds
+    seconds = max(3600 - delta.seconds, 0)
 
     timer_value = str(datetime.timedelta(seconds=seconds + 1))
 
