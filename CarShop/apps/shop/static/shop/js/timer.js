@@ -1,6 +1,9 @@
 function foo(seconds, timerId) {
     function startTimer(duration, display) {
-        var timer = duration, minutes, seconds;
+        var timer = duration;
+        var minutes;
+        var seconds;
+
         setInterval(function () {
             minutes = parseInt(timer / 60, 10)
             seconds = parseInt(timer % 60, 10);
@@ -16,9 +19,8 @@ function foo(seconds, timerId) {
         }, 1000);
     }
 
+    var time = seconds;
 
-        var time = seconds;
-        var display = document.querySelector(`#${timerId}`);
-        startTimer(time, display);
-
+    var display = document.querySelector(`#${timerId}`);
+    startTimer(time, display);
 }

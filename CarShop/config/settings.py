@@ -26,6 +26,9 @@ STATIC_ROOT = ''
 STATIC_URL = '/static/'
 STATICFILES_DIRS = ('static',)
 
+STATICFILES_STORAGE = 'babel_transpiling.storage.StaticFilesTranspilingStorage'
+
+
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = 'login'
 
@@ -42,6 +45,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'babel_transpiling',
+
     'apps.admin_override',
     'apps.admin_override.config',
     'apps.core',
@@ -57,6 +62,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'babel_transpiling.middlewares.StaticFilesTranspilingMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -142,3 +150,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TEST_RUNNER = "apps.core.test_tools.RunnerWithTestModels"
 
 SITE_START_TIME = timezone.now()
+
+
+BABEL_TRANSPILING = {
+    'transpiler': 'npm/@babel/standalone@7.12.15/babel.min.js',
+    'extensions': ['.jsx'],
+    'options': {
+        'plugins': ['transform-import-cssm'],
+        "presets": ["react"],
+        "generatorOpts": {
+            "jsescOption": {
+                "minimal": True
+            }
+        }
+    },
+    'mimetypes': {
+        '.jsx': 'application/javascript'
+    },
+    'setup': ['npm/babel-plugin-transform-import-cssm@1.0.0/index.standalone.js']
+}

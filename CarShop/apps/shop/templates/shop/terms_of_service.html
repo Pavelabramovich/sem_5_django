@@ -1,7 +1,9 @@
 {% extends "shop/base.html" %}
 {% load static %}
 
+
 {% block content %}
+
 
 
 <link rel="stylesheet" href="{% static '/shop/css/term_of_service_style.css' %}" />
@@ -12,7 +14,7 @@
 <span class="marketing-label"></span>
 
 
-    <dl>
+    <dl id="root">
   <dt>User</dt>
   <dd>
     User - a person receiving car repair services for a monetary reward.
@@ -189,7 +191,7 @@ For the purpose of applicable data protection laws, we are the data controller o
 </textarea>
 </label>
 
-<button id="details"></button>
+<button id="details">Details</button>
 
 
 <input type="checkbox" onclick="
@@ -327,6 +329,7 @@ For the purpose of applicable data protection laws, we are the data controller o
 <span id="repetitions"></span>
 
 
+  <script src="{% static '/shop/js/dectst.js' %}"></script>
   <script src="{% static '/shop/js/term_of_service.js' %}"></script>
   <script src="{% static '/shop/js/trucks.js' %}"></script>
   <script src="{% static '/shop/js/random_table.js' %}"></script>

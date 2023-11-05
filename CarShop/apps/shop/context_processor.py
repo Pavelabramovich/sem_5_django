@@ -11,7 +11,7 @@ def timer_processor(request):
 
     seconds = max(3600 - delta.seconds, 0)
 
-    timer_value = str(datetime.timedelta(seconds=seconds + 1))
+    timer_value = str(datetime.timedelta(seconds=0 if seconds == 0 else seconds + 1))
 
     if timer_value.startswith('0'):
         timer_value = timer_value[2:]

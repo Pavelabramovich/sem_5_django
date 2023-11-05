@@ -68,14 +68,12 @@ def home(request):
     start_time = settings.SITE_START_TIME
     now = timezone.now()
 
-    seconds = 3600 - (now - start_time).seconds
 
     return render(request, "shop/home.html", {
         'categories': categories,
         'carousel_items': carousel_items,
         'news': news,
-        'providers': providers,
-        'seconds': seconds,
+        'providers': providers
     })
 
 

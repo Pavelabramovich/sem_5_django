@@ -14,6 +14,60 @@ IncorrectTireSeasonException.prototype = Object.create(Error.prototype, {
 });
 
 
+function argsToLower(func) {
+    function wrapped(...args) {
+        for (var i = 0; i < args.length; i++) {
+            try {
+                args[i] = args[i].trim().toLowerCase()
+            } catch(e) {
+                if (!e instanceof TypeError) {
+                    throw e
+                }
+            }
+        }
+
+        func.call(this, ...args)
+    }
+
+    return wrapped
+}
+
+Object.defineProperty(String.prototype, 'capitalize', {
+    value: function() {
+        return this.charAt(0).toUpperCase() + this.slice(1);
+    },
+    enumerable: false
+});
+
+function retCapitalize(func) {
+    function wrapped(...args) {
+        try {
+            return func.call(this, ...args).capitalize()
+        } catch(e) {
+            if (!e instanceof TypeError) {
+                throw e
+            }
+        }
+    }
+
+    return wrapped
+}
+
+
+
+
+function decorateProperty(prototype, property, accessor, decorator) {
+    if (!['get', 'set'].includes(accessor.trim().toLowerCase())) {
+        throw new Error("Invalid accessor ot overwrite")
+    }
+
+    Object.defineProperty(prototype, property, {
+        [accessor]: decorator(Object.getOwnPropertyDescriptor(prototype, property)[accessor])
+    });
+}
+
+
+
 
 class Detail {
     #name;
@@ -67,8 +121,6 @@ class Tire extends Detail {
     }
 
     set season(value) {
-        value = value.trim().toLowerCase()
-
         if (['winter', 'summer'].includes(value)) {
             this.#season = value;
         } else {
@@ -81,8 +133,14 @@ class Tire extends Detail {
     }
 }
 
+decorateProperty(Tire.prototype, "season", 'get', retCapitalize)
+decorateProperty(Tire.prototype, "season", 'set', argsToLower)
+
+
 //details
 const button = document.getElementById("details")
+
+
 button.addEventListener("click", function() {
     var d1 = new Detail("Gear", 10)
 
@@ -93,7 +151,7 @@ button.addEventListener("click", function() {
     alert("after change price: " + d1.toString())
 
 
-    var t1 = new Tire("SuperTire", 23, 'winter')
+    var t1 = new Tire("SuperTire", 23, 'Winter')
 
     alert(t1)
 
