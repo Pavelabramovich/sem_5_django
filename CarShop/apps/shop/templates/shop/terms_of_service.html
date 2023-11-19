@@ -193,45 +193,28 @@ For the purpose of applicable data protection laws, we are the data controller o
 
 <button id="details">Details</button>
 
-
-<input type="checkbox" onclick="
-  var text = document.querySelector('#text_id');
-  var body = document.body;
-
-  if (this.dataset.counter === '1') {
-    this.dataset.counter = '2';
-
-    text.style.color = 'red';
-    text.style.fontSize = '20px';
-
-    body.style.background = 'yellow';
-  } else {
-    this.dataset.counter = '1';
-    
-    text.style.color = 'blue';
-    text.style.fontSize = '10px'
-
-    body.style.background = 'white';
-}">
-
-<button
-  data-tmp="1"
-  data-pi2="1"
-  data-counter="1"
-  onclick="
-  var i = this.dataset.counter;
-
-  this.dataset.tmp *= i / (2 * i + 1);
-  this.dataset.pi2 = +this.dataset.tmp + +this.dataset.pi2;
-  this.dataset.counter++;
-
-  this.innerText = ` π = ${2 * this.dataset.pi2}`;">
-
-  π = 2
-</button>
-
 <div>
-    <style>
+  TextColor:
+<input type="color" value="#000000" onchange="
+  var text = document.querySelector('#text_id');
+  text.style.color = this.value;
+"/>
+
+  Background:
+<input type="color" value="#ffffff" onchange="
+  var body = document.body;
+  body.style.background = this.value;
+"/>
+
+  fontSize:
+<input type="number" id="tentacles" name="tentacles" min="10" max="100" onchange="
+  var text = document.querySelector('#text_id');
+  text.style.fontSize = `${this.value}px`
+"/>
+</div>
+
+
+<style>
     button {
       background-color: #777;
       border: none;
@@ -263,7 +246,10 @@ For the purpose of applicable data protection laws, we are the data controller o
     .selected:nth-child(odd) {
       background-color: #FFE91E;
     }
-  </style>
+</style>
+
+<div id="cont">
+
 
 
   <table id="random_table">
@@ -287,10 +273,10 @@ For the purpose of applicable data protection laws, we are the data controller o
 </div>
 
 
-<span id="trucks">
+<div id="trucks">
   <img src="{% static '/shop/images/truck_left.png' %}" class="truck" id="truck_left" width="100%">
   <img src="{% static '/shop/images/truck_right.png' %}" class="truck" id="truck_right" width="100%">
-</span>
+</div>
 
 
 {% load static %}

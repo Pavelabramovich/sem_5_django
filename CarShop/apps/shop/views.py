@@ -65,15 +65,14 @@ def home(request):
     news = News.objects.all()
     providers = Provider.objects.all()
 
-    start_time = settings.SITE_START_TIME
-    now = timezone.now()
-
+    categories_count = len(categories)
 
     return render(request, "shop/home.html", {
         'categories': categories,
         'carousel_items': carousel_items,
         'news': news,
-        'providers': providers
+        'providers': providers,
+        'categories_count': categories_count
     })
 
 

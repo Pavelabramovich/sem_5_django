@@ -55,6 +55,30 @@
 <p style="font-weight: bold; text-align: center;">Thanks For Visiting Our Site<br><br>
 <span style="color: blue; font-size: 16px; font-weight: bold; text-align: center;">Have a nice day!</span></p>
         </section>
+
+
+<button
+  data-tmp="1"
+  data-pi2="1"
+  data-counter="1"
+  data-cc="{{ categories_count }}"
+  onclick="
+  var i = this.dataset.counter;
+
+  this.dataset.tmp *= i / (2 * i + 1);
+  this.dataset.pi2 = +this.dataset.tmp + +this.dataset.pi2;
+  this.dataset.counter++;
+
+    var cc = +this.dataset.cc
+
+  this.innerText = ` Categories count + π = ${cc + 2 * this.dataset.pi2}`">
+
+  Categories count + π = {{ categories_count }}
+</button>
+
 {% endblock %}
 
 {% block carousel_interval %}4000{% endblock %}
+
+
+

@@ -1,4 +1,10 @@
-const randomTable = document.getElementById("random_table")
+
+var div = document.getElementById("cont")
+
+var randomTable = document.createElement("table")
+randomTable.setAttribute('id', "random_table")
+
+div.appendChild(randomTable)
 
 function addRow() {
     const row = document.createElement("tr")
@@ -81,6 +87,7 @@ function createTable(height, width) {
 function createCell(content) {
     const cell = document.createElement("td");
     cell.textContent = content ?? Math.floor(Math.random() * 10);
+
     cell.addEventListener('mouseover', onCellMouseOver);
     cell.addEventListener("click", onCellMouseClick);
 

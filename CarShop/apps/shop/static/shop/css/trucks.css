@@ -3,5 +3,10 @@
     top: 0;
     left: 0;
     width: 100%;
+}
+
+#trucks {
+    background-image: url('../images/field.png');
+    background-size: cover;
 
 }

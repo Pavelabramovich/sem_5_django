@@ -142,4 +142,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TEST_RUNNER = "apps.core.test_tools.RunnerWithTestModels"
 
 SITE_START_TIME = timezone.now()
-
